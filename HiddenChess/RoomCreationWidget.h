@@ -15,6 +15,10 @@ public:
 		ui.createRoomButton->setDisabled(true);
 	}
 
+	void enableCreateRoomBtn() {
+		ui.createRoomButton->setDisabled(false);
+	}
+
 private:
 	Ui::RoomCreationWidgetClass ui;
 

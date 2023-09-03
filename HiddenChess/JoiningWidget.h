@@ -11,6 +11,14 @@ public:
 	JoiningWidget(QWidget *parent = nullptr);
 	~JoiningWidget();
 
+	void disableConnectBtn() {
+		ui.connectButton->setDisabled(true);
+	}
+
+	void enableconnectBtn() {
+		ui.connectButton->setDisabled(false);
+	}
+
 private:
 	Ui::JoiningWidgetClass ui;
 
