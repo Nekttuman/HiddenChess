@@ -14,6 +14,7 @@ public:
 
 //private slots:
 
+
 signals:
 	void connectionErr(QString);
 
