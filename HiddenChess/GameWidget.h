@@ -14,6 +14,7 @@ public:
 private:
 	Ui::GameWidgetClass ui;
 
+
 signals:
 	void backToMenu_signal();
 
