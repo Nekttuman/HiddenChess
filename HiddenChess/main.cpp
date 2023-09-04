@@ -8,7 +8,5 @@ int main(int argc, char *argv[])
     HiddenChess w;
     w.show();
 
-    //ChatWidget cw;
-    //cw.show();
     return a.exec();
 }
