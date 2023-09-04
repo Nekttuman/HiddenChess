@@ -8,6 +8,11 @@ Client::Client(QObject* parent)
 
 	connect(socket, &QTcpSocket::readyRead, this, &Client::readyRead_slot);
 	connect(socket, &QTcpSocket::disconnected, socket, &QTcpSocket::deleteLater);
+
+	connect(socket, &QTcpSocket::connected, this, [&]() {emit connected_signal(); });
+	connect(socket, &QTcpSocket::disconnected, socket, [&]() {emit connectionErr("disconnected"); });
+	connect(socket, &QTcpSocket::errorOccurred, socket, [&]() {emit connectionErr("connection error"); });
+
 }
 
 Client::~Client()
@@ -27,16 +32,21 @@ void Client::SendToServer(QString str)
 
 void Client::connectToHost_slot(){
 	try {
-		qDebug() << "connect to host";
+		//qDebug() << "connecting to host";
 		
 		socket->connectToHost("127.0.0.1", 2323);
 	}
 	catch (...) {
-		qDebug() << "read err";
-		emit connectionErr("err");
+		//qDebug() << "read err";
+		emit connectionErr("programm error");
+		return;
+	}
+	if (socket->state() == QAbstractSocket::SocketState::ConnectingState) {
+		emit connectionErr("connecting...");
 	}
 
-	emit connectionErr("err");
+
+	//emit connectionErr("err");
 }
 
 //void Client::on_connectButton_clicked() {

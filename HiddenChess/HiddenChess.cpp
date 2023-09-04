@@ -39,7 +39,11 @@ HiddenChess::HiddenChess(QWidget *parent)
 
     connect(ui.mainMenuWidget, &MainMenu::createRoomBtn_signal, client, &Client::connectToHost_slot);
     connect(client, &Client::connectionErr, this, &HiddenChess::disableGame_slot);
+    connect(client, &Client::connectionErr, this, [&]() {has_connection = false; });
 
+
+    connect(client, &Client::connected_signal, this, [&]() {has_connection = true; });
+      connect(client, &Client::connected_signal, this, &HiddenChess::removeErr_slot);
 }
 
 HiddenChess::~HiddenChess()

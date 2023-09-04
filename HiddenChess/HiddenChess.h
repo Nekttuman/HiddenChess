@@ -18,6 +18,8 @@ private:
 
     Client* client;
 
+    bool has_connection = false;
+
     void paintEvent(QPaintEvent) {
 
         ui.mainMenuWidget->setFixedSize(this->size());
@@ -47,11 +49,16 @@ private slots:
       ui.gameWidget->show();
   }
 
-  void disableGame_slot() {
+  void disableGame_slot(QString err) {
       ui.roomCreationWidget->disableCreateRoomBtn();
+      ui.joiningWidget->disableConnectBtn();
       qDebug() << "disableGame slot called";
-      ui.errTextBrowser->setText("connection error");
+      ui.errTextBrowser->setText(err);
       ui.errTextBrowser->setStyleSheet(ui.errTextBrowser->styleSheet() + "\ncolor:red;");
+  }
+
+  void removeErr_slot() {
+    ui.errTextBrowser->setText("");
   }
 
 

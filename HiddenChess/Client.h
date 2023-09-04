@@ -12,11 +12,9 @@ public:
 	Client(QObject *parent);
 	~Client();
 
-//private slots:
-
-
 signals:
 	void connectionErr(QString);
+	void connected_signal();
 
 public slots:
 	void readyRead_slot();
