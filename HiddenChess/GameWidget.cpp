@@ -8,7 +8,7 @@ GameWidget::GameWidget(QWidget* parent)
   /*Square* image = new Square();
   ui.gridLayout->addWidget(image);*/
   //SetGame();
-
+  ui.gridLayout->setSpacing(0);
   connect(ui.startButton, &QPushButton::clicked, this, &GameWidget::setGame);
 }
 
