@@ -7,7 +7,7 @@ Client::Client(QObject* parent)
 	socket = new QTcpSocket;
 
 	connect(socket, &QTcpSocket::readyRead, this, &Client::readyRead_slot);
-	connect(socket, &QTcpSocket::disconnected, socket, &QTcpSocket::deleteLater);
+	//connect(socket, &QTcpSocket::disconnected, socket, &QTcpSocket::deleteLater);
 
 	connect(socket, &QTcpSocket::connected, this, [&]() {emit connected_signal(); });
 	connect(socket, &QTcpSocket::disconnected, socket, [&]() {emit connectionErr("disconnected"); });
@@ -18,12 +18,20 @@ Client::Client(QObject* parent)
 Client::~Client()
 {}
 
+enum serverMessageType {
+	tryConnectToRoom,
+	createRoom,
+	chatMess,
+	move,
+	surrenderCommand
+};
+
 void Client::SendToServer(QString str)
 {
 	Data.clear();
 	QDataStream out(&Data, QIODevice::WriteOnly);
 	//out.setVersion(QDataStream::Qt)
-	out << quint16(0) << str;
+	out << quint16(0) << serverMessageType::chatMess << str;
 	out.device()->seek(0);
 	out << quint16(Data.size() - sizeof(quint16));
 	socket->write(Data);
@@ -31,6 +39,8 @@ void Client::SendToServer(QString str)
 }
 
 void Client::connectToHost_slot(){
+	if (socket->state() == QAbstractSocket::SocketState::ConnectedState)
+		return;
 	try {
 		//qDebug() << "connecting to host";
 		
@@ -44,8 +54,6 @@ void Client::connectToHost_slot(){
 	if (socket->state() == QAbstractSocket::SocketState::ConnectingState) {
 		emit connectionErr("connecting...");
 	}
-
-
 	//emit connectionErr("err");
 }
 
