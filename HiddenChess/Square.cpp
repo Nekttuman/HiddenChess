@@ -1,5 +1,6 @@
 #include "Square.h"
 #include <qpainter.h>
+#include <qdebug.h>
 
 Square::Square(QWidget* parent)
 	: QWidget(parent)
@@ -30,6 +31,17 @@ Square::Square(int x, int y, QWidget* parent) {
 
 	}
 	else bgcolor = Qt::white;
+
+	
+
+}
+
+void Square::ChangeImage(QPixmap& image) {
+
+	qDebug() << image;
+	if (!image.isNull()) {
+		ui.label->setPixmap(image);
+	}
 
 
 }

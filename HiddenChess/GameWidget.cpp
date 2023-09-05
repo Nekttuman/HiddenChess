@@ -30,6 +30,16 @@ void GameWidget::setGame() {
 
     }
   }
-
+  
+  QPainter painter(squares[4][4]);
+  painter.setRenderHint(QPainter::Antialiasing);
+  painter.setBrush(Qt::black);
+  QPixmap image("../HiddenChess/Figures/pawnWhite.png");
+  image =image.scaled(40,40,Qt::KeepAspectRatio);
+  qDebug() << image;
+  painter.drawPixmap(rect(), image);
+ 
+  
+  
 
 }
