@@ -57,9 +57,12 @@ private slots:
       ui.errTextBrowser->setStyleSheet(ui.errTextBrowser->styleSheet() + "\ncolor:red;");
   }
 
-  void removeErr_slot() {
-    ui.errTextBrowser->setText("");
+  void showConnectedMessage_slot() {
+    ui.errTextBrowser->setText("Connected");
+    ui.errTextBrowser->setStyleSheet(ui.errTextBrowser->styleSheet() + "color:green;");
   }
+
+
 
 
 };
