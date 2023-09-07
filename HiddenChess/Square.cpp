@@ -27,14 +27,12 @@ void Square::paintEvent(QPaintEvent* event) {
 	painter.setRenderHint(QPainter::Antialiasing);
 	painter.setBrush(bgcolor);
 	painter.drawRect(rect());
-
-
-	switch (ft) {
-	case FigureType::pawn:
-		painter.drawPixmap(rect(), *image);
-		break;
-
-
-	}
+	ui.label->setFixedSize(this->size());
+	
 };
 
+void Square::setFigureType(FigureType figureType, QPixmap& img) {
+	ft = figureType;
+	image = &img;
+	ui.label->setPixmap((*image).scaled(this->size(), Qt::KeepAspectRatio));
+}
