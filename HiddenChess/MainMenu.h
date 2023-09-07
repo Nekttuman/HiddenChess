@@ -23,13 +23,13 @@ signals:
 	void exitBtn_signal();
 
 private slots:
-	void emitCreateRoom_signal() {
+	void emitCreateRoom_slot() {
 		emit createRoomBtn_signal();
 	}
-	void emitJoinBtn_signal() {
+	void emitJoinBtn_slot() {
 		emit joinRoomBtn_signal();
 	}
-	void emitExit_signal(){
+	void emitExit_slot(){
 		emit exitBtn_signal();
 	}
 
