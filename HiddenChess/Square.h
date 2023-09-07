@@ -31,18 +31,15 @@ public:
 	~Square();
 	Square(int x, int y, QWidget* parent = nullptr);
 
-	FigureType ft;
 
-	void setFigureType(FigureType figureType, QPixmap &img) {
-		ft = figureType;
-		image = &img;
-	}
+	void setFigureType(FigureType figureType, QPixmap& img);
 
 public:
 
 	QColor bgcolor = Qt::black;
 	QPoint x, y;
-	QPixmap *image;
+	QPixmap* image;
+	FigureType ft;
 
 private:
 	Ui::SquareClass ui;

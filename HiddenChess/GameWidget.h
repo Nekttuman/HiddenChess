@@ -11,31 +11,30 @@ class GameWidget : public QWidget
 public:
 	GameWidget(QWidget *parent = nullptr);
 	~GameWidget();
+	void setFigures();
 
 private:
 	Ui::GameWidgetClass ui;
 
-	ImgManager imageManager;
+	
 signals:
 	void backToMenu_signal();
-
-private slots:
-	void emitBackToMenu_slot() {
-		emit backToMenu_signal();
-	}
-
-
 
 public:
 	Square* squares[8][8];
 
 
 private slots:
+	void emitBackToMenu_slot() {
+		emit backToMenu_signal();
+	}
+	void startGame();
+
 	void setGame();
 
 protected:
 
-	void paintEvent(QPaintEvent* event) override;
+	//void paintEvent(QPaintEvent* event) override;
 };
 
 
