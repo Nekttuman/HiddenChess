@@ -15,7 +15,7 @@ public:
 private:
 	Ui::GameWidgetClass ui;
 
-
+	ImgManager imageManager;
 signals:
 	void backToMenu_signal();
 
@@ -32,6 +32,10 @@ public:
 
 private slots:
 	void setGame();
+
+protected:
+
+	void paintEvent(QPaintEvent* event) override;
 };
 
 
