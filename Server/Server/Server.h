@@ -1,12 +1,73 @@
 #pragma once
 
+#include <QObject>
+#include <QtCore>
 #include <QTcpServer>
+#include <QTcpSocket>
 
-class Server  : public QTcpServer
+#include "Room.h"
+
+enum serverResponcesType {
+	roomNameCheckFailed,
+	roomNameCheckPassed,
+	roomCreated,
+	roomCreationErr
+};
+
+
+class Server : public QTcpServer
 {
 	Q_OBJECT
 
 public:
-	Server(QObject *parent);
+	Server();
 	~Server();
+
+	QTcpSocket* socket;
+	
+private:
+	QVector<QTcpSocket*> m_sockets;
+	quint16 m_nextBlockSize = 0;
+
+	QVector<Room*> m_rooms;
+
+	void SendToClient(QString str);
+
+
+	void createRoom(QString roomName, QString pswd, QTcpSocket* sender) {
+
+		QByteArray Data;
+		QDataStream out(&Data, QIODevice::WriteOnly);
+		if (!isUniq(roomName)) {
+			out << quint16(0) << serverResponcesType::roomCreationErr;
+			out.device()->seek(0);
+			out << quint16(Data.size() - sizeof(quint16));
+			sender->write(Data);
+			return;
+		}
+		m_rooms.push_back(new Room(sender, roomName, pswd));
+		qDebug() << "room created: " << roomName << pswd;
+
+		out << quint16(0) << serverResponcesType::roomCreated;
+		out.device()->seek(0);
+		out << quint16(Data.size() - sizeof(quint16));
+		sender->write(Data);
+
+
+	}
+
+	bool isUniq(QString roomName) {
+		for (auto room : m_rooms) {
+			if (room->getName() == roomName)
+				return false;
+		}
+		return true;
+	}
+
+public slots:
+	void incomingConnection(qintptr socketDescriptor) override;
+	void slotReadyRead();
+
+private slots:
+	void disconnectSocket();
 };

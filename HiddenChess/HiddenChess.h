@@ -49,6 +49,8 @@ private slots:
       ui.gameWidget->show();
   }
 
+  
+
   void disableGame_slot(QString err) {
       ui.roomCreationWidget->disableCreateRoomBtn();
       ui.joiningWidget->disableConnectBtn();

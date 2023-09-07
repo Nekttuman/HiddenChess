@@ -257,23 +257,7 @@
    <sender>createRoomButton</sender>
    <signal>clicked()</signal>
    <receiver>RoomCreationWidgetClass</receiver>
-   <slot>hide()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>438</x>
-     <y>299</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>459</x>
-     <y>183</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>createRoomButton</sender>
-   <signal>clicked()</signal>
-   <receiver>RoomCreationWidgetClass</receiver>
-   <slot>emitStartGame_slot()</slot>
+   <slot>createRoom_slot()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>438</x>
@@ -320,7 +304,7 @@
  </connections>
  <slots>
   <slot>emitBackToMenu_slot()</slot>
-  <slot>emitStartGame_slot()</slot>
+  <slot>createRoom_slot()</slot>
   <slot>validateFields_slot()</slot>
  </slots>
 </ui>

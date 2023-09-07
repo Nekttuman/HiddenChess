@@ -10,28 +10,20 @@ Client::Client(QObject* parent)
 	//connect(socket, &QTcpSocket::disconnected, socket, &QTcpSocket::deleteLater);
 
 	connect(socket, &QTcpSocket::connected, this, [&]() {emit connected_signal(); });
-	connect(socket, &QTcpSocket::disconnected, socket, [&]() {emit connectionErr("disconnected"); });
-	connect(socket, &QTcpSocket::errorOccurred, socket, [&]() {emit connectionErr("connection error"); });
+	connect(socket, &QTcpSocket::disconnected, socket, [&]() {emit connectionErr_signal("disconnected"); });
+	connect(socket, &QTcpSocket::errorOccurred, socket, [&]() {emit connectionErr_signal("connection error"); });
 
 }
 
 Client::~Client()
 {}
 
-enum serverMessageType {
-	tryConnectToRoom,
-	createRoom,
-	chatMess,
-	move,
-	surrenderCommand
-};
-
 void Client::SendToServer(QString str)
 {
 	Data.clear();
 	QDataStream out(&Data, QIODevice::WriteOnly);
 	//out.setVersion(QDataStream::Qt)
-	out << quint16(0) << serverMessageType::chatMess << str;
+	out << quint16(0) << clientRequestType::chatMess << str;
 	out.device()->seek(0);
 	out << quint16(Data.size() - sizeof(quint16));
 	socket->write(Data);
@@ -42,19 +34,15 @@ void Client::connectToHost_slot(){
 	if (socket->state() == QAbstractSocket::SocketState::ConnectedState)
 		return;
 	try {
-		//qDebug() << "connecting to host";
-		
 		socket->connectToHost("127.0.0.1", 2323);
 	}
 	catch (...) {
-		//qDebug() << "read err";
-		emit connectionErr("programm error");
+		emit connectionErr_signal("programm error");
 		return;
 	}
 	if (socket->state() == QAbstractSocket::SocketState::ConnectingState) {
-		emit connectionErr("connecting...");
+		emit connectionErr_signal("connecting...");
 	}
-	//emit connectionErr("err");
 }
 
 //void Client::on_connectButton_clicked() {
@@ -67,18 +55,15 @@ void Client::connectToHost_slot(){
 //	SendToServer(ui.lineEdit->text());
 //}
 
+
+
+
 void Client::readyRead_slot() {
 	QDataStream in(socket);
 
-	//in.setVersion(QDataStream::Qt_6_2);
-
 	if (in.status() == QDataStream::Ok) {
-		//QString str;
-		//in >> str;
-		//ui.textBrowser->append(str);
 
 
-		QString str;
 		while (true) {
 			if (nextBlockSize == 0) {
 				if (socket->bytesAvailable() < 2)
@@ -88,9 +73,24 @@ void Client::readyRead_slot() {
 			if (socket->bytesAvailable() < nextBlockSize)
 				break;
 
-			in >> str;
+
+			serverResponceType rt;
+			in >> rt;
+			if (rt == serverResponceType::roomCreationErr) {
+
+			}
+			else if (rt == serverResponceType::roomCreated) {
+				
+			}
+			else if (rt == serverResponceType::roomNameCheckFailed) {
+				emit roomNameUniqNotConfirmed_signal();
+			}
+			else if (rt == serverResponceType::roomNameCheckPassed) {
+				emit roomNameUniqConfirmed_signal();
+			}
+
+
 			nextBlockSize = 0;
-			qDebug()<<str;
 
 			break;
 		}
