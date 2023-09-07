@@ -13,6 +13,15 @@ enum serverResponcesType {
 	roomCreated,
 	roomCreationErr
 };
+enum clientRequestType {
+	tryConnectToRoom,
+	createRoom,
+	chatMess,
+	move,
+	surrenderCommand,
+	checkRoomNameUniq
+};
+
 
 
 class Server : public QTcpServer
@@ -39,7 +48,7 @@ private:
 		QByteArray Data;
 		QDataStream out(&Data, QIODevice::WriteOnly);
 		if (!isUniq(roomName)) {
-			out << quint16(0) << serverResponcesType::roomCreationErr;
+			out << quint16(0) << serverResponcesType::roomCreationErr<<"Not uniq name";
 			out.device()->seek(0);
 			out << quint16(Data.size() - sizeof(quint16));
 			sender->write(Data);
@@ -53,7 +62,32 @@ private:
 		out << quint16(Data.size() - sizeof(quint16));
 		sender->write(Data);
 
+		for (auto room : m_rooms) {
+			qDebug() << room->getName();
+		}
 
+
+	}
+
+	void checkRoomNameUniq(QString name, QTcpSocket* sender) {
+
+		QByteArray Data;
+		QDataStream out(&Data, QIODevice::WriteOnly);
+		if (isUniq(name)) {
+
+			qDebug() << name << "uniq";
+			out << quint16(0) << serverResponcesType::roomNameCheckPassed;
+			out.device()->seek(0);
+			out << quint16(Data.size() - sizeof(quint16));
+		}
+		else {
+			qDebug() << name << "not uniq";
+			out << quint16(0) << serverResponcesType::roomNameCheckFailed;
+			out.device()->seek(0);
+			out << quint16(Data.size() - sizeof(quint16));
+		}
+
+		sender->write(Data);
 	}
 
 	bool isUniq(QString roomName) {

@@ -25,6 +25,10 @@ public:
 	QString getPswd() {
 		return ui.pswdLineEdit->text();
 	}
+	void clearFields() {
+		ui.pswdLineEdit->clear();
+		ui.roomNameLineEdit->clear();
+	}
 private:
 	Ui::RoomCreationWidgetClass ui;
 
@@ -40,7 +44,7 @@ private slots:
 	void emitBackToMenu_slot() {
 		emit backToMenu_signal();
 	}
-	void createRoom_slot() {
+	void createRoomBtnPressed_slot() {
 		emit createRoom_signal();
 	}
 
@@ -52,6 +56,7 @@ private slots:
 		{
 			ui.roomPswdErrorLabel->show();
 			isValid = false;
+			disableCreateRoomBtn();
 		} else {
 			ui.roomPswdErrorLabel->hide();
 		}
@@ -61,7 +66,8 @@ private slots:
 		{
 			ui.roomNameErrorLabel->show();
 			ui.roomNameErrorLabel->setText("name err");
-			isValid = false;		
+			isValid = false;	
+			disableCreateRoomBtn();
 		} else {
 			ui.roomNameErrorLabel->hide();
 			emit checkRoomNameUniquness_signal(ui.roomNameLineEdit->text());
@@ -85,6 +91,7 @@ public slots:
 
 		ui.roomNameErrorLabel->setText("name already exists");
 		ui.roomNameErrorLabel->show();
+		disableCreateRoomBtn();
 	}
 
 	void allowRoomCreation_slot() {

@@ -10,8 +10,8 @@ Client::Client(QObject* parent)
 	//connect(socket, &QTcpSocket::disconnected, socket, &QTcpSocket::deleteLater);
 
 	connect(socket, &QTcpSocket::connected, this, [&]() {emit connected_signal(); });
-	connect(socket, &QTcpSocket::disconnected, socket, [&]() {emit connectionErr_signal("disconnected"); });
-	connect(socket, &QTcpSocket::errorOccurred, socket, [&]() {emit connectionErr_signal("connection error"); });
+	connect(socket, &QTcpSocket::disconnected, socket, [&]() {emit clientErr_signal("disconnected"); });
+	connect(socket, &QTcpSocket::errorOccurred, socket, [&]() {emit clientErr_signal("connection error"); });
 
 }
 
@@ -37,11 +37,11 @@ void Client::connectToHost_slot(){
 		socket->connectToHost("127.0.0.1", 2323);
 	}
 	catch (...) {
-		emit connectionErr_signal("programm error");
+		emit clientErr_signal("programm error");
 		return;
 	}
 	if (socket->state() == QAbstractSocket::SocketState::ConnectingState) {
-		emit connectionErr_signal("connecting...");
+		emit clientErr_signal("connecting...");
 	}
 }
 
@@ -76,11 +76,14 @@ void Client::readyRead_slot() {
 
 			serverResponceType rt;
 			in >> rt;
+			qDebug() << rt;
 			if (rt == serverResponceType::roomCreationErr) {
-
+				QString err;
+				in >> err;
+				emit clientErr_signal(err);
 			}
 			else if (rt == serverResponceType::roomCreated) {
-				
+				emit roomCreated_signal();
 			}
 			else if (rt == serverResponceType::roomNameCheckFailed) {
 				emit roomNameUniqNotConfirmed_signal();

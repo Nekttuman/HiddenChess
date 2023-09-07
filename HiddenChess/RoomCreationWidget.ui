@@ -257,7 +257,7 @@
    <sender>createRoomButton</sender>
    <signal>clicked()</signal>
    <receiver>RoomCreationWidgetClass</receiver>
-   <slot>createRoom_slot()</slot>
+   <slot>createRoomBtnPressed_slot()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>438</x>
@@ -304,7 +304,7 @@
  </connections>
  <slots>
   <slot>emitBackToMenu_slot()</slot>
-  <slot>createRoom_slot()</slot>
+  <slot>createRoomBtnPressed_slot()</slot>
   <slot>validateFields_slot()</slot>
  </slots>
 </ui>

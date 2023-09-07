@@ -15,7 +15,7 @@ class Room {
 	QString m_pswd;
 
 public:
-	Room(QTcpSocket* hostSocket, QString roomName, QString roomPswd) {
+	Room(QTcpSocket* hostSocket, QString roomName, QString roomPswd): m_name(roomName), m_pswd(roomPswd) {
 		m_hostSocket = hostSocket;
 	}
 

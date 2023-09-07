@@ -40,13 +40,7 @@ void Server::incomingConnection(qintptr socketDescriptor) {
 }
 
 
-enum clientRequestType {
-	tryConnectToRoom,
-	createRoom,
-	chatMess,
-	move,
-	surrenderCommand
-};
+
 
 
 void Server::slotReadyRead()
@@ -81,14 +75,14 @@ void Server::slotReadyRead()
 				in >> roomName >> pswd;
 				createRoom(roomName, pswd, socket);
 			}
-
+			if (mt == clientRequestType::checkRoomNameUniq) {
+				QString roomName;
+				in >> roomName;
+				checkRoomNameUniq(roomName, socket);
+			}
 
 
 			m_nextBlockSize = 0;
-
-
-
-			//SendToClient(str);
 			break;
 		}
 	}
@@ -97,6 +91,8 @@ void Server::slotReadyRead()
 }
 
 void Server::disconnectSocket() {
+	// TODO: delete related rooms
+
 	qDebug() << "client disconnected " << socket->localAddress();
 	m_sockets.erase(std::remove(m_sockets.begin(), m_sockets.end(), socket), m_sockets.end());
 

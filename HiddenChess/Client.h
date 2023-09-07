@@ -10,7 +10,8 @@ enum clientRequestType {
 	createRoom,
 	chatMess,
 	move,
-	surrenderCommand
+	surrenderCommand,
+	checkRoomNameUniq
 };
 
 enum serverResponceType {
@@ -33,10 +34,9 @@ public:
 	void tryCreateRoom(QString roomName, QString pswd) {
 		if (socket->state() != QAbstractSocket::SocketState::ConnectedState)
 		{
-			emit connectionErr_signal("not connected");
+			emit clientErr_signal("not connected");
 			return;
 		}
-		qDebug() << "try create room";
 
 		Data.clear();
 		QDataStream out(&Data, QIODevice::WriteOnly);
@@ -49,19 +49,25 @@ public:
 	}
 
 signals:
-	void connectionErr_signal(QString);
+	void clientErr_signal(QString);
 	void connected_signal();
 
 	void roomNameUniqConfirmed_signal();
 	void roomNameUniqNotConfirmed_signal();
+
+	void roomCreated_signal();
 
 public slots:
 	void readyRead_slot();
 	void connectToHost_slot();
 
 	void checkRoomNameUniq_slot(QString roomName) {
-		// TODO
-		emit roomNameUniqConfirmed_signal();
+		Data.clear();
+		QDataStream out(&Data, QIODevice::WriteOnly);
+		out << quint16(0) << clientRequestType::checkRoomNameUniq << roomName;
+		out.device()->seek(0);
+		out << quint16(Data.size() - sizeof(quint16));
+		socket->write(Data);
 	}
 
 private:
