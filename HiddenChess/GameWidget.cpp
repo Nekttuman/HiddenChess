@@ -36,10 +36,8 @@ void GameWidget::setGame() {
   
 }
 
-
-
-
 void GameWidget::paintEvent(QPaintEvent* event) {
+    // resize pics when squares resized
   if (squares[0][0]!=nullptr)
     imageManager.pawnImg = imageManager.pawnImg.scaled(squares[0][0]->size(), Qt::KeepAspectRatio);
 
