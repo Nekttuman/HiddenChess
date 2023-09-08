@@ -28,6 +28,8 @@ void Square::paintEvent(QPaintEvent* event) {
 	painter.setBrush(bgcolor);
 	painter.drawRect(rect());
 	ui.label->setFixedSize(this->size());
+
+	
 	
 };
 

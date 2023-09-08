@@ -23,7 +23,7 @@ void ChatWidget::SendToServer(QString str)
 	out << quint16(Data.size() - sizeof(quint16));
 	socket->write(Data);
 
-	ui.lineEdit->clear();
+	ui.textEdit->clear();
 }
 
 void ChatWidget::on_connectButton_clicked() {
@@ -31,9 +31,7 @@ void ChatWidget::on_connectButton_clicked() {
 }
 
 void ChatWidget::on_sendButton_clicked() {
-	if (ui.lineEdit->text() == "")
-		return;
-	SendToServer(ui.lineEdit->text());
+	//SendToServer(ui.textEdit->);
 }
 
 void ChatWidget::slotReadyRead() {
