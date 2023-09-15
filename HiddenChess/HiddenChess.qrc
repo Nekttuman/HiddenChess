@@ -1,4 +1,5 @@
 <RCC>
-    <qresource prefix="HiddenChess">
+    <qresource prefix="/HiddenChess">
+        <file>Figures/pawnWhite.png</file>
     </qresource>
 </RCC>

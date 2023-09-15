@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QtWidgets>
+#include <qdrag.h>
 #include <qlabel.h>
 #include "ui_Square.h"
 
@@ -39,7 +40,7 @@ public:
 
 	QColor bgcolor = Qt::black;
 	QPoint x, y;
-	QPixmap *image;
+	QPixmap image;
 	FigureType ft;
 
 private:
@@ -49,4 +50,7 @@ private:
 
 protected:
 	void paintEvent(QPaintEvent* event) override;
+	void mousePressEvent(QMouseEvent* event) override;
+	void dropEvent(QDropEvent* event) override;
+	void dragEnterEvent(QDragEnterEvent* event) override;
 };
