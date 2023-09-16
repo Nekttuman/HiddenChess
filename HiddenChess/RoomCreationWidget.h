@@ -34,11 +34,15 @@ private:
 
 	bool roomNameUniq = false;
 
+
+
 signals:
 	void backToMenu_signal();
 	void createRoom_signal();
+	void checkRoomNameUniq_signal(QString);
+
+	// internal logic
 	void fieldsCorrect_signal();
-	void checkRoomNameUniquness_signal(QString);
 
 private slots:
 	void emitBackToMenu_slot() {
@@ -70,12 +74,18 @@ private slots:
 			disableCreateRoomBtn();
 		} else {
 			ui.roomNameErrorLabel->hide();
-			emit checkRoomNameUniquness_signal(ui.roomNameLineEdit->text());
+			emit checkRoomNameUniq_signal(ui.roomNameLineEdit->text());
 		}
 
 		if (isValid)
 			emit fieldsCorrect_signal();
 	}
+	void allowRoomCreation_slot() {
+		if (roomNameUniq) {
+			ui.createRoomButton->setEnabled(true);
+		}
+	}
+
 
 public slots:
 
@@ -92,12 +102,6 @@ public slots:
 		ui.roomNameErrorLabel->setText("name already exists");
 		ui.roomNameErrorLabel->show();
 		disableCreateRoomBtn();
-	}
-
-	void allowRoomCreation_slot() {
-		if (roomNameUniq) {
-			ui.createRoomButton->setEnabled(true);
-		}
 	}
 
 

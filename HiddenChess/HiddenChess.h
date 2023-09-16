@@ -28,7 +28,7 @@ private:
         ui.gameWidget->setFixedSize(this->size());
     }
 
-private slots:
+public slots:
   void showCreateRoomWidget_slot() {
       ui.roomCreationWidget->show();
   }
@@ -63,8 +63,6 @@ private slots:
     ui.errTextBrowser->setText("Connected");
     ui.errTextBrowser->setStyleSheet(ui.errTextBrowser->styleSheet() + "color:green;");
   }
-
-
 
 
 };

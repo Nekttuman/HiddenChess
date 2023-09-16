@@ -30,7 +30,7 @@ public:
 	Square* squares[8][8];
 
 
-private slots:
+public slots:
 	void setGame();
 
 protected:

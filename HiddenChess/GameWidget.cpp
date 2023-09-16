@@ -6,9 +6,7 @@ GameWidget::GameWidget(QWidget* parent)
 {
   ui.setupUi(this);
   
-
   ui.gridLayout->setSpacing(0);
-  connect(ui.startButton, &QPushButton::clicked, this, &GameWidget::setGame);
 }
 
 GameWidget::~GameWidget()

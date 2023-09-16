@@ -35,6 +35,7 @@ HiddenChess::HiddenChess(QWidget *parent)
             ui.roomCreationWidget->getPswd()
         ); });
     connect(client, &Client::roomCreated_signal, this, &HiddenChess::showGameWidget_slot);
+    connect(client, &Client::roomCreated_signal, ui.gameWidget, &GameWidget::setGame);
     connect(client, &Client::roomCreated_signal, this, [&]() {ui.roomCreationWidget->hide(); });
     connect(client, &Client::roomCreated_signal, this, [&]() {ui.roomCreationWidget->clearFields(); });
 
@@ -54,9 +55,7 @@ HiddenChess::HiddenChess(QWidget *parent)
     connect(client, &Client::connected_signal, this, [&]() {has_connection = true; });
     connect(client, &Client::connected_signal, this, &HiddenChess::showConnectedMessage_slot);
     
-    connect(ui.roomCreationWidget, &RoomCreationWidget::fieldsCorrect_signal,
-        ui.roomCreationWidget, &RoomCreationWidget::allowRoomCreation_slot);
-    connect(ui.roomCreationWidget, &RoomCreationWidget::checkRoomNameUniquness_signal,
+    connect(ui.roomCreationWidget, &RoomCreationWidget::checkRoomNameUniq_signal,
         client, &Client::checkRoomNameUniq_slot);
     connect(client, &Client::roomNameUniqConfirmed_signal, ui.roomCreationWidget,
         &RoomCreationWidget::roomNameUniqConfirmed_slot);

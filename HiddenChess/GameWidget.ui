@@ -50,19 +50,6 @@
    </property>
    <layout class="QGridLayout" name="gridLayout"/>
   </widget>
-  <widget class="QPushButton" name="startButton">
-   <property name="geometry">
-    <rect>
-     <x>410</x>
-     <y>10</y>
-     <width>93</width>
-     <height>28</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>start</string>
-   </property>
-  </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
