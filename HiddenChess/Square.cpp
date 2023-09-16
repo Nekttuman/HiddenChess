@@ -48,24 +48,25 @@ void Square::setFigureType(FigureType figureType, QPixmap& img) {
 
 void Square::mousePressEvent(QMouseEvent* event) {
 
-	ui.label->setPixmap(QPixmap());
+	if (!image.isNull()) {
 
-	QDrag* drag = new QDrag(this);
-	QMimeData* mimeData = new QMimeData;
+		ui.label->setPixmap(QPixmap());
 
-	mimeData->setImageData(image);
-	drag->setMimeData(mimeData);
-	drag->setPixmap(image);
+		QDrag* drag = new QDrag(this);
+		QMimeData* mimeData = new QMimeData;
 
-	image = QPixmap();
+		mimeData->setImageData(image);
+		drag->setMimeData(mimeData);
+		drag->setPixmap(image);
 
-	hideCursorMe();
+		image = QPixmap();
 
-	drag->setHotSpot(event->pos() - this->rect().topLeft());
 
-	Qt::DropAction dropAction = drag->exec();
+		drag->setHotSpot(event->pos() - this->rect().topLeft());
 
-	showCursorMe();
+		Qt::DropAction dropAction = drag->exec();
+
+	}
 	
 }
 

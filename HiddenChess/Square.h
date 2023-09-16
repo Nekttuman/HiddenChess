@@ -20,7 +20,7 @@ public:
 
 	ImgManager() {
 		pawnImg.fill(Qt::transparent);
-		pawnImg.load("../HiddenChess/Figures/pawnWhite.png");
+		pawnImg.load("../HiddenChess/Figures/Wp.png");
 	}
 };
 
