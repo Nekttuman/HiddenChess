@@ -24,9 +24,12 @@ public:
 public:
 
 	QColor bgcolor = Qt::black;
-	QPoint x, y;
+	int x, y;
 	QPixmap image;
 	Figure* Ffigure;
+
+signals:
+	void showMoves_signal(Figure* figure, int x, int y);
 	
 
 private:

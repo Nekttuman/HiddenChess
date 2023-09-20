@@ -5,10 +5,20 @@ GameWidget::GameWidget(QWidget* parent)
   : QWidget(parent)
 {
   ui.setupUi(this);
-  
 
+
+  
   ui.gridLayout->setSpacing(0);
+
+
   connect(ui.startButton, &QPushButton::clicked, this, &GameWidget::startGame_slot);
+  for (int i = 0; i < 8;++i) {
+    for (int j = 0; j < 8;++j) {
+      squares[i][j] = new Square(i, j, this);
+      connect(squares[i][j], &Square::showMoves_signal, this, &GameWidget::showMoves_slot);
+    }
+    }
+ 
 }
 
 GameWidget::~GameWidget()
@@ -24,7 +34,6 @@ void GameWidget::setField() {
   for (int i = 0; i < 8; i++) {
     for (int k = 0; k < 8; k++) {
 
-      squares[i][k] = new Square(i, k, this);
 
       ui.gridLayout->addWidget(squares[i][k], i, k);
       squares[i][k]->show();
@@ -33,15 +42,6 @@ void GameWidget::setField() {
   }
   
 }
-//
-//void GameWidget::paintEvent(QPaintEvent* event) {
-//    // resize pics when squares resized
-//  if (squares[0][0]!=nullptr)
-//    imageManager.pawnImg = imageManager.pawnImg.scaled(squares[0][0]->size(), Qt::KeepAspectRatio);
-//
-//
-//}
-
 
 
 
@@ -60,4 +60,11 @@ void GameWidget::setFigures() {
 
 
   }
+}
+
+
+
+void GameWidget::showMoves_slot(Figure* figure, int x, int y) {
+
+  qDebug() << x;
 }

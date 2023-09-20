@@ -39,10 +39,11 @@ class Figure {
 	
 public:
 
-	Ft figure;
+	Ft figureType;
 	Fc fColor;
 	QString figureImage="";
 	bool fakeStatus;
+	int x, y;
 
 	Figure(Ft figure_, Fc fcolor_);
 

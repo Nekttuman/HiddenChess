@@ -2,7 +2,7 @@
 #include <qpainter.h>
 #include <qdebug.h>
 #include "MyFunc.h"
-#include <GameWidget.h>
+#include "GameWidget.h"
 
 
 
@@ -10,13 +10,17 @@ Square::~Square()
 {}
 
 
-Square::Square(int x, int y, QWidget* parent) {
+Square::Square(int x_, int y_, QWidget* parent) {
 
 	ui.setupUi(this);
 	ui.label->acceptDrops();
 	this->setAcceptDrops(true);
 	ui.label->setAcceptDrops(false);
-	if ((x + y) % 2 == 0) {
+
+	x = x_;
+	y = y_;
+
+	if ((x_ + y_) % 2 == 0) {
 
 		bgcolor = Qt::black;
 
@@ -52,7 +56,12 @@ void Square::setFigureType(Ft figure_, Fc color_) {
 
 void Square::mousePressEvent(QMouseEvent* event) {
 
-	if (!(Ffigure->figureImage=="")) {
+	if ((Ffigure!=nullptr)) {
+
+
+		qDebug() << "signal";
+		emit showMoves_signal(Ffigure, x, y);
+
 
 		ui.label->setPixmap(QPixmap());
 

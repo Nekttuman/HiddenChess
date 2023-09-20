@@ -20,7 +20,7 @@ void showCursorMe() {
 
 Figure::Figure(Ft figure_, Fc fcolor_) {
 
-	figure = figure_;
+	figureType = figure_;
 	fColor = fcolor_;
 	fakeStatus = false;
 	figureImage = FigureImages[{figure_, fcolor_}];
