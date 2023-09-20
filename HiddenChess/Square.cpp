@@ -2,6 +2,7 @@
 #include <qpainter.h>
 #include <qdebug.h>
 #include "MyFunc.h"
+#include <GameWidget.h>
 
 
 
@@ -37,9 +38,12 @@ void Square::paintEvent(QPaintEvent* event) {
 	
 };
 
-void Square::setFigureType(FigureType figureType, QPixmap& img) {
-	ft = figureType;
-	image = img.scaled(this->size(), Qt::KeepAspectRatio);
+void Square::setFigureType(Ft figure_, Fc color_) {
+
+
+	Ffigure = new Figure(figure_, color_);
+	image = QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::KeepAspectRatio);
+
 	ui.label->setPixmap(image);
 }
 
@@ -48,19 +52,21 @@ void Square::setFigureType(FigureType figureType, QPixmap& img) {
 
 void Square::mousePressEvent(QMouseEvent* event) {
 
-	if (!image.isNull()) {
+	if (!(Ffigure->figureImage=="")) {
 
 		ui.label->setPixmap(QPixmap());
 
 		QDrag* drag = new QDrag(this);
 		QMimeData* mimeData = new QMimeData;
+		QByteArray data = serialize();
 
-		mimeData->setImageData(image);
+		
+
+		mimeData->setData("application/Figure", data);
+
 		drag->setMimeData(mimeData);
-		drag->setPixmap(image);
-
-		image = QPixmap();
-
+		drag->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::KeepAspectRatio));
+		Ffigure = nullptr;
 
 		drag->setHotSpot(event->pos() - this->rect().topLeft());
 
@@ -76,18 +82,16 @@ void Square::dropEvent(QDropEvent* event) {
 	const QMimeData* mimeData = event->mimeData();
 	
 
-	if (mimeData->hasImage()) {
-		// Retrieve the dropped image from the mime data
-		QPixmap droppedImage = qvariant_cast<QPixmap>(mimeData->imageData());
+	if (mimeData->hasFormat("application/Figure")) {
 
-		// Handle the dropped image as needed
-		// You can display it or perform other operations
-		image = droppedImage;
-		// For example, if you want to display the image in your QLabel (ui.label),
-		// you can set the pixmap like this:
-		ui.label->setPixmap(droppedImage);
 		
+		QByteArray data = event->mimeData()->data("application/Figure");
+		
+		Ffigure = deserialize(data);
+
+		ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::KeepAspectRatio));
 	}
+
 	
 	event->acceptProposedAction();
 }
@@ -95,8 +99,36 @@ void Square::dropEvent(QDropEvent* event) {
 void Square::dragEnterEvent(QDragEnterEvent* event) {
 	const QMimeData* mimeData = event->mimeData();
 	
-
-	if (mimeData->hasImage()) {
 		event->acceptProposedAction();
-	}
+}
+
+
+
+
+QByteArray Square::serialize() {
+
+	QByteArray data;
+	QDataStream stream(&data, QIODevice::WriteOnly);
+	qintptr objAddress = reinterpret_cast<qintptr>(Ffigure);
+
+	stream << objAddress;
+	
+	return data;
+}
+
+
+
+
+Figure* Square::deserialize(QByteArray data) {
+
+	QDataStream stream(data);
+	qintptr	objAdress;
+
+	stream >> objAdress;
+
+
+	Figure* obj = reinterpret_cast<Figure*>(objAdress);
+
+	return obj;
+
 }

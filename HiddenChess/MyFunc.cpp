@@ -16,3 +16,17 @@ void hideCursorMe() {
 void showCursorMe() {
     ShowCursor(TRUE);
 }
+
+
+Figure::Figure(Ft figure_, Fc fcolor_) {
+
+	figure = figure_;
+	fColor = fcolor_;
+	fakeStatus = false;
+	figureImage = FigureImages[{figure_, fcolor_}];
+
+};
+
+
+
+

@@ -4,25 +4,10 @@
 #include <qdrag.h>
 #include <qlabel.h>
 #include "ui_Square.h"
+#include "MyFunc.h"
 
 
-enum FigureType {
-	no,
-	pawn,
 
-};
-
-class ImgManager {
-public:
-
-	QPixmap pawnImg;
-
-
-	ImgManager() {
-		pawnImg.fill(Qt::transparent);
-		pawnImg.load("../HiddenChess/Figures/Wp.png");
-	}
-};
 
 class Square : public QWidget
 {
@@ -34,17 +19,22 @@ public:
 
 	
 
-	void setFigureType(FigureType figureType, QPixmap& img);
+	void setFigureType(Ft figure_, Fc color_);
 
 public:
 
 	QColor bgcolor = Qt::black;
 	QPoint x, y;
 	QPixmap image;
-	FigureType ft;
+	Figure* Ffigure;
+	
 
 private:
 	Ui::SquareClass ui;
+	QByteArray serialize();
+	Figure* deserialize(QByteArray data);
+
+
 
 
 

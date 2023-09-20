@@ -8,14 +8,18 @@ class GameWidget : public QWidget
 {
 	Q_OBJECT
 
+
+public:
+	Square* squares[8][8];
+
 public:
 	GameWidget(QWidget *parent = nullptr);
 	~GameWidget();
 
+
 private:
 	Ui::GameWidgetClass ui;
 
-	ImgManager imageManager;
 
 	void setField();
 	void setFigures();
@@ -29,8 +33,7 @@ private slots:
 
 
 
-public:
-	Square* squares[8][8];
+
 
 
 private slots:

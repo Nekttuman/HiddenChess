@@ -54,10 +54,9 @@ void GameWidget::startGame_slot() {
 
 void GameWidget::setFigures() {
 
-  ImgManager pawn = ImgManager();
   for (int i = 0; i < 8; i++) {
 
-    squares[1][i]->setFigureType(FigureType::pawn, pawn.pawnImg);
+    squares[1][i]->setFigureType(bishop, white);
 
 
   }

@@ -2,28 +2,56 @@
 #include <QtWidgets>
 #include <qmap.h>
 #include<qstring.h>
+#include <tuple>
 
 
-class Figures {
+enum Ft {
+	pawn,
+	king,
+	queen,
+	rook,
+	knight,
+	bishop
+};
+enum Fc {
+	white, black
+ };
 
-	enum FigureType {
-		no,
-		pawn,
-		king,
-		queen, 
-		rook,
-		knight,
-		bishop
-	};
+typedef std::tuple<Ft, Fc> TwoKey;
 
-	const QString a = "../HiddenChess/Figures/";
-	const QString w = "W";
-	const QString b = "B";
+const QMap<TwoKey, QString> FigureImages = { {{pawn, white}, (":/HiddenChess/Figures/Wp.png")},
+	{{pawn, black}, (":/HiddenChess/Figures/Bp.png")},
+	{{king, white}, (":/HiddenChess/Figures/Wk.png")},
+	{{king, black}, (":/HiddenChess/Figures/Bk.png")},
+	{{queen, white}, (":/HiddenChess/Figures/Wq.png")},
+	{{queen, black}, (":/HiddenChess/Figures/Bq.png")},
+	{{rook, white}, (":/HiddenChess/Figures/Wr.png")},
+	{{rook, black}, (":/HiddenChess/Figures/Br.png")},
+	{{knight, white}, (":/HiddenChess/Figures/Wn.png")},
+	{{knight, black}, (":/HiddenChess/Figures/Bn.png")},
+	{{bishop, white}, (":/HiddenChess/Figures/Wb.png")},
+	{{bishop, black}, (":/HiddenChess/Figures/Bb.png")}
+};
 
-	QMap<FigureType, QString> FigureImages =
-											{ {no, ""}, {pawn,"p.png"}, {king, "k.png"},
-							{queen, "q.png"},{rook, "r.png"}, {knight, "n.png"},
-				{bishop, "b.png"} };
+
+
+class Figure {
+	
+public:
+
+	Ft figure;
+	Fc fColor;
+	QString figureImage="";
+	bool fakeStatus;
+
+	Figure(Ft figure_, Fc fcolor_);
+
+private:
+	
+
+
+
+
 
 
 
