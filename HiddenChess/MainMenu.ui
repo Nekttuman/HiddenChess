@@ -294,11 +294,11 @@
    <sender>startGameBtn</sender>
    <signal>clicked()</signal>
    <receiver>MainMenuClass</receiver>
-   <slot>emitCreateRoom_signal()</slot>
+   <slot>emitCreateRoom_slot()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>684</x>
-     <y>243</y>
+     <y>225</y>
     </hint>
     <hint type="destinationlabel">
      <x>445</x>
@@ -310,7 +310,7 @@
    <sender>joinRoomBtn</sender>
    <signal>clicked()</signal>
    <receiver>MainMenuClass</receiver>
-   <slot>emitJoinBtn_signal()</slot>
+   <slot>emitJoinBtn_slot()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>371</x>
@@ -326,7 +326,7 @@
    <sender>startGameBtn_4</sender>
    <signal>clicked()</signal>
    <receiver>MainMenuClass</receiver>
-   <slot>emitExit_signal()</slot>
+   <slot>emitExit_slot()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>441</x>
@@ -372,8 +372,8 @@
   </connection>
  </connections>
  <slots>
-  <slot>emitCreateRoom_signal()</slot>
-  <slot>emitJoinBtn_signal()</slot>
-  <slot>emitExit_signal()</slot>
+  <slot>emitCreateRoom_slot()</slot>
+  <slot>emitJoinBtn_slot()</slot>
+  <slot>emitExit_slot()</slot>
  </slots>
 </ui>

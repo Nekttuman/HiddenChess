@@ -28,7 +28,7 @@ private:
         ui.gameWidget->setFixedSize(this->size());
     }
 
-private slots:
+public slots:
   void showCreateRoomWidget_slot() {
       ui.roomCreationWidget->show();
   }
@@ -49,6 +49,8 @@ private slots:
       ui.gameWidget->show();
   }
 
+  
+
   void disableGame_slot(QString err) {
       ui.roomCreationWidget->disableCreateRoomBtn();
       ui.joiningWidget->disableConnectBtn();
@@ -57,8 +59,9 @@ private slots:
       ui.errTextBrowser->setStyleSheet(ui.errTextBrowser->styleSheet() + "\ncolor:red;");
   }
 
-  void removeErr_slot() {
-    ui.errTextBrowser->setText("");
+  void showConnectedMessage_slot() {
+    ui.errTextBrowser->setText("Connected");
+    ui.errTextBrowser->setStyleSheet(ui.errTextBrowser->styleSheet() + "color:green;");
   }
 
 

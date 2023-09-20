@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>732</width>
-    <height>572</height>
+    <height>536</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -195,7 +195,7 @@
      <item>
       <widget class="QLabel" name="label_3">
        <property name="text">
-        <string>input room id</string>
+        <string>input room name</string>
        </property>
       </widget>
      </item>
@@ -235,7 +235,7 @@
      <item>
       <widget class="QLabel" name="label_6">
        <property name="text">
-        <string>input passwd</string>
+        <string>input room passwd</string>
        </property>
       </widget>
      </item>
@@ -279,8 +279,8 @@
    <slot>hide()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>89</x>
-     <y>344</y>
+     <x>330</x>
+     <y>446</y>
     </hint>
     <hint type="destinationlabel">
      <x>30</x>
@@ -295,8 +295,8 @@
    <slot>emitBackToMenu_slot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>491</x>
-     <y>344</y>
+     <x>490</x>
+     <y>446</y>
     </hint>
     <hint type="destinationlabel">
      <x>544</x>
@@ -311,8 +311,8 @@
    <slot>emitStartGame_slot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>457</x>
-     <y>269</y>
+     <x>490</x>
+     <y>389</y>
     </hint>
     <hint type="destinationlabel">
      <x>531</x>
@@ -327,8 +327,8 @@
    <slot>hide()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>95</x>
-     <y>261</y>
+     <x>336</x>
+     <y>389</y>
     </hint>
     <hint type="destinationlabel">
      <x>25</x>
