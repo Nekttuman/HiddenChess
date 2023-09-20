@@ -3,35 +3,31 @@
 #include <QWidget>
 #include "ui_JoiningWidget.h"
 
-class JoiningWidget : public QWidget
-{
-	Q_OBJECT
+class JoiningWidget : public QWidget {
+Q_OBJECT
 
 public:
-	JoiningWidget(QWidget *parent = nullptr);
-	~JoiningWidget();
+    JoiningWidget(QWidget *parent = nullptr);
 
-	void disableConnectBtn() {
-		ui.connectButton->setDisabled(true);
-	}
+    ~JoiningWidget();
 
-	void enableconnectBtn() {
-		ui.connectButton->setDisabled(false);
-	}
+    void disableConnectBtn() { ui.connectButton->setDisabled(true); }
+
+    void enableconnectBtn() { ui.connectButton->setDisabled(false); }
 
 private:
-	Ui::JoiningWidgetClass ui;
+    Ui::JoiningWidgetClass ui;
 
 
 signals:
-	void backToMenu_signal();
-	void startGame_signal();
+
+    void backToMenu_signal();
+
+    void startGame_signal();
 
 private slots:
-	void emitBackToMenu_slot() {
-		emit backToMenu_signal();
-	}
-	void emitStartGame_slot() {
-		emit startGame_signal();
-	}
+
+    void emitBackToMenu_slot() { emit backToMenu_signal(); }
+
+    void emitStartGame_slot() { emit startGame_signal(); }
 };

@@ -1,10 +1,8 @@
 #include "MainMenu.h"
 
 MainMenu::MainMenu(QWidget *parent)
-	: QWidget(parent)
-{
-	ui.setupUi(this);
+        : QWidget(parent) {
+    ui.setupUi(this);
 }
 
-MainMenu::~MainMenu()
-{}
+MainMenu::~MainMenu() {}

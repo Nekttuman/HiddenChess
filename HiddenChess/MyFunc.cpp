@@ -1,10 +1,5 @@
-﻿#include <QCoreApplication>
-#include <QCursor>
-#include <QMouseEvent>
-#include <QThread>
-#include <QApplication>
+﻿#include <QCursor>
 #include <Windows.h>
-#include <qdebug.h>
 #include "MyFunc.h"
 
 void hideCursorMe() {
@@ -20,10 +15,10 @@ void showCursorMe() {
 
 Figure::Figure(Ft figure_, Fc fcolor_) {
 
-	figureType = figure_;
-	fColor = fcolor_;
-	fakeStatus = false;
-	figureImage = FigureImages[{figure_, fcolor_}];
+    figureType = figure_;
+    fColor = fcolor_;
+    fakeStatus = false;
+    figureImage = FigureImages[{figure_, fcolor_}];
 
 };
 

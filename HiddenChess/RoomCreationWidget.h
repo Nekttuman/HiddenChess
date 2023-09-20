@@ -3,106 +3,60 @@
 #include <QtWidgets>
 #include "ui_RoomCreationWidget.h"
 
-class RoomCreationWidget : public QWidget
-{
-	Q_OBJECT
+class RoomCreationWidget : public QWidget {
+Q_OBJECT
 
 public:
-	RoomCreationWidget(QWidget *parent = nullptr);
-	~RoomCreationWidget();
+    RoomCreationWidget(QWidget *parent = nullptr);
 
-	void disableCreateRoomBtn() {
-		ui.createRoomButton->setDisabled(true);
-	}
+    ~RoomCreationWidget();
 
-	void enableCreateRoomBtn() {
-		ui.createRoomButton->setDisabled(false);
-	}
+    void disableCreateRoomBtn() { ui.createRoomButton->setDisabled(true); }
 
-	QString getRoomName() {
-		return ui.roomNameLineEdit->text();
-	}
-	QString getPswd() {
-		return ui.pswdLineEdit->text();
-	}
-	void clearFields() {
-		ui.pswdLineEdit->clear();
-		ui.roomNameLineEdit->clear();
-	}
+    void enableCreateRoomBtn() { ui.createRoomButton->setDisabled(false); }
+
+    QString getRoomName() { return ui.roomNameLineEdit->text(); }
+
+    QString getPswd() { return ui.pswdLineEdit->text(); }
+
+    void clearFields() {
+        ui.pswdLineEdit->clear();
+        ui.roomNameLineEdit->clear();
+    }
+
 private:
-	Ui::RoomCreationWidgetClass ui;
+    Ui::RoomCreationWidgetClass ui;
 
-	bool roomNameUniq = false;
-
+    bool roomNameUniq = false;
 
 
 signals:
-	void backToMenu_signal();
-	void createRoom_signal();
-	void checkRoomNameUniq_signal(QString);
 
-	// internal logic
-	void fieldsCorrect_signal();
+    void backToMenu_signal();
+
+    void createRoom_signal();
+
+    void checkRoomNameUniq_signal(QString);
+
+    // internal logic
+    void fieldsCorrect_signal();
 
 private slots:
-	void emitBackToMenu_slot() {
-		emit backToMenu_signal();
-	}
-	void createRoomBtnPressed_slot() {
-		emit createRoom_signal();
-	}
 
-	void validateFields_slot() {
-		bool isValid = true;
+    void emitBackToMenu_slot() { emit backToMenu_signal(); }
 
-		if (ui.pswdLineEdit->text() == ""
-			|| ui.pswdLineEdit->text().contains(" ")) 
-		{
-			ui.roomPswdErrorLabel->show();
-			isValid = false;
-			disableCreateRoomBtn();
-		} else {
-			ui.roomPswdErrorLabel->hide();
-		}
+    void createRoomBtnPressed_slot() { emit createRoom_signal(); }
 
-		if (ui.roomNameLineEdit->text() == ""
-			|| ui.roomNameLineEdit->text().contains(" ")) 
-		{
-			ui.roomNameErrorLabel->show();
-			ui.roomNameErrorLabel->setText("name err");
-			isValid = false;	
-			disableCreateRoomBtn();
-		} else {
-			ui.roomNameErrorLabel->hide();
-			emit checkRoomNameUniq_signal(ui.roomNameLineEdit->text());
-		}
+    void validateFields_slot();
 
-		if (isValid)
-			emit fieldsCorrect_signal();
-	}
-	void allowRoomCreation_slot() {
-		if (roomNameUniq) {
-			ui.createRoomButton->setEnabled(true);
-		}
-	}
+    void allowRoomCreation_slot();
 
 
 public slots:
 
-	void roomNameUniqConfirmed_slot() {
-		qDebug() << "sh";
-		roomNameUniq = true;
+    void roomNameUniqConfirmed_slot();
 
-		ui.roomNameErrorLabel->hide();
-		
-	}
-	void roomNameUniqNotConfirmed_slot() {
-		roomNameUniq = false;
-
-		ui.roomNameErrorLabel->setText("name already exists");
-		ui.roomNameErrorLabel->show();
-		disableCreateRoomBtn();
-	}
+    void roomNameUniqNotConfirmed_slot();
 
 
 };
