@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QtWidgets>
+#include <qdrag.h>
 #include <qlabel.h>
 #include "ui_Square.h"
 
@@ -19,7 +20,7 @@ public:
 
 	ImgManager() {
 		pawnImg.fill(Qt::transparent);
-		pawnImg.load("../HiddenChess/Figures/pawnWhite.png");
+		pawnImg.load("../HiddenChess/Figures/Wp.png");
 	}
 };
 
@@ -31,18 +32,16 @@ public:
 	~Square();
 	Square(int x, int y, QWidget* parent = nullptr);
 
-	FigureType ft;
+	
 
-	void setFigureType(FigureType figureType, QPixmap &img) {
-		ft = figureType;
-		image = &img;
-	}
+	void setFigureType(FigureType figureType, QPixmap& img);
 
 public:
 
 	QColor bgcolor = Qt::black;
 	QPoint x, y;
-	QPixmap *image;
+	QPixmap image;
+	FigureType ft;
 
 private:
 	Ui::SquareClass ui;
@@ -51,4 +50,7 @@ private:
 
 protected:
 	void paintEvent(QPaintEvent* event) override;
+	void mousePressEvent(QMouseEvent* event) override;
+	void dropEvent(QDropEvent* event) override;
+	void dragEnterEvent(QDragEnterEvent* event) override;
 };

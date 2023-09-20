@@ -18,9 +18,12 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>40</width>
-     <height>40</height>
+     <width>241</width>
+     <height>211</height>
     </rect>
+   </property>
+   <property name="acceptDrops">
+    <bool>true</bool>
    </property>
    <property name="autoFillBackground">
     <bool>false</bool>

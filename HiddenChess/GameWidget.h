@@ -16,6 +16,9 @@ private:
 	Ui::GameWidgetClass ui;
 
 	ImgManager imageManager;
+
+	void setField();
+	void setFigures();
 signals:
 	void backToMenu_signal();
 
@@ -30,12 +33,12 @@ public:
 	Square* squares[8][8];
 
 
-public slots:
-	void setGame();
+private slots:
+	void startGame_slot();
 
 protected:
 
-	void paintEvent(QPaintEvent* event) override;
+	//void paintEvent(QPaintEvent* event) override;
 };
 
 
