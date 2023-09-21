@@ -15,23 +15,24 @@ public:
 
     Square(int x, int y, QWidget *parent = nullptr);
 
-
     void setFigureType(Ft figure_, Fc color_);
+    void lightSquare();
+    void hideSquare();
 
 public:
 
     QColor bgcolor = Qt::black;
     int x, y;
-    QPixmap image;
-    Figure *Ffigure;
+    Figure *Ffigure=nullptr;
 
 signals:
 
     void showMoves_signal(Figure *figure, int x, int y);
-
+    void hideMoves_signal(Figure* figure, int x, int y);
 
 private:
     Ui::SquareClass ui;
+
 
     QByteArray serialize();
 
