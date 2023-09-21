@@ -6,25 +6,30 @@
 
 
 enum clientRequestType {
-    tryConnectToRoom,
     createRoom,
     chatMess,
     move,
     surrenderCommand,
-    checkRoomNameUniq
+    checkRoomNameUniq,
+    tryJoiningToRoom
 };
 
-enum serverResponceType {
+enum serverResponseType {
     roomNameCheckFailed,
     roomNameCheckPassed,
     roomCreated,
-    roomCreationErr
-};
+    roomCreationErr,
 
+    JoiningErrNoRoom,
+    JoiningErrWrongPswd,
+    JoiningErrRoomFull,
+    JoinedToRoom
+};
 
 class Client : public QObject {
 Q_OBJECT
 
+using RoomId = int;
 public:
     Client(QObject *parent);
 
@@ -44,18 +49,22 @@ signals:
 
     void roomCreated_signal();
 
+    void joinedToRoom();
+
 public slots:
 
     void readyRead_slot();
 
     void connectToHost_slot();
 
-    void checkRoomNameUniq_slot(QString roomName);
+    void checkRoomNameUniq_slot(QString roomName); //for creating
+    void sendJoiningRequest_slot(QString roomName, QString roomPasswd); // for joining
 
 private:
-    QTcpSocket *socket;
-    QByteArray Data;
-    quint16 nextBlockSize = 0;
+    QTcpSocket *m_socket;
+    QByteArray m_data;
+    quint16 m_nextBlockSize = 0;
+    RoomId m_currentRoom = -1;
 
     void SendToServer(QString str);
 };

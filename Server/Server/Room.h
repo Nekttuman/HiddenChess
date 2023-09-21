@@ -6,7 +6,7 @@
 
 class Room {
     QTcpSocket *m_hostSocket;
-    QTcpSocket *m_oponentSocket;
+    QTcpSocket *m_oponentSocket = nullptr;
 
 
     QString m_name;
@@ -18,8 +18,11 @@ public:
     }
 
     QString getName() { return m_name; }
+    bool checkPswd(QString pswd){return m_pswd==pswd;}
+    bool hasOpponent(){return m_oponentSocket != nullptr;}
 
     void add_oponent(QTcpSocket *oponentSocket) { m_oponentSocket = oponentSocket; }
+
 
 };
 

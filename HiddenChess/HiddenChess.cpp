@@ -21,12 +21,15 @@ HiddenChess::HiddenChess(QWidget *parent)
     client = new Client(this);
 
 
+    connect(ui.mainMenuWidget, &MainMenu::createRoomBtn_signal, client, &Client::connectToHost_slot);
+    connect(ui.mainMenuWidget, &MainMenu::joinRoomBtn_signal, client, &Client::connectToHost_slot);
     connect(ui.mainMenuWidget, &MainMenu::createRoomBtn_signal, this, &HiddenChess::showCreateRoomWidget_slot);
     connect(ui.mainMenuWidget, &MainMenu::joinRoomBtn_signal, this, &HiddenChess::showJoiningWidget_slot);
     connect(ui.mainMenuWidget, &MainMenu::exitBtn_signal, this, &HiddenChess::exit_slot);
     connect(ui.roomCreationWidget, &RoomCreationWidget::backToMenu_signal,
             this, &HiddenChess::showMainMenu_slot);
 
+    //------------------------------- Room creation client-server connects
     connect(ui.roomCreationWidget, &RoomCreationWidget::createRoom_signal,
             client, [&]() {
                 client->tryCreateRoom(
@@ -39,15 +42,16 @@ HiddenChess::HiddenChess(QWidget *parent)
     connect(client, &Client::roomCreated_signal, this, [&]() { ui.roomCreationWidget->hide(); });
     connect(client, &Client::roomCreated_signal, this, [&]() { ui.roomCreationWidget->clearFields(); });
 
+    //--------------------------------- Room joining client-server connects
     connect(ui.joiningWidget, &JoiningWidget::backToMenu_signal,
             this, &HiddenChess::showMainMenu_slot);
-    connect(ui.joiningWidget, &JoiningWidget::startGame_signal,
-            this, &HiddenChess::showGameWidget_slot);
+    connect(ui.joiningWidget, &JoiningWidget::tryJoining_signal,
+            client, &Client::sendJoiningRequest_slot);
+    connect(client, &Client::joinedToRoom, this, &HiddenChess::showGameWidget_slot);
+    connect(client, &Client::joinedToRoom, this, [&]() { ui.joiningWidget->hide(); });
 
-    connect(ui.gameWidget, &GameWidget::backToMenu_signal,
-            this, &HiddenChess::showMainMenu_slot);
 
-    connect(ui.mainMenuWidget, &MainMenu::createRoomBtn_signal, client, &Client::connectToHost_slot);
+    //---------------------------------
     connect(client, &Client::clientErr_signal, this, &HiddenChess::disableGame_slot);
     connect(client, &Client::clientErr_signal, this, [&]() { has_connection = false; });
 
@@ -62,13 +66,16 @@ HiddenChess::HiddenChess(QWidget *parent)
     connect(client, &Client::roomNameUniqNotConfirmed_signal, ui.roomCreationWidget,
             &RoomCreationWidget::roomNameUniqNotConfirmed_slot);
 
+
+    connect(ui.gameWidget, &GameWidget::backToMenu_signal,
+            this, &HiddenChess::showMainMenu_slot);
+
 }
 
 HiddenChess::~HiddenChess() {}
 
 void HiddenChess::disableGame_slot(QString err) {
     ui.roomCreationWidget->disableCreateRoomBtn();
-    ui.joiningWidget->disableConnectBtn();
     qDebug() << "disableGame slot called";
     ui.errTextBrowser->setText(err);
     ui.errTextBrowser->setStyleSheet(ui.errTextBrowser->styleSheet() + "\ncolor:red;");

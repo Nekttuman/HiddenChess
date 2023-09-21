@@ -1,5 +1,7 @@
 #include "Server.h"
 
+#include <utility>
+
 
 Server::Server() {
     if (this->listen(QHostAddress::Any, 2323))
@@ -73,6 +75,13 @@ void Server::slotReadyRead() {
                 in >> roomName;
                 checkRoomNameUniq(roomName, socket);
             }
+            if (mt == clientRequestType::tryJoiningToRoom) {
+                QString roomName, roomPasswd;
+                in >> roomName >> roomPasswd;
+
+                qDebug()<<"joining room request"<<roomName<<roomPasswd;
+                tryJoinToRoom(roomName, roomPasswd, socket);
+            }
 
 
             m_nextBlockSize = 0;
@@ -96,21 +105,21 @@ void Server::createRoom(QString roomName, QString pswd, QTcpSocket *sender) {
     QByteArray Data;
     QDataStream out(&Data, QIODevice::WriteOnly);
     if (!isUniq(roomName)) {
-        out << quint16(0) << serverResponcesType::roomCreationErr << "Not uniq name";
+        out << quint16(0) << serverResponseType::roomCreationErr << "Not uniq name";
         out.device()->seek(0);
         out << quint16(Data.size() - sizeof(quint16));
         sender->write(Data);
         return;
     }
-    m_rooms.push_back(new Room(sender, roomName, pswd));
+    M_rooms[++prevId] = new Room(sender, roomName, pswd);
     qDebug() << "room created: " << roomName << pswd;
 
-    out << quint16(0) << serverResponcesType::roomCreated;
+    out << quint16(0) << serverResponseType::roomCreated;
     out.device()->seek(0);
     out << quint16(Data.size() - sizeof(quint16));
     sender->write(Data);
 
-    for (auto room: m_rooms) {
+    for (auto room: M_rooms) {
         qDebug() << room->getName();
     }
 
@@ -124,12 +133,12 @@ void Server::checkRoomNameUniq(QString name, QTcpSocket *sender) {
     if (isUniq(name)) {
 
         qDebug() << name << "uniq";
-        out << quint16(0) << serverResponcesType::roomNameCheckPassed;
+        out << quint16(0) << serverResponseType::roomNameCheckPassed;
         out.device()->seek(0);
         out << quint16(Data.size() - sizeof(quint16));
     } else {
         qDebug() << name << "not uniq";
-        out << quint16(0) << serverResponcesType::roomNameCheckFailed;
+        out << quint16(0) << serverResponseType::roomNameCheckFailed;
         out.device()->seek(0);
         out << quint16(Data.size() - sizeof(quint16));
     }
@@ -137,10 +146,58 @@ void Server::checkRoomNameUniq(QString name, QTcpSocket *sender) {
     sender->write(Data);
 }
 
-bool Server::isUniq(QString roomName) {
-    for (auto room: m_rooms) {
+bool Server::isUniq(const QString& roomName) {
+    for (auto room: M_rooms) {
         if (room->getName() == roomName)
             return false;
     }
     return true;
+}
+
+void Server::tryJoinToRoom(const QString& roomName, QString roomPasswd, QTcpSocket *sender) {
+    QByteArray Data;
+    QDataStream out(&Data, QIODevice::WriteOnly);
+
+    auto roomId = getRoomId(roomName);
+    if (roomId == -1){
+        out << quint16(0) << serverResponseType::JoiningErrNoRoom;
+        out.device()->seek(0);
+        out << quint16(Data.size() - sizeof(quint16));
+        sender->write(Data);
+        return;
+    }
+
+
+    auto room = M_rooms[roomId];
+    if (!room->checkPswd(std::move(roomPasswd))){
+        out << quint16(0) << serverResponseType::JoiningErrWrongPswd;
+        out.device()->seek(0);
+        out << quint16(Data.size() - sizeof(quint16));
+        sender->write(Data);
+        return;
+    }
+
+    if (room->hasOpponent()){
+        out << quint16(0) << serverResponseType::JoiningErrRoomFull;
+        out.device()->seek(0);
+        out << quint16(Data.size() - sizeof(quint16));
+        sender->write(Data);
+        return;
+    }
+
+    room->add_oponent(sender);
+    out << quint16(0) << serverResponseType::JoinedToRoom << roomId;
+    out.device()->seek(0);
+    out << quint16(Data.size() - sizeof(quint16));
+    qDebug()<<"joined to"<<roomId;
+    sender->write(Data);
+
+}
+
+Server::roomId Server::getRoomId(const QString& roomName) {
+    for (auto roomId = M_rooms.keyBegin(); roomId != M_rooms.keyEnd(); ++roomId){
+        if (M_rooms[*roomId]->getName() == roomName)
+            return *roomId;
+    }
+    return -1;
 }

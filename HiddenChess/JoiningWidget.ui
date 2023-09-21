@@ -93,7 +93,7 @@
    <item row="6" column="1">
     <widget class="QPushButton" name="connectButton">
      <property name="enabled">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
@@ -169,25 +169,6 @@
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QLabel" name="nicknameInputErrlabel">
-       <property name="tabletTracking">
-        <bool>false</bool>
-       </property>
-       <property name="layoutDirection">
-        <enum>Qt::RightToLeft</enum>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">color:red;</string>
-       </property>
-       <property name="text">
-        <string>not available</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
     </layout>
    </item>
    <item row="3" column="1">
@@ -200,7 +181,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="roomIdLineEdit">
+      <widget class="QLineEdit" name="roomNameLineEdit">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
          <horstretch>0</horstretch>
@@ -216,7 +197,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="idInputErrLabel">
+      <widget class="QLabel" name="roomNameErrorLabel">
        <property name="styleSheet">
         <string notr="true">color:red;</string>
        </property>
@@ -256,9 +237,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="pswdInputErrorLabel">
+      <widget class="QLabel" name="roomPswdErrorLabel">
        <property name="text">
-        <string/>
+        <string>incorrect passwd</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -280,7 +261,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>330</x>
-     <y>446</y>
+     <y>439</y>
     </hint>
     <hint type="destinationlabel">
      <x>30</x>
@@ -296,7 +277,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>490</x>
-     <y>446</y>
+     <y>439</y>
     </hint>
     <hint type="destinationlabel">
      <x>544</x>
@@ -308,31 +289,15 @@
    <sender>connectButton</sender>
    <signal>clicked()</signal>
    <receiver>JoiningWidgetClass</receiver>
-   <slot>emitStartGame_slot()</slot>
+   <slot>tryJoining_slot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>490</x>
-     <y>389</y>
+     <x>442</x>
+     <y>346</y>
     </hint>
     <hint type="destinationlabel">
-     <x>531</x>
-     <y>240</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>connectButton</sender>
-   <signal>clicked()</signal>
-   <receiver>JoiningWidgetClass</receiver>
-   <slot>hide()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>336</x>
-     <y>389</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>25</x>
-     <y>244</y>
+     <x>583</x>
+     <y>282</y>
     </hint>
    </hints>
   </connection>
@@ -340,5 +305,6 @@
  <slots>
   <slot>emitBackToMenu_slot()</slot>
   <slot>emitStartGame_slot()</slot>
+  <slot>tryJoining_slot()</slot>
  </slots>
 </ui>

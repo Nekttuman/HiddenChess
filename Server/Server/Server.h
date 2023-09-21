@@ -7,25 +7,31 @@
 
 #include "Room.h"
 
-enum serverResponcesType {
+enum serverResponseType {
     roomNameCheckFailed,
     roomNameCheckPassed,
     roomCreated,
-    roomCreationErr
+    roomCreationErr,
+
+    JoiningErrNoRoom,
+    JoiningErrWrongPswd,
+    JoiningErrRoomFull,
+    JoinedToRoom
 };
+
 enum clientRequestType {
-    tryConnectToRoom,
     createRoom,
     chatMess,
     move,
     surrenderCommand,
-    checkRoomNameUniq
+    checkRoomNameUniq,
+    tryJoiningToRoom
 };
-
 
 class Server : public QTcpServer {
 Q_OBJECT
 
+    int prevId = 0;
 public:
     Server();
 
@@ -37,7 +43,10 @@ private:
     QVector<QTcpSocket *> m_sockets;
     quint16 m_nextBlockSize = 0;
 
-    QVector<Room *> m_rooms;
+
+    using roomId = int;
+
+    QMap<roomId, Room*> M_rooms;
 
     void SendToClient(QString str);
 
@@ -45,7 +54,9 @@ private:
     void createRoom(QString roomName, QString pswd, QTcpSocket *sender);
 
     void checkRoomNameUniq(QString name, QTcpSocket *sender);
-    bool isUniq(QString roomName) ;
+    bool isUniq(const QString& roomName) ;
+    void tryJoinToRoom(const QString& roomName, QString roomPasswd, QTcpSocket *sender);
+    roomId getRoomId(const QString& roomName);
 
 public slots:
 

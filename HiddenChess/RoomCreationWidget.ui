@@ -303,8 +303,8 @@
   </connection>
  </connections>
  <slots>
-  <slot>emitBackToMenu_slot()</slot>
-  <slot>createRoomBtnPressed_slot()</slot>
   <slot>validateFields_slot()</slot>
+  <slot>createRoomBtnPressed_slot()</slot>
+  <slot>tryJoining_slot()</slot>
  </slots>
 </ui>
