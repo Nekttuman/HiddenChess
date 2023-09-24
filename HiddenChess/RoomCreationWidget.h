@@ -19,6 +19,8 @@ public:
 
     QString getPswd() { return ui.pswdLineEdit->text(); }
 
+    QString getNick() { return ui.nickLineEdit->text(); }
+
     void clearFields() {
         ui.pswdLineEdit->clear();
         ui.roomNameLineEdit->clear();

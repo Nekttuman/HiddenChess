@@ -65,6 +65,12 @@ void GameWidget::startGame_slot() {
 }
 
 
+void GameWidget::setOpponentNick_slot(QString nick){
+    qDebug()<<nick;
+    ui.opponentNickLineEdit->setText(nick);
+}
+
+
 
 TwoDimIntArray GameWidget::EnabledMoves(Ft figure, int x, int y) {
 

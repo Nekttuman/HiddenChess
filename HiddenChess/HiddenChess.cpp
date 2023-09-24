@@ -34,10 +34,12 @@ HiddenChess::HiddenChess(QWidget *parent)
             client, [&]() {
                 client->tryCreateRoom(
                         ui.roomCreationWidget->getRoomName(),
-                        ui.roomCreationWidget->getPswd()
-                );
+                        ui.roomCreationWidget->getPswd(),
+                        ui.roomCreationWidget->getNick());
             });
     connect(client, &Client::roomCreated_signal, this, &HiddenChess::showGameWidget_slot);
+    connect(client, &Client::roomCreated_signal, ui.gameWidget,
+            [&]() { ui.gameWidget->setHostNick_slot(ui.roomCreationWidget->getNick()); });
     connect(client, &Client::roomCreated_signal, ui.gameWidget, &GameWidget::startGame_slot);
     connect(client, &Client::roomCreated_signal, this, [&]() { ui.roomCreationWidget->hide(); });
     connect(client, &Client::roomCreated_signal, this, [&]() { ui.roomCreationWidget->clearFields(); });
@@ -49,7 +51,12 @@ HiddenChess::HiddenChess(QWidget *parent)
             client, &Client::sendJoiningRequest_slot);
     connect(client, &Client::joinedToRoom, this, &HiddenChess::showGameWidget_slot);
     connect(client, &Client::joinedToRoom, this, [&]() { ui.joiningWidget->hide(); });
-
+    connect(client, &Client::joinedToRoom, ui.gameWidget, &GameWidget::startGame_slot);
+    connect(client, &Client::opponentNickRecieved_signal, ui.gameWidget, &GameWidget::setOpponentNick_slot);
+    connect(client, &Client::joinedToRoom, ui.gameWidget,
+            [&]() { ui.gameWidget->setHostNick_slot(ui.joiningWidget->getNick()); });
+    connect(client, &Client::joinedToRoom, this, [&]() { ui.joiningWidget->clearFields(); });
+    connect(client, &Client::joinedToRoom, this, [&]() { ui.errTextBrowser->clear(); });
 
     //---------------------------------
     connect(client, &Client::clientErr_signal, this, &HiddenChess::disableGame_slot);

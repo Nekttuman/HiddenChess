@@ -40,6 +40,7 @@ void Square::paintEvent(QPaintEvent *event) {
 void Square::setFigureType(Ft figure_, Fc color_) {
 
 
+
     Ffigure = new Figure(figure_, color_);
     
 

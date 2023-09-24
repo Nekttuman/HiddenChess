@@ -42,7 +42,7 @@ void Client::connectToHost_slot() {
     }
 }
 
-void Client::tryCreateRoom(QString roomName, QString pswd) {
+void Client::tryCreateRoom(QString roomName, QString pswd, QString hostNick) {
     if (m_socket->state() != QAbstractSocket::SocketState::ConnectedState) {
         emit clientErr_signal("not connected");
         return;
@@ -50,15 +50,13 @@ void Client::tryCreateRoom(QString roomName, QString pswd) {
 
     m_data.clear();
     QDataStream out(&m_data, QIODevice::WriteOnly);
-    out << quint16(0) << clientRequestType::createRoom << roomName << pswd;
+    out << quint16(0) << clientRequestType::createRoom << roomName << pswd << hostNick;
     out.device()->seek(0);
     out << quint16(m_data.size() - sizeof(quint16));
     m_socket->write(m_data);
 
 
 }
-
-
 
 
 void Client::readyRead_slot() {
@@ -90,19 +88,22 @@ void Client::readyRead_slot() {
                 emit roomNameUniqNotConfirmed_signal();
             } else if (rt == serverResponseType::roomNameCheckPassed) {
                 emit roomNameUniqConfirmed_signal();
-            }            else if (rt == serverResponseType::JoiningErrNoRoom){
-
-            }
-            else if (rt == serverResponseType::JoiningErrWrongPswd){
-
-            }
-            else if (rt == serverResponseType::JoiningErrRoomFull){
-            // TODO
-            }
-            else if (rt == serverResponseType::JoinedToRoom){
+            } else if (rt == serverResponseType::JoiningErrNoRoom)
+                    emit clientErr_signal("This room doesnt exist");
+            else if (rt == serverResponseType::JoiningErrWrongPswd)
+                    emit clientErr_signal("Wrong password");
+            else if (rt == serverResponseType::JoiningErrRoomFull)
+                    emit clientErr_signal("Room already full");
+            else if (rt == serverResponseType::JoinedToRoom) {
                 in >> m_currentRoom;
                 emit joinedToRoom();
-                qDebug()<<"joined to room"<<m_currentRoom;
+                getOpponentNick();
+                qDebug() << "joined to room" << m_currentRoom;
+            } else if (rt == serverResponseType::OpponentNick) {
+                QString opponentNick;
+                in >> opponentNick;
+                qDebug()<<"Opponent nick recieved"<<opponentNick;
+                emit opponentNickRecieved_signal(opponentNick);
             }
 
 
@@ -115,6 +116,14 @@ void Client::readyRead_slot() {
         qDebug() << "read err";
 }
 
+void Client::getOpponentNick() {
+    m_data.clear();
+    QDataStream out(&m_data, QIODevice::WriteOnly);
+    out << quint16(0) << clientRequestType::getOpponentNick << m_currentRoom;
+    out.device()->seek(0);
+    out << quint16(m_data.size() - sizeof(quint16));
+    m_socket->write(m_data);
+}
 
 void Client::checkRoomNameUniq_slot(QString roomName) {
     m_data.clear();
@@ -125,11 +134,11 @@ void Client::checkRoomNameUniq_slot(QString roomName) {
     m_socket->write(m_data);
 }
 
-void Client::sendJoiningRequest_slot(QString roomName, QString roomPasswd) {
-    qDebug()<<"sendJoiningRequest_slot of Client called";
+void Client::sendJoiningRequest_slot(QString roomName, QString roomPasswd, QString nick) {
+    qDebug() << "sendJoiningRequest_slot of Client called"<<roomName<<roomPasswd<<nick;
     m_data.clear();
     QDataStream out(&m_data, QIODevice::WriteOnly);
-    out << quint16(0) << clientRequestType::tryJoiningToRoom << roomName<< roomPasswd;
+    out << quint16(0) << clientRequestType::tryJoiningToRoom << roomName << roomPasswd<<nick;
     out.device()->seek(0);
     out << quint16(m_data.size() - sizeof(quint16));
     m_socket->write(m_data);

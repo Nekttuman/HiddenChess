@@ -15,6 +15,12 @@ public:
 
     void enableConnectBtn() { ui.connectButton->setDisabled(false); }
 
+    void clearFields();
+
+    QString getNick(){
+        return ui.nicknameLineEdit->text();
+    }
+
 private:
     Ui::JoiningWidgetClass ui;
 
@@ -23,7 +29,7 @@ signals:
 
     void backToMenu_signal();
 
-    void tryJoining_signal(QString roomName, QString roomPasswd);
+    void tryJoining_signal(QString roomName, QString roomPasswd, QString nick);
 
 
 private slots:

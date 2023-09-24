@@ -61,26 +61,32 @@ void Server::slotReadyRead() {
                 break;
             }
 
-            clientRequestType mt;
+            clientRequestType requestType;
 
-            in >> mt;
-            qDebug() << mt;
-            if (mt == clientRequestType::createRoom) {
-                QString roomName, pswd;
-                in >> roomName >> pswd;
-                createRoom(roomName, pswd, socket);
+            in >> requestType;
+            qDebug() << requestType;
+            if (requestType == clientRequestType::createRoom) {
+                QString roomName, pswd, hostNick;
+                in >> roomName >> pswd >> hostNick;
+                createRoom(roomName, pswd, hostNick, socket);
             }
-            if (mt == clientRequestType::checkRoomNameUniq) {
+            if (requestType == clientRequestType::checkRoomNameUniq) {
                 QString roomName;
                 in >> roomName;
                 checkRoomNameUniq(roomName, socket);
             }
-            if (mt == clientRequestType::tryJoiningToRoom) {
-                QString roomName, roomPasswd;
-                in >> roomName >> roomPasswd;
+            if (requestType == clientRequestType::tryJoiningToRoom) {
+                QString roomName, roomPasswd, nick;
+                in >> roomName >> roomPasswd >> nick;
 
-                qDebug()<<"joining room request"<<roomName<<roomPasswd;
-                tryJoinToRoom(roomName, roomPasswd, socket);
+                qDebug() << "joining room request" << roomName << roomPasswd << nick;
+                tryJoinToRoom(roomName, roomPasswd, nick, socket);
+            }
+            if (requestType == clientRequestType::getOpponentNick) {
+                roomId room;
+                in >> room;
+                QString opponentNick = M_rooms[room]->getOpponentNick(socket);
+                sendNick(opponentNick, socket);
             }
 
 
@@ -89,6 +95,17 @@ void Server::slotReadyRead() {
         }
     } else
         qDebug() << "data stream err";
+}
+
+void Server::sendNick(const QString &nick, QTcpSocket *receiver) {
+
+    QByteArray Data; //TODO: make Data Server member m_data (like in Client)
+    QDataStream out(&Data, QIODevice::WriteOnly);
+    out << quint16(0) << serverResponseType::OpponentNick << nick;
+    out.device()->seek(0);
+    out << quint16(Data.size() - sizeof(quint16));
+
+    receiver->write(Data);
 }
 
 void Server::disconnectSocket() {
@@ -100,7 +117,7 @@ void Server::disconnectSocket() {
     socket->deleteLater();
 }
 
-void Server::createRoom(QString roomName, QString pswd, QTcpSocket *sender) {
+void Server::createRoom(QString roomName, QString pswd, QString hostNick, QTcpSocket *sender) {
 
     QByteArray Data;
     QDataStream out(&Data, QIODevice::WriteOnly);
@@ -111,7 +128,9 @@ void Server::createRoom(QString roomName, QString pswd, QTcpSocket *sender) {
         sender->write(Data);
         return;
     }
-    M_rooms[++prevId] = new Room(sender, roomName, pswd);
+    M_rooms[prevId] = new Room(sender, roomName, pswd);
+    M_rooms[prevId]->setHostNick(hostNick);
+    ++prevId;
     qDebug() << "room created: " << roomName << pswd;
 
     out << quint16(0) << serverResponseType::roomCreated;
@@ -146,7 +165,7 @@ void Server::checkRoomNameUniq(QString name, QTcpSocket *sender) {
     sender->write(Data);
 }
 
-bool Server::isUniq(const QString& roomName) {
+bool Server::isUniq(const QString &roomName) {
     for (auto room: M_rooms) {
         if (room->getName() == roomName)
             return false;
@@ -154,48 +173,50 @@ bool Server::isUniq(const QString& roomName) {
     return true;
 }
 
-void Server::tryJoinToRoom(const QString& roomName, QString roomPasswd, QTcpSocket *sender) {
+void Server::tryJoinToRoom(const QString &roomName, QString roomPasswd, QString nick, QTcpSocket *receiver) {
     QByteArray Data;
     QDataStream out(&Data, QIODevice::WriteOnly);
 
     auto roomId = getRoomId(roomName);
-    if (roomId == -1){
+    if (roomId == -1) {
         out << quint16(0) << serverResponseType::JoiningErrNoRoom;
         out.device()->seek(0);
         out << quint16(Data.size() - sizeof(quint16));
-        sender->write(Data);
+        receiver->write(Data);
         return;
     }
 
 
     auto room = M_rooms[roomId];
-    if (!room->checkPswd(std::move(roomPasswd))){
+    if (!room->checkPswd(std::move(roomPasswd))) {
         out << quint16(0) << serverResponseType::JoiningErrWrongPswd;
         out.device()->seek(0);
         out << quint16(Data.size() - sizeof(quint16));
-        sender->write(Data);
+        receiver->write(Data);
         return;
     }
 
-    if (room->hasOpponent()){
+    if (room->hasOpponent()) {
         out << quint16(0) << serverResponseType::JoiningErrRoomFull;
         out.device()->seek(0);
         out << quint16(Data.size() - sizeof(quint16));
-        sender->write(Data);
+        receiver->write(Data);
         return;
     }
 
-    room->add_oponent(sender);
+    room->add_oponent(receiver);
     out << quint16(0) << serverResponseType::JoinedToRoom << roomId;
     out.device()->seek(0);
     out << quint16(Data.size() - sizeof(quint16));
-    qDebug()<<"joined to"<<roomId;
-    sender->write(Data);
+    qDebug() << "joined to" << roomId;
+    receiver->write(Data);
+
+    sendNick(nick, room->getHostSocket());
 
 }
 
-Server::roomId Server::getRoomId(const QString& roomName) {
-    for (auto roomId = M_rooms.keyBegin(); roomId != M_rooms.keyEnd(); ++roomId){
+Server::roomId Server::getRoomId(const QString &roomName) {
+    for (auto roomId = M_rooms.keyBegin(); roomId != M_rooms.keyEnd(); ++roomId) {
         if (M_rooms[*roomId]->getName() == roomName)
             return *roomId;
     }
