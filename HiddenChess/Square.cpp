@@ -40,8 +40,6 @@ void Square::paintEvent(QPaintEvent *event) {
 
 void Square::setFigureType(Ft figure_, Fc color_) {
 
-
-
     Ffigure = new Figure(figure_, color_);
     
 
@@ -51,7 +49,7 @@ void Square::setFigureType(Ft figure_, Fc color_) {
 
 void Square::mousePressEvent(QMouseEvent *event) {
     
-    if ((Ffigure != nullptr)) {
+    if ((Ffigure != nullptr) && Ffigure->fColor==player) {
 
         emit showMoves_signal(Ffigure, x, y);
 
@@ -88,6 +86,20 @@ void Square::mousePressEvent(QMouseEvent *event) {
 }
 
 
+void Square::dragEnterEvent(QDragEnterEvent* event) {
+  const QMimeData* mimeData = event->mimeData();
+
+
+  if (Ffigure == nullptr) event->acceptProposedAction();
+  else if (Ffigure->fColor == enemy)event->acceptProposedAction();
+  else if (Ffigure->fColor == player) {
+    // Если фигура на клетке белая, игнорируем операцию drop и фигура остается на месте
+    event->setDropAction(Qt::IgnoreAction); // Установим флаг Qt::IgnoreAction
+    event->accept();
+  }
+}
+
+
 void Square::dropEvent(QDropEvent *event) {
 
     const QMimeData *mimeData = event->mimeData();
@@ -104,6 +116,7 @@ void Square::dropEvent(QDropEvent *event) {
 
         ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::KeepAspectRatio));
 
+
     }
     else if (Ffigure->fColor == enemy) {
 
@@ -117,23 +130,12 @@ void Square::dropEvent(QDropEvent *event) {
       ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::KeepAspectRatio));
 
     }
-    
 
-
-
-}
-
-void Square::dragEnterEvent(QDragEnterEvent *event) {
-    const QMimeData *mimeData = event->mimeData();
-    
-
-    if (Ffigure == nullptr) event->acceptProposedAction();
-    else if (Ffigure->fColor == enemy)event->acceptProposedAction();
-    else if (Ffigure->fColor == player) {
-      // Если фигура на клетке белая, игнорируем операцию drop и фигура остается на месте
-      event->setDropAction(Qt::IgnoreAction); // Установим флаг Qt::IgnoreAction
-      event->accept();
+    if (Ffigure->fakeStatus==false && !Ffigure->availableMoves.contains(QPoint(x, y))) {
+      Ffigure->fakeStatus = true;
+      qDebug() << "false";
     }
+    Ffigure->availableMoves.clear();
 }
 
 
