@@ -24,7 +24,7 @@ private:
 
     void setFigures();
 
-    TwoDimIntArray EnabledMoves(Ft figure, int x, int y);
+    void setEnabledMoves(Figure* figure, int x, int y);
 
 signals:
 
