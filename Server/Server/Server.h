@@ -32,6 +32,12 @@ enum serverResponseType {
 };
 class Server : public QTcpServer {
 Q_OBJECT
+// TODO: create roomManager, in server create func
+//  sendResponce(serverResponseType rt, QList<QString> responseParams)
+//  and send everything throw it
+//  getRequest(clientRequestType rt, QList<QString> requestParams) analogically
+//  and have one instance of roomManager in server
+
 
     int prevId = 0;
 public:
@@ -44,14 +50,12 @@ public:
 private:
     QVector<QTcpSocket *> m_sockets;
     quint16 m_nextBlockSize = 0;
+    QByteArray m_data;
 
 
     using roomId = int;
 
     QMap<roomId, Room*> M_rooms;
-
-    void SendToClient(QString str);
-
 
     void createRoom(QString roomName, QString pswd, QString hostNick, QTcpSocket *sender);
     void sendNick(const QString& nick, QTcpSocket * receiver);
