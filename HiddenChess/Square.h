@@ -5,6 +5,7 @@
 #include <qlabel.h>
 #include "ui_Square.h"
 #include "MyFunc.h"
+#include "DnData.h"
 
 
 class Square : public QWidget {
@@ -23,7 +24,7 @@ public:
 
     QColor bgcolor = Qt::black;
     int x, y;
-    Figure *Ffigure=nullptr;
+    Figure* Ffigure = nullptr;
 
 signals:
 
@@ -33,18 +34,14 @@ signals:
 private:
     Ui::SquareClass ui;
 
-
-    QByteArray serialize();
-
-    Figure *deserialize(QByteArray data);
+    QByteArray serialize(DnData* dndata);
+    DnData *deserialize(QByteArray data);
 
 
 protected:
+
     void paintEvent(QPaintEvent *event) override;
-
     void mousePressEvent(QMouseEvent *event) override;
-
     void dropEvent(QDropEvent *event) override;
-
     void dragEnterEvent(QDragEnterEvent *event) override;
 };
