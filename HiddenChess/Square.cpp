@@ -2,6 +2,7 @@
 #include <qpainter.h>
 #include <qdebug.h>
 #include "MyFunc.h"
+#include "DnData.h";
 
 
 Square::~Square() {}
@@ -13,7 +14,6 @@ Square::Square(int x_, int y_, QWidget *parent) {
     ui.label->acceptDrops();
     this->setAcceptDrops(true);
     ui.label->setAcceptDrops(false);
-
 
     x = x_;
     y = y_;
@@ -56,9 +56,11 @@ void Square::mousePressEvent(QMouseEvent *event) {
 
         ui.label->setPixmap(QPixmap());
 
+        DnData dndata = DnData(Ffigure, x, y);
+
         QDrag *drag = new QDrag(this);
         QMimeData *mimeData = new QMimeData;
-        QByteArray data = serialize();
+        QByteArray data = serialize(&dndata);
 
 
         mimeData->setData("application/Figure", data);
@@ -96,18 +98,20 @@ void Square::dropEvent(QDropEvent *event) {
       
         QByteArray data = event->mimeData()->data("application/Figure");
 
-        Ffigure = deserialize(data);
+        DnData* dndata = deserialize(data);
+        Ffigure = dndata->Ffigure;
 
         ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::KeepAspectRatio));
 
     }
-    else if (Ffigure->fColor == black) {
+    else if (Ffigure->fColor == enemy) {
 
       event->acceptProposedAction();
 
       QByteArray data = event->mimeData()->data("application/Figure");
 
-      Ffigure = deserialize(data);
+      DnData* dndata = deserialize(data);
+      Ffigure = dndata->Ffigure;
 
       ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::KeepAspectRatio));
 
@@ -123,8 +127,8 @@ void Square::dragEnterEvent(QDragEnterEvent *event) {
     
 
     if (Ffigure == nullptr) event->acceptProposedAction();
-    else if (Ffigure->fColor == black)event->acceptProposedAction();
-    else if (Ffigure->fColor == white) {
+    else if (Ffigure->fColor == enemy)event->acceptProposedAction();
+    else if (Ffigure->fColor == player) {
       // Если фигура на клетке белая, игнорируем операцию drop и фигура остается на месте
       event->setDropAction(Qt::IgnoreAction); // Установим флаг Qt::IgnoreAction
       event->accept();
@@ -132,11 +136,11 @@ void Square::dragEnterEvent(QDragEnterEvent *event) {
 }
 
 
-QByteArray Square::serialize() {
+QByteArray Square::serialize(DnData* dndata) {
 
     QByteArray data;
     QDataStream stream(&data, QIODevice::WriteOnly);
-    qintptr objAddress = reinterpret_cast<qintptr>(Ffigure);
+    qintptr objAddress = reinterpret_cast<qintptr>(dndata);
 
     stream << objAddress;
 
@@ -144,7 +148,7 @@ QByteArray Square::serialize() {
 }
 
 
-Figure *Square::deserialize(QByteArray data) {
+DnData *Square::deserialize(QByteArray data) {
 
     QDataStream stream(data);
     qintptr objAdress;
@@ -152,7 +156,7 @@ Figure *Square::deserialize(QByteArray data) {
     stream >> objAdress;
 
 
-    Figure *obj = reinterpret_cast<Figure *>(objAdress);
+    DnData* obj = reinterpret_cast<DnData*>(objAdress);
 
     return obj;
 
@@ -166,7 +170,7 @@ void Square::lightSquare() {
 		ui.label->setPixmap(QPixmap(":/HiddenChess/AnotherPics/green.png").scaled(this->size(), Qt::IgnoreAspectRatio));
 	}
 
-  if (Ffigure != nullptr) {
+  else {
 
     QPixmap greenPixmap(":/HiddenChess/AnotherPics/red.png");
     greenPixmap = greenPixmap.scaled(this->size(), Qt::IgnoreAspectRatio);

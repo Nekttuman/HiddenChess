@@ -44,30 +44,30 @@ void GameWidget::setFigures() {
 
     for (int i = 0; i < 8; i++) {
 
-        squares[6][i]->setFigureType(pawn, white);
+        squares[6][i]->setFigureType(pawn, player);
     }
-    squares[7][0]->setFigureType(rook, white);
-    squares[7][7]->setFigureType(rook, white);
-    squares[7][1]->setFigureType(knight, white);
-    squares[7][6]->setFigureType(knight, white);
-    squares[7][2]->setFigureType(bishop, white);
-    squares[7][5]->setFigureType(bishop, white);
-    squares[7][3]->setFigureType(queen, white);
-    squares[7][4]->setFigureType(king, white);
+    squares[7][0]->setFigureType(rook, player);
+    squares[7][7]->setFigureType(rook, player);
+    squares[7][1]->setFigureType(knight, player);
+    squares[7][6]->setFigureType(knight, player);
+    squares[7][2]->setFigureType(bishop, player);
+    squares[7][5]->setFigureType(bishop, player);
+    squares[7][3]->setFigureType(queen, player);
+    squares[7][4]->setFigureType(king, player);
 
 
     for (int i = 0; i < 8; i++) {
 
-      squares[1][i]->setFigureType(pawn, black);
+      squares[1][i]->setFigureType(pawn, enemy);
     }
-    squares[0][0]->setFigureType(rook, black);
-    squares[0][7]->setFigureType(rook, black);
-    squares[0][1]->setFigureType(knight, black);
-    squares[0][6]->setFigureType(knight, black);
-    squares[0][2]->setFigureType(bishop, black);
-    squares[0][5]->setFigureType(bishop, black);
-    squares[0][3]->setFigureType(queen, black);
-    squares[0][4]->setFigureType(king, black);
+    squares[0][0]->setFigureType(rook, enemy);
+    squares[0][7]->setFigureType(rook, enemy);
+    squares[0][1]->setFigureType(knight, enemy);
+    squares[0][6]->setFigureType(knight, enemy);
+    squares[0][2]->setFigureType(bishop, enemy);
+    squares[0][5]->setFigureType(bishop, enemy);
+    squares[0][3]->setFigureType(queen, enemy);
+    squares[0][4]->setFigureType(king, enemy);
 }
 
 
@@ -89,13 +89,13 @@ TwoDimIntArray GameWidget::EnabledMoves(Ft figure, int x, int y) {
     if (x > 0) {
       try {
         if (squares[x - 1][y - 1]->Ffigure != nullptr) {
-          if (squares[x - 1][y - 1]->Ffigure->fColor == black) list.append({ x-1, y - 1 });
+          if (squares[x - 1][y - 1]->Ffigure->fColor == enemy) list.append({ x-1, y - 1 });
         }
       }
       catch (...) {}
       try {
         if (squares[x - 1][y + 1]->Ffigure != nullptr) {
-          if (squares[x - 1][y + 1]->Ffigure->fColor == black) list.append({ x - 1, y + 1 });
+          if (squares[x - 1][y + 1]->Ffigure->fColor == enemy) list.append({ x - 1, y + 1 });
         }
       }
       catch (...) {}
@@ -117,7 +117,7 @@ TwoDimIntArray GameWidget::EnabledMoves(Ft figure, int x, int y) {
       for (int k = -1; k < 2; ++k) {
         if (!((x - i < 0 || x - i>7) || (y - k < 0 || y - k>7) || (i == 0 && k == 0)))
           if (squares[x - i][y - k]->Ffigure == nullptr) list.append({ x - i, y - k });
-          else if (squares[x - i][y - k]->Ffigure->fColor == black) list.append({ x - i, y - k });
+          else if (squares[x - i][y - k]->Ffigure->fColor == enemy) list.append({ x - i, y - k });
       }
     }
     break;
@@ -135,7 +135,7 @@ TwoDimIntArray GameWidget::EnabledMoves(Ft figure, int x, int y) {
 
                 // Проверяем, есть ли фигура на пути, и если есть, прерываем цикл
                 if (squares[newX][y]->Ffigure != nullptr) {
-                  if (squares[newX][y]->Ffigure->fColor == black) {
+                  if (squares[newX][y]->Ffigure->fColor == enemy) {
                     list.append({ newX, y });
                     break;
                   }
@@ -151,7 +151,7 @@ TwoDimIntArray GameWidget::EnabledMoves(Ft figure, int x, int y) {
 
                 // Проверяем, есть ли фигура на пути, и если есть, прерываем цикл
                 if (squares[x][newY]->Ffigure != nullptr) {
-                  if (squares[x][newY]->Ffigure->fColor == black) {
+                  if (squares[x][newY]->Ffigure->fColor == enemy) {
                     list.append({ x, newY });
                     break;
                   }
@@ -174,7 +174,7 @@ TwoDimIntArray GameWidget::EnabledMoves(Ft figure, int x, int y) {
               list.append({ newX, newY });
             }
             else {
-              if (squares[newX][newY]->Ffigure->fColor == black) {
+              if (squares[newX][newY]->Ffigure->fColor == enemy) {
                 list.append({ newX, newY });
                 break;
               }
@@ -190,7 +190,7 @@ TwoDimIntArray GameWidget::EnabledMoves(Ft figure, int x, int y) {
     }
     break;
 
-  
+    
   case rook:
     // Движение как ладья (вертикально и горизонтально)
     for (int i = -1; i < 2; i += 2) {
@@ -204,7 +204,7 @@ TwoDimIntArray GameWidget::EnabledMoves(Ft figure, int x, int y) {
           {
             if (squares[newX][y]->Ffigure == nullptr) list.append({ newX, y });
             else {
-              if (squares[newX][y]->Ffigure->fColor == black) {
+              if (squares[newX][y]->Ffigure->fColor == enemy) {
                 list.append({ newX, y });
                 break;
               }
@@ -220,7 +220,7 @@ TwoDimIntArray GameWidget::EnabledMoves(Ft figure, int x, int y) {
           {
             if (squares[x][newY]->Ffigure == nullptr) list.append({ x, newY });
             else {
-              if (squares[x][newY]->Ffigure->fColor == black) {
+              if (squares[x][newY]->Ffigure->fColor == enemy) {
                 list.append({ x, newY });
                 break;
               }
@@ -246,7 +246,7 @@ TwoDimIntArray GameWidget::EnabledMoves(Ft figure, int x, int y) {
         if (squares[newX][newY]->Ffigure == nullptr) {
           list.append({ newX, newY });
         }
-        else if (squares[newX][newY]->Ffigure->fColor == black) {
+        else if (squares[newX][newY]->Ffigure->fColor == enemy) {
           list.append({ newX, newY });
         }
        }
@@ -266,7 +266,7 @@ TwoDimIntArray GameWidget::EnabledMoves(Ft figure, int x, int y) {
               list.append({ newX, newY });
             }
             else {
-              if (squares[newX][newY]->Ffigure->fColor == black) {
+              if (squares[newX][newY]->Ffigure->fColor == enemy) {
                 list.append({ newX, newY });
                 break;
               }
@@ -296,18 +296,17 @@ TwoDimIntArray GameWidget::EnabledMoves(Ft figure, int x, int y) {
 
 void GameWidget::showMoves_slot(Figure* figure, int x, int y) {
 
-  TwoDimIntArray list = EnabledMoves(figure->figureType, x, y);
-  if (!list.isEmpty()){
-    foreach(const QList<int>&coordinates, list) {
+  figure->list = EnabledMoves(figure->figureType, x, y);
+  foreach(const QList<int>&coordinates, figure->list) {
 
       squares[coordinates.at(0)][coordinates.at(1)]->lightSquare();
 
 
-    }
-  
-  }
+   }
   
 }
+  
+
 
 void GameWidget::hideMoves_slot(Figure* figure, int x, int y) {
 
