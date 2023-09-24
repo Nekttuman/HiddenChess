@@ -49,11 +49,10 @@ void Square::setFigureType(Ft figure_, Fc color_) {
 
 
 void Square::mousePressEvent(QMouseEvent *event) {
-
+    
     if ((Ffigure != nullptr)) {
 
         emit showMoves_signal(Ffigure, x, y);
-
 
         ui.label->setPixmap(QPixmap());
 
@@ -63,21 +62,22 @@ void Square::mousePressEvent(QMouseEvent *event) {
 
 
         mimeData->setData("application/Figure", data);
-
         drag->setMimeData(mimeData);
-        drag->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::KeepAspectRatio));
 
-        drag->setHotSpot(event->pos() - this->rect().topLeft());
+        auto image = QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::KeepAspectRatio);
+        drag->setPixmap(image);
+
+        QPoint hotSpot = QPoint(image.size().width() / 2, image.size().height() / 2);
+        drag->setHotSpot(hotSpot);
 
         Qt::DropAction dropAction = drag->exec();
 
         if (dropAction == Qt::IgnoreAction) {
-         
-          qDebug() << "TI DAUN";
 
           ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::KeepAspectRatio));
         }
         else Ffigure = nullptr;
+
         emit hideMoves_signal(Ffigure, x, y);
         
     }
@@ -167,7 +167,8 @@ void Square::lightSquare() {
 	}
 
   if (Ffigure != nullptr) {
-    QPixmap greenPixmap(":/HiddenChess/AnotherPics/green.png");
+
+    QPixmap greenPixmap(":/HiddenChess/AnotherPics/red.png");
     greenPixmap = greenPixmap.scaled(this->size(), Qt::IgnoreAspectRatio);
     
     QPixmap currentPixmap = ui.label->pixmap()->scaled(this->size(), Qt::IgnoreAspectRatio);

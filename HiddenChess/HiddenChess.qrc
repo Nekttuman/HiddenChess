@@ -13,5 +13,6 @@
         <file>Figures/Wq.png</file>
         <file>Figures/Wr.png</file>
         <file>AnotherPics/green.png</file>
+        <file>AnotherPics/red.png</file>
     </qresource>
 </RCC>

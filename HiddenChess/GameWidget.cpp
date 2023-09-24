@@ -54,6 +54,20 @@ void GameWidget::setFigures() {
     squares[7][5]->setFigureType(bishop, white);
     squares[7][3]->setFigureType(queen, white);
     squares[7][4]->setFigureType(king, white);
+
+
+    for (int i = 0; i < 8; i++) {
+
+      squares[1][i]->setFigureType(pawn, black);
+    }
+    squares[0][0]->setFigureType(rook, black);
+    squares[0][7]->setFigureType(rook, black);
+    squares[0][1]->setFigureType(knight, black);
+    squares[0][6]->setFigureType(knight, black);
+    squares[0][2]->setFigureType(bishop, black);
+    squares[0][5]->setFigureType(bishop, black);
+    squares[0][3]->setFigureType(queen, black);
+    squares[0][4]->setFigureType(king, black);
 }
 
 
@@ -72,36 +86,81 @@ TwoDimIntArray GameWidget::EnabledMoves(Ft figure, int x, int y) {
 
   switch (figure) {
   case pawn:
+    if (x > 0) {
+      try {
+        if (squares[x - 1][y - 1]->Ffigure != nullptr) {
+          if (squares[x - 1][y - 1]->Ffigure->fColor == black) list.append({ x-1, y - 1 });
+        }
+      }
+      catch (...) {}
+      try {
+        if (squares[x - 1][y + 1]->Ffigure != nullptr) {
+          if (squares[x - 1][y + 1]->Ffigure->fColor == black) list.append({ x - 1, y + 1 });
+        }
+      }
+      catch (...) {}
 
-    if (x > 0)  list.append({ x - 1, y }); // Один шаг вперед
-    if (x == 6) list.append({ x - 2, y }); //два шага (первый ход)
+    }
+
+    if (x > 0) 
+      if (squares[x - 1][y]->Ffigure == nullptr) {
+
+      list.append({ x - 1, y });
+    }
+    else break;
+
+    if (x == 6 && squares[x - 2][y]->Ffigure == nullptr) list.append({ x - 2, y }); //два шага (первый ход)
     break;
+
   case king:
     for (int i = -1; i < 2; ++i) {
       for (int k = -1; k < 2; ++k) {
-        if(!((x-i<0 || x-i>7) || (y - k < 0 || y - k>7) || (i==0 && k==0))) list.append({ x - i, y-k });
+        if (!((x - i < 0 || x - i>7) || (y - k < 0 || y - k>7) || (i == 0 && k == 0)))
+          if (squares[x - i][y - k]->Ffigure == nullptr) list.append({ x - i, y - k });
+          else if (squares[x - i][y - k]->Ffigure->fColor == black) list.append({ x - i, y - k });
       }
     }
     break;
+
   case queen:
     // Движение как ладья (вертикально и горизонтально)
     for (int i = -1; i < 2; i += 2) {
-      for (int j = 0; j < 8; ++j) {
-        int newX = x;
-        int newY = y;
+        for (int j = 0; j < 8; ++j) {
+            int newX = x;
+            int newY = y;
 
-        while (true) {
-          newX += i;
-          if (newX < 0 || newX >= 8) break;
-          list.append({ newX, y });
-        }
+            while (true) {
+                newX += i;
+                if (newX < 0 || newX >= 8) break;
 
-        while (true) {
-          newY += i;
-          if (newY < 0 || newY >= 8) break;
-          list.append({ x, newY });
+                // Проверяем, есть ли фигура на пути, и если есть, прерываем цикл
+                if (squares[newX][y]->Ffigure != nullptr) {
+                  if (squares[newX][y]->Ffigure->fColor == black) {
+                    list.append({ newX, y });
+                    break;
+                  }
+                  else break;
+                }
+
+                list.append({ newX, y });
+            }
+
+            while (true) {
+                newY += i;
+                if (newY < 0 || newY >= 8) break;
+
+                // Проверяем, есть ли фигура на пути, и если есть, прерываем цикл
+                if (squares[x][newY]->Ffigure != nullptr) {
+                  if (squares[x][newY]->Ffigure->fColor == black) {
+                    list.append({ x, newY });
+                    break;
+                  }
+                  else break;
+                }
+
+                list.append({ x, newY });
+            }
         }
-      }
     }
 
     // Движение как слон (по диагонали)
@@ -111,8 +170,18 @@ TwoDimIntArray GameWidget::EnabledMoves(Ft figure, int x, int y) {
           int newX = x + k * i;
           int newY = y + k * j;
           if (newX >= 0 && newX < 8 && newY >= 0 && newY < 8) {
-            list.append({ newX, newY });
+            if (squares[newX][newY]->Ffigure == nullptr) {
+              list.append({ newX, newY });
+            }
+            else {
+              if (squares[newX][newY]->Ffigure->fColor == black) {
+                list.append({ newX, newY });
+                break;
+              }
+              else break;
+            }
           }
+
           else {
             break; // Прерываем, если выходим за пределы доски
           }
@@ -120,6 +189,7 @@ TwoDimIntArray GameWidget::EnabledMoves(Ft figure, int x, int y) {
       }
     }
     break;
+
   
   case rook:
     // Движение как ладья (вертикально и горизонтально)
@@ -130,14 +200,34 @@ TwoDimIntArray GameWidget::EnabledMoves(Ft figure, int x, int y) {
 
         while (true) {
           newX += i;
-          if (newX < 0 || newX >= 8) break;
-          list.append({ newX, y });
+          if (newX >= 0 && newX < 8)
+          {
+            if (squares[newX][y]->Ffigure == nullptr) list.append({ newX, y });
+            else {
+              if (squares[newX][y]->Ffigure->fColor == black) {
+                list.append({ newX, y });
+                break;
+              }
+              else break;
+            }
+          }
+          else break;
         }
 
         while (true) {
           newY += i;
-          if (newY < 0 || newY >= 8) break;
-          list.append({ x, newY });
+          if (newY >= 0 && newY < 8)
+          {
+            if (squares[x][newY]->Ffigure == nullptr) list.append({ x, newY });
+            else {
+              if (squares[x][newY]->Ffigure->fColor == black) {
+                list.append({ x, newY });
+                break;
+              }
+              else break;
+            }
+          }
+          else break;
         }
       }
     }
@@ -153,9 +243,15 @@ TwoDimIntArray GameWidget::EnabledMoves(Ft figure, int x, int y) {
 
       // Проверка, что новые координаты находятся на доске (8x8)
       if (newX >= 0 && newX < 8 && newY >= 0 && newY < 8) {
-        list.append({ newX, newY });
-      }
-    }
+        if (squares[newX][newY]->Ffigure == nullptr) {
+          list.append({ newX, newY });
+        }
+        else if (squares[newX][newY]->Ffigure->fColor == black) {
+          list.append({ newX, newY });
+        }
+       }
+     }
+    
     break;
 
   case bishop:
@@ -166,8 +262,18 @@ TwoDimIntArray GameWidget::EnabledMoves(Ft figure, int x, int y) {
           int newX = x + k * i;
           int newY = y + k * j;
           if (newX >= 0 && newX < 8 && newY >= 0 && newY < 8) {
-            list.append({ newX, newY });
+            if (squares[newX][newY]->Ffigure == nullptr) {
+              list.append({ newX, newY });
+            }
+            else {
+              if (squares[newX][newY]->Ffigure->fColor == black) {
+                list.append({ newX, newY });
+                break;
+              }
+              else break;
+            }
           }
+          
           else {
             break; // Прерываем, если выходим за пределы доски
           }
