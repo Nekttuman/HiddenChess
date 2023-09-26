@@ -55,6 +55,9 @@ public slots:
         ui.hostNickLineEdit->setText(nick);
     }
 
+protected:
+  void resizeEvent(QResizeEvent* event) override;
+
 };
 
 

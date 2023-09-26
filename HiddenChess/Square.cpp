@@ -43,7 +43,7 @@ void Square::setFigureType(Ft figure_, Fc color_) {
     Ffigure = new Figure(figure_, color_);
     
 
-    ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::KeepAspectRatio));
+    ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::IgnoreAspectRatio));
 }
 
 
@@ -201,4 +201,9 @@ void Square::hideSquare() {
   if (Ffigure == nullptr) ui.label->setPixmap(QPixmap(""));
   else ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::IgnoreAspectRatio));
 	
+}
+
+void Square::resizePicture() {
+
+  if (Ffigure != nullptr) ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::IgnoreAspectRatio));
 }

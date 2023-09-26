@@ -19,6 +19,7 @@ public:
     void setFigureType(Ft figure_, Fc color_);
     void lightSquare();
     void hideSquare();
+    void resizePicture();
 
 public:
 

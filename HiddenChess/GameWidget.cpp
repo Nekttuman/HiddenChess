@@ -350,3 +350,23 @@ void GameWidget::hideMoves_slot(Figure* figure, int x, int y) {
 
 }
 
+
+
+void GameWidget::resizeEvent(QResizeEvent* event) {
+  
+  QRect widgetSize = ui.gridLayout->geometry();
+  int width = widgetSize.width();
+  int height = widgetSize.height();
+  int minSize = (width < height) ? width : height;
+  
+  ui.gridLayout->setGeometry(QRect(widgetSize.topLeft(), QSize(minSize,minSize)));
+
+  for (int i = 0; i < 8; ++i) {
+    for (int j = 0; j < 8; ++j) {
+      squares[i][j]->resizePicture();
+    }
+  }
+  
+  QWidget::resizeEvent(event);
+}
+
