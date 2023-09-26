@@ -7,7 +7,7 @@ GameWidget::GameWidget(QWidget *parent)
 
 
     ui.gridLayout->setSpacing(0);
-
+    ui.label_3->setText("ti dolbaaaeeeb");
 
     connect(ui.startButton, &QPushButton::clicked, this, &GameWidget::startGame_slot);
     for (int i = 0; i < 8; ++i) {
@@ -358,15 +358,20 @@ void GameWidget::resizeEvent(QResizeEvent* event) {
   int width = widgetSize.width();
   int height = widgetSize.height();
   int minSize = (width < height) ? width : height;
+  //int buttonsHeight = ui.surrenderButton->size().height();
   
   ui.gridLayout->setGeometry(QRect(widgetSize.topLeft(), QSize(minSize,minSize)));
+  
+  //ui.surrenderButton->setMaximumSize(minSize,buttonsHeight);
+  //ui.surrenderButton_2->setMaximumSize(minSize, buttonsHeight);
+  //ui.startButton->setMaximumSize(minSize, buttonsHeight);
+  
+  QWidget::resizeEvent(event);
 
   for (int i = 0; i < 8; ++i) {
     for (int j = 0; j < 8; ++j) {
       squares[i][j]->resizePicture();
     }
   }
-  
-  QWidget::resizeEvent(event);
 }
 
