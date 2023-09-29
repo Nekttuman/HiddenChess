@@ -1,6 +1,8 @@
-#include "RoomsManager.h"
+//
+// Created by 79140 on 9/29/2023.
+//
 
-#include <utility>
+#include "RoomsManager.h"
 
 
 void
@@ -12,11 +14,11 @@ RoomsManager::createRoom(const QString &roomName, const QString &pswd, QString h
         return;
     }
     M_rooms[prevId] = new Room(roomHostSocketDescriptor, roomName, pswd);
-    M_rooms[prevId]->setHostNick(std::move(hostNick));
-
-
-    qDebug() << "room created: " << roomName << pswd << M_rooms[prevId]->getHostNick();
+    M_rooms[prevId]->setHostNick(hostNick);
     ++prevId;
+
+    qDebug() << "room created: " << roomName << pswd;
+
     sendResponse_signal(roomHostSocketDescriptor, serverResponseType::roomCreated, {});
 }
 
@@ -35,14 +37,18 @@ bool RoomsManager::isUniq(const QString &roomName) {
     return true;
 }
 
-void RoomsManager::tryJoinToRoom(const QString &roomName, const QString& roomPasswd, QString nick, qintptr socketDescriptor) {
+void RoomsManager::tryJoinToRoom(const QString &roomName, QString roomPasswd, QString nick, qintptr socketDescriptor) {
+
+    // TODO: rewrite with serverResponseType::roomCreationErr and responceParams as describtion of err,
+    //         or rewrite serverResponseType::roomCreationErr usage
+
     auto roomId = getRoomId(roomName);
     if (roomId == -1) {
         sendResponse_signal(socketDescriptor, serverResponseType::JoiningErrNoRoom, {});
         return;
     }
     auto room = M_rooms[roomId];
-    if (!room->checkPswd(roomPasswd)) {
+    if (!room->checkPswd(std::move(roomPasswd))) {
         sendResponse_signal(socketDescriptor, serverResponseType::JoiningErrWrongPswd, {});
         return;
     }
@@ -51,14 +57,12 @@ void RoomsManager::tryJoinToRoom(const QString &roomName, const QString& roomPas
         return;
     }
 
-    room->addOpponent(socketDescriptor, nick);
+    room->add_oponent(socketDescriptor);
 
-    sendResponse_signal(socketDescriptor, serverResponseType::JoinedToRoom,
-                        {QString::number(roomId), room->getHostNick()});
-    qDebug() << "joined to" << roomId << room->getHostNick();
+    sendResponse_signal(socketDescriptor, serverResponseType::JoiningErrRoomFull, {QString(roomId)});
+    qDebug() << "joined to" << roomId;
 
-    sendResponse_signal(room->getHostSocketDescriptor(), serverResponseType::OpponentNick, {std::move(nick)});
-    sendResponse_signal(socketDescriptor, serverResponseType::OpponentNick, {room->getHostNick()});
+    sendResponse_signal(room->getHostSocket(), serverResponseType::OpponentNick, { nick});
 }
 
 RoomsManager::RoomId RoomsManager::getRoomId(const QString &roomName) {
@@ -68,5 +72,15 @@ RoomsManager::RoomId RoomsManager::getRoomId(const QString &roomName) {
     }
     return -1;
 }
+
+void RoomsManager::sendOpponentNick(qintptr receiverSocketDescriptor, RoomId roomid) {
+auto room = M_rooms[roomid];
+if (room==nullptr){
+    sendResponse_signal(receiverSocketDescriptor, serverResponseType::JoiningErrNoRoom, {});
+    return;
+}
+    sendResponse_signal(room->getHostSocket(), serverResponseType::OpponentNick, { room->getOpponentNick(receiverSocketDescriptor)});
+}
+
 
 
