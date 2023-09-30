@@ -4,15 +4,13 @@
 #include <QTcpSocket>
 #include <qdatastream.h>
 
-
 enum clientRequestType {
     createRoom,
     chatMess,
     move,
     surrenderCommand,
     checkRoomNameUniq,
-    tryJoiningToRoom,
-    getOpponentNick
+    tryJoiningToRoom
 };
 
 enum serverResponseType {
@@ -53,7 +51,7 @@ signals:
 
     void joinedToRoom();
 
-    void opponentNickRecieved_signal(QString opponentNick);
+    void opponentNickReceived_signal(QString opponentNick);
 
 public slots:
 
@@ -71,6 +69,4 @@ private:
     RoomId m_currentRoom = -1;
 
     void SendToServer(QString str);
-
-    void getOpponentNick();
 };

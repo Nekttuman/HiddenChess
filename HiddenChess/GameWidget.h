@@ -52,7 +52,7 @@ public slots:
 
     void startGame_slot();
 
-    void setOpponentNick_slot(QString);
+    void setOpponentNick_slot(const QString&);
     void setHostNick_slot(QString nick){
         ui.hostNickLineEdit->setText(nick);
     }

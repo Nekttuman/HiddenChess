@@ -44,6 +44,14 @@ HiddenChess::HiddenChess(QWidget *parent)
     connect(client, &Client::roomCreated_signal, this, [&]() { ui.roomCreationWidget->hide(); });
     connect(client, &Client::roomCreated_signal, this, [&]() { ui.roomCreationWidget->clearFields(); });
 
+    connect(ui.roomCreationWidget, &RoomCreationWidget::checkRoomNameUniq_signal,
+            client, &Client::checkRoomNameUniq_slot);
+    connect(client, &Client::roomNameUniqConfirmed_signal, ui.roomCreationWidget,
+            &RoomCreationWidget::roomNameUniqConfirmed_slot);
+    connect(client, &Client::roomNameUniqNotConfirmed_signal, ui.roomCreationWidget,
+            &RoomCreationWidget::roomNameUniqNotConfirmed_slot);
+
+
     //--------------------------------- Room joining client-server connects
     connect(ui.joiningWidget, &JoiningWidget::backToMenu_signal,
             this, &HiddenChess::showMainMenu_slot);
@@ -51,8 +59,10 @@ HiddenChess::HiddenChess(QWidget *parent)
             client, &Client::sendJoiningRequest_slot);
     connect(client, &Client::joinedToRoom, this, &HiddenChess::showGameWidget_slot);
     connect(client, &Client::joinedToRoom, this, [&]() { ui.joiningWidget->hide(); });
+
     connect(client, &Client::joinedToRoom, ui.gameWidget, &GameWidget::startGame_slot);
-    connect(client, &Client::opponentNickRecieved_signal, ui.gameWidget, &GameWidget::setOpponentNick_slot);
+
+    connect(client, &Client::opponentNickReceived_signal, ui.gameWidget, &GameWidget::setOpponentNick_slot);
     connect(client, &Client::joinedToRoom, ui.gameWidget,
             [&]() { ui.gameWidget->setHostNick_slot(ui.joiningWidget->getNick()); });
     connect(client, &Client::joinedToRoom, this, [&]() { ui.joiningWidget->clearFields(); });
@@ -66,12 +76,6 @@ HiddenChess::HiddenChess(QWidget *parent)
     connect(client, &Client::connected_signal, this, [&]() { has_connection = true; });
     connect(client, &Client::connected_signal, this, &HiddenChess::showConnectedMessage_slot);
 
-    connect(ui.roomCreationWidget, &RoomCreationWidget::checkRoomNameUniq_signal,
-            client, &Client::checkRoomNameUniq_slot);
-    connect(client, &Client::roomNameUniqConfirmed_signal, ui.roomCreationWidget,
-            &RoomCreationWidget::roomNameUniqConfirmed_slot);
-    connect(client, &Client::roomNameUniqNotConfirmed_signal, ui.roomCreationWidget,
-            &RoomCreationWidget::roomNameUniqNotConfirmed_slot);
 
 
     connect(ui.gameWidget, &GameWidget::backToMenu_signal,
