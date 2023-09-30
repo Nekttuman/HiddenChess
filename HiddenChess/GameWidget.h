@@ -24,7 +24,15 @@ private:
 
     void setFigures();
 
-    TwoDimIntArray EnabledMoves(Ft figure, int x, int y);
+    void setEnabledMoves(Figure* figure, int x, int y);
+
+
+    void pawnAvailableMoves(Figure* figure, int x, int y);
+    void kingAvailableMoves(Figure* figure, int x, int y);
+    void queenAvailableMoves(Figure* figure, int x, int y);
+    void rookAvailableMoves(Figure* figure, int x, int y);
+    void knightAvailableMoves(Figure* figure, int x, int y);
+    void bishopAvailableMoves(Figure* figure, int x, int y);
 
 signals:
 
@@ -46,6 +54,9 @@ public slots:
     void setHostNick_slot(QString nick){
         ui.hostNickLineEdit->setText(nick);
     }
+
+protected:
+  void resizeEvent(QResizeEvent* event) override;
 
 };
 

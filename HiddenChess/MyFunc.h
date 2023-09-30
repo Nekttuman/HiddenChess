@@ -57,7 +57,7 @@ public:
     Fc fColor;
     QString figureImage = "";
     bool fakeStatus;
-    TwoDimIntArray list;
+    QList<QPoint> availableMoves;
 
     Figure(Ft figure_, Fc fcolor_);
 

@@ -5,9 +5,9 @@
 struct DnData {
 
 	Figure* Ffigure;
-	int prevX, prevY;
+	QPoint prevPos;
 
-	DnData(Figure* _ffigure, int x, int y) : Ffigure(_ffigure), prevX(x), prevY(y) {};
+	DnData(Figure* _ffigure, int x, int y) : Ffigure(_ffigure), prevPos({x, y}) {};
 
 };
 

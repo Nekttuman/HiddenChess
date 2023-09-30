@@ -1,15 +1,13 @@
 #include "HiddenChess.h"
-#include <QtWidgets/QApplication>
-//#include "GameWidget.h"
+#include "GameWidget.h"
+#include <QMainWindow>
 
-int main(int argc, char *argv[])
-{
-    QApplication a(argc, argv);
-    HiddenChess w;
+
+int main(int argc, char *argv[]) {
+    QApplication app(argc, argv);
+    GameWidget w;
     w.show();
 
-//GameWidget gw;
-//gw.show();
 
-    return a.exec();
+    return app.exec();
 }
