@@ -24,25 +24,22 @@ enum serverResponseType {
 
 };
 
-class RoomsManager: public QObject {
-    Q_OBJECT
+class RoomsManager : public QObject {
+Q_OBJECT
 
     using RoomId = int;
 
     QMap<RoomId, Room *> M_rooms;
 
-
     int prevId = 0;
-
-
 public:
-    explicit RoomsManager(QObject *parent = nullptr): QObject(parent) {  }
+    explicit RoomsManager(QObject *parent = nullptr) : QObject(parent) {}
 
-    void createRoom(const QString& roomName, const QString& pswd, QString hostNick, qintptr roomHostSocketDescriptor);
+    void createRoom(const QString &roomName, const QString &pswd, QString hostNick, qintptr roomHostSocketDescriptor);
 
-    void checkRoomNameUniq(const QString& name, qintptr socketDescriptor);
+    void checkRoomNameUniq(const QString &name, qintptr socketDescriptor);
 
-    void tryJoinToRoom(const QString &roomName, QString roomPasswd, QString nick, qintptr socketDescriptor);
+    void tryJoinToRoom(const QString &roomName, const QString& roomPasswd, QString nick, qintptr socketDescriptor);
 
     RoomId getRoomId(const QString &roomName);
 

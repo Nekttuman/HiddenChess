@@ -1,7 +1,5 @@
 #include "Server.h"
 
-#include <utility>
-
 
 Server::Server() {
     if (this->listen(QHostAddress::Any, 2323))
@@ -70,8 +68,8 @@ void Server::slotReadyRead() {
                     roomsManager->tryJoinToRoom(roomName, roomPasswd, nick, socket->socketDescriptor());
                     break;
                 }
-                default:{
-                    qDebug()<<"not handled request: "<<requestType;
+                default: {
+                    qDebug() << "not handled request: " << requestType;
                 }
             }
             m_nextBlockSize = 0;
@@ -90,16 +88,16 @@ void Server::disconnectSocket() {
     socket->deleteLater();
 }
 
-void Server::sendResponse_slot(qintptr socketDescriptor, serverResponseType rt, const QList<QString>& responseParams) {
+void Server::sendResponse_slot(qintptr socketDescriptor, serverResponseType rt, const QList<QString> &responseParams) {
     m_data.clear();
     QDataStream out(&m_data, QIODevice::WriteOnly);
     out << quint16(0) << rt;
-    qDebug()<<QTime::currentTime()<<"sending response"<<rt<<"params:";
-    for (const auto& param:responseParams){
+    qDebug() << QTime::currentTime() << "sending response" << rt << "params:";
+    for (const auto &param: responseParams) {
         out << param;
         qDebug() << param;
     }
-    qDebug()<<"to: "<<socketDescriptor;
+    qDebug() << "to: " << socketDescriptor;
 
     out.device()->seek(0);
     out << quint16(m_data.size() - sizeof(quint16));
