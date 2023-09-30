@@ -36,10 +36,6 @@ bool RoomsManager::isUniq(const QString &roomName) {
 }
 
 void RoomsManager::tryJoinToRoom(const QString &roomName, const QString& roomPasswd, QString nick, qintptr socketDescriptor) {
-
-    // TODO: rewrite with serverResponseType::roomCreationErr and responceParams as describtion of err,
-    //         or rewrite serverResponseType::roomCreationErr usage
-
     auto roomId = getRoomId(roomName);
     if (roomId == -1) {
         sendResponse_signal(socketDescriptor, serverResponseType::JoiningErrNoRoom, {});
