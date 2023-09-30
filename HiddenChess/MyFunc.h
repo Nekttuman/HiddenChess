@@ -61,6 +61,8 @@ public:
 
     Figure(Ft figure_, Fc fcolor_);
 
+    bool FirstMoveDone;
+
 private:
 
 

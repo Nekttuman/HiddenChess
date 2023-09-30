@@ -143,6 +143,26 @@ void GameWidget::pawnAvailableMoves(Figure* figure, int x, int y) {
 
 
 void GameWidget::kingAvailableMoves(Figure* figure, int x, int y) {
+
+  if (figure->FirstMoveDone == false) {
+    int i = x;
+    while (i < 8) {
+      if (squares[++i][y]->Ffigure != nullptr) {
+        if (squares[i][y]->Ffigure->figureType!= rook && squares[i][y]->Ffigure->fColor!=player) break;
+        if (squares[i][y]->Ffigure->FirstMoveDone == false) {
+          if(i<3)  figure->availableMoves.append({ x +1, y});
+          else  figure->availableMoves.append({ x + 2, y });
+
+        }
+        else break;
+      }
+
+
+
+    }
+  
+  }
+
   for (int i = -1; i < 2; ++i) {
     for (int k = -1; k < 2; ++k) {
       if (!((x - i < 0 || x - i>7) || (y - k < 0 || y - k>7) || (i == 0 && k == 0)))
