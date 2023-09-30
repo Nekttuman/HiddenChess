@@ -11,7 +11,7 @@ Server::Server() {
 
     roomsManager = new RoomsManager();
 
-    Server::connect(roomsManager, &RoomsManager::sendResponse_signal, this, &Server::sendResponce_slot);
+    Server::connect(roomsManager, &RoomsManager::sendResponse_signal, this, &Server::sendResponse_slot);
 }
 
 Server::~Server() {
@@ -50,7 +50,6 @@ void Server::slotReadyRead() {
             clientRequestType requestType;
 
             in >> requestType;
-            qDebug() << requestType;
 
             switch (requestType) {
                 case clientRequestType::createRoom: {
@@ -69,12 +68,6 @@ void Server::slotReadyRead() {
                     QString roomName, roomPasswd, nick;
                     in >> roomName >> roomPasswd >> nick;
                     roomsManager->tryJoinToRoom(roomName, roomPasswd, nick, socket->socketDescriptor());
-                    break;
-                }
-                case clientRequestType::getOpponentNick: {
-                    roomId room;
-                    in >> room;
-                    roomsManager->sendOpponentNick(socket->socketDescriptor(), roomId room);
                     break;
                 }
                 default:{
@@ -97,7 +90,19 @@ void Server::disconnectSocket() {
     socket->deleteLater();
 }
 
-void Server::sendResponce(qintptr socketDescriptor, serverResponseType rt, QList<QString> responseParams) {
+void Server::sendResponse_slot(qintptr socketDescriptor, serverResponseType rt, const QList<QString>& responseParams) {
+    m_data.clear();
+    QDataStream out(&m_data, QIODevice::WriteOnly);
+    out << quint16(0) << rt;
+    qDebug()<<QTime::currentTime()<<"sending response"<<rt<<"params:";
+    for (const auto& param:responseParams){
+        out << param;
+        qDebug() << param;
+    }
+    qDebug()<<"to: "<<socketDescriptor;
 
+    out.device()->seek(0);
+    out << quint16(m_data.size() - sizeof(quint16));
+    m_sockets[socketDescriptor]->write(m_data);
 }
 

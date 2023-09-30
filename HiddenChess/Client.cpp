@@ -95,15 +95,18 @@ void Client::readyRead_slot() {
             else if (rt == serverResponseType::JoiningErrRoomFull)
                     emit clientErr_signal("Room already full");
             else if (rt == serverResponseType::JoinedToRoom) {
-                in >> m_currentRoom;
+                QString roomId;
+                QString opponentNick;
+                in >> roomId>>opponentNick;
+                m_currentRoom = roomId.toInt();
                 emit joinedToRoom();
-                getOpponentNick();
-                qDebug() << "joined to room" << m_currentRoom;
+                emit opponentNickReceived_signal(opponentNick);
+                qDebug() << "joined to room" << roomId<<opponentNick;
             } else if (rt == serverResponseType::OpponentNick) {
                 QString opponentNick;
                 in >> opponentNick;
                 qDebug()<<"Opponent nick recieved"<<opponentNick;
-                emit opponentNickRecieved_signal(opponentNick);
+                emit opponentNickReceived_signal(opponentNick);
             }
 
 
@@ -116,14 +119,7 @@ void Client::readyRead_slot() {
         qDebug() << "read err";
 }
 
-void Client::getOpponentNick() {
-    m_data.clear();
-    QDataStream out(&m_data, QIODevice::WriteOnly);
-    out << quint16(0) << clientRequestType::getOpponentNick << m_currentRoom;
-    out.device()->seek(0);
-    out << quint16(m_data.size() - sizeof(quint16));
-    m_socket->write(m_data);
-}
+
 
 void Client::checkRoomNameUniq_slot(QString roomName) {
     m_data.clear();

@@ -14,8 +14,7 @@ enum clientRequestType {
     move,
     surrenderCommand,
     checkRoomNameUniq,
-    tryJoiningToRoom,
-    getOpponentNick
+    tryJoiningToRoom
 };
 
 
@@ -31,7 +30,7 @@ public:
     QTcpSocket *socket;
 
 
-    using roomId = int;
+    using RoomId = int;
 
 private:
     QMap <qintptr,QTcpSocket*> m_sockets;
@@ -46,7 +45,7 @@ public slots:
     void incomingConnection(qintptr socketDescriptor) override;
 
     void slotReadyRead();
-    void sendResponce_slot(qintptr socketDescriptor, serverResponseType rt, QList<QString> responseParams);
+    void sendResponse_slot(qintptr socketDescriptor, serverResponseType rt, const QList<QString>& responseParams);
 
 
 private slots:

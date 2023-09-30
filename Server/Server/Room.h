@@ -2,49 +2,54 @@
 #include <QtCore>
 #include <QTcpServer>
 #include <QTcpSocket>
+#include <utility>
 
 
 class Room {
-    QTcpSocket *m_hostSocket;               // replace on socketDescriptor
-    QTcpSocket *m_oponentSocket = nullptr;
+    qintptr m_hostSocketDescriptor = -1;
+    qintptr m_oponentSocketDescriptor = -1;
 
     QString m_hostNick;
     QString m_opponentNick;
-
 
     QString m_name;
     QString m_pswd;
 
 public:
-    Room(QTcpSocket *hostSocket, QString roomName, QString roomPswd) : m_name(roomName), m_pswd(roomPswd) {
-        m_hostSocket = hostSocket;
+    Room(qintptr hostSocketDescriptor, QString roomName, QString roomPswd) : m_name(std::move(roomName)),
+                                                                             m_pswd(std::move(roomPswd)) {
+        m_hostSocketDescriptor = hostSocketDescriptor;
     }
 
-    void setHostNick(QString nick){
+    void setHostNick(QString nick) {
         m_hostNick = nick;
     }
-    QString getHostNick(){return m_hostNick;}
 
-    QTcpSocket* getHostSocket(){
-        return m_hostSocket;
+    QString getHostNick() { return m_hostNick; }
+
+    [[nodiscard]] qintptr getHostSocketDescriptor() const {
+        return m_hostSocketDescriptor;
     }
 
-    void setOpponentNick(QString nick){
-        m_opponentNick = nick;
+    void setOpponentNick(QString nick) {
+        m_opponentNick = std::move(nick);
     }
 
     QString getName() { return m_name; }
-    bool checkPswd(QString pswd){return m_pswd==pswd;}
-    bool hasOpponent(){return m_oponentSocket != nullptr;}
 
-    void add_oponent(QTcpSocket *oponentSocket) { m_oponentSocket = oponentSocket; }
+    bool checkPswd(const QString &pswd) { return m_pswd == pswd; }
 
-    QString getOpponentNick(QTcpSocket *requester){
-        if (requester->socketDescriptor() == m_hostSocket->socketDescriptor())
+    bool hasOpponent() const { return m_oponentSocketDescriptor != -1; }
+
+    void addOpponent(qintptr opponentSocketDescriptor, QString nick) {
+        m_oponentSocketDescriptor = opponentSocketDescriptor;
+        m_opponentNick = std::move(nick);
+    }
+
+    QString getOpponentNick(qintptr requesterSocketDescriptor) {
+        if (requesterSocketDescriptor == m_hostSocketDescriptor)
             return m_opponentNick;
         return m_hostNick;
     }
 
 };
-
-#pragma once

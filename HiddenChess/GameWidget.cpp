@@ -79,7 +79,7 @@ void GameWidget::startGame_slot() {
 }
 
 
-void GameWidget::setOpponentNick_slot(QString nick){
+void GameWidget::setOpponentNick_slot(const QString& nick){
     qDebug()<<nick;
     ui.opponentNickLineEdit->setText(nick);
 }
