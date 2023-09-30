@@ -24,7 +24,7 @@ enum serverResponseType {
 
 };
 
-class RoomsManager: QObject {
+class RoomsManager: public QObject {
     Q_OBJECT
 
     using RoomId = int;
@@ -36,7 +36,7 @@ class RoomsManager: QObject {
 
 
 public:
-    RoomsManager() {  }
+    explicit RoomsManager(QObject *parent = nullptr): QObject(parent) {  }
 
     void createRoom(const QString& roomName, const QString& pswd, QString hostNick, qintptr roomHostSocketDescriptor);
 
@@ -45,8 +45,6 @@ public:
     void tryJoinToRoom(const QString &roomName, QString roomPasswd, QString nick, qintptr socketDescriptor);
 
     RoomId getRoomId(const QString &roomName);
-
-    void sendOpponentNick(qintptr receiverSocketDescriptor, RoomId roomid);
 
 signals:
 
