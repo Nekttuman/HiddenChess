@@ -1,5 +1,7 @@
 #include "RoomsManager.h"
 
+#include <utility>
+
 
 void
 RoomsManager::createRoom(const QString &roomName, const QString &pswd, QString hostNick,
@@ -10,10 +12,10 @@ RoomsManager::createRoom(const QString &roomName, const QString &pswd, QString h
         return;
     }
     M_rooms[prevId] = new Room(roomHostSocketDescriptor, roomName, pswd);
-    M_rooms[prevId]->setHostNick(hostNick);
+    M_rooms[prevId]->setHostNick(std::move(hostNick));
 
 
-    qDebug() << "room created: " << roomName << pswd<<M_rooms[prevId]->getHostNick();
+    qDebug() << "room created: " << roomName << pswd << M_rooms[prevId]->getHostNick();
     ++prevId;
     sendResponse_signal(roomHostSocketDescriptor, serverResponseType::roomCreated, {});
 }
@@ -33,7 +35,7 @@ bool RoomsManager::isUniq(const QString &roomName) {
     return true;
 }
 
-void RoomsManager::tryJoinToRoom(const QString &roomName, QString roomPasswd, QString nick, qintptr socketDescriptor) {
+void RoomsManager::tryJoinToRoom(const QString &roomName, const QString& roomPasswd, QString nick, qintptr socketDescriptor) {
 
     // TODO: rewrite with serverResponseType::roomCreationErr and responceParams as describtion of err,
     //         or rewrite serverResponseType::roomCreationErr usage
@@ -55,8 +57,9 @@ void RoomsManager::tryJoinToRoom(const QString &roomName, QString roomPasswd, QS
 
     room->addOpponent(socketDescriptor, nick);
 
-    sendResponse_signal(socketDescriptor, serverResponseType::JoinedToRoom, {QString::number(roomId), room->getHostNick()});
-    qDebug() << "joined to" << roomId<<room->getHostNick();
+    sendResponse_signal(socketDescriptor, serverResponseType::JoinedToRoom,
+                        {QString::number(roomId), room->getHostNick()});
+    qDebug() << "joined to" << roomId << room->getHostNick();
 
     sendResponse_signal(room->getHostSocketDescriptor(), serverResponseType::OpponentNick, {std::move(nick)});
     sendResponse_signal(socketDescriptor, serverResponseType::OpponentNick, {room->getHostNick()});

@@ -18,7 +18,6 @@ enum clientRequestType {
 };
 
 
-
 class Server : public QTcpServer {
 Q_OBJECT
 
@@ -33,7 +32,7 @@ public:
     using RoomId = int;
 
 private:
-    QMap <qintptr,QTcpSocket*> m_sockets;
+    QMap<qintptr, QTcpSocket *> m_sockets;
     quint16 m_nextBlockSize = 0;
     QByteArray m_data;
 
@@ -45,7 +44,8 @@ public slots:
     void incomingConnection(qintptr socketDescriptor) override;
 
     void slotReadyRead();
-    void sendResponse_slot(qintptr socketDescriptor, serverResponseType rt, const QList<QString>& responseParams);
+
+    void sendResponse_slot(qintptr socketDescriptor, serverResponseType rt, const QList<QString> &responseParams);
 
 
 private slots:
