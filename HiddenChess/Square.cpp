@@ -3,6 +3,7 @@
 #include <qdebug.h>
 #include "MyFunc.h"
 #include "DnData.h";
+#include "qmath.h"
 
 
 Square::~Square() {}
@@ -93,8 +94,8 @@ void Square::dragEnterEvent(QDragEnterEvent* event) {
   if (Ffigure == nullptr) event->acceptProposedAction();
   else if (Ffigure->fColor == enemy)event->acceptProposedAction();
   else if (Ffigure->fColor == player) {
-    // Если фигура на клетке белая, игнорируем операцию drop и фигура остается на месте
-    event->setDropAction(Qt::IgnoreAction); // Установим флаг Qt::IgnoreAction
+   
+    event->setDropAction(Qt::IgnoreAction); 
     event->accept();
   }
 }
@@ -104,36 +105,51 @@ void Square::dropEvent(QDropEvent *event) {
 
     const QMimeData *mimeData = event->mimeData();
 
-    //mimeData->hasFormat("application/Figure")
-    if (Ffigure==nullptr) {
+    event->acceptProposedAction();
 
-        event->acceptProposedAction();
-      
-        QByteArray data = event->mimeData()->data("application/Figure");
+    QByteArray data = event->mimeData()->data("application/Figure");
+    DnData* dndata = deserialize(data);
 
-        DnData* dndata = deserialize(data);
+    if (dndata->Ffigure->figureType == king && dndata->Ffigure->FirstMoveDone == false 
+          && abs(dndata->prevPos.y() - y) == 2) {
+
+        if (dndata->prevPos.y() - y == 2) {
+          qDebug() << "rakirovka";
+          emit relocateLeftRook_signal(dndata->prevPos.x(), dndata->prevPos.y());
+        }
+        else {
+          qDebug() << "rakirovka";
+          emit relocateRightRook_signal(dndata->prevPos.x(), dndata->prevPos.y());
+        }
         Ffigure = dndata->Ffigure;
-
         ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::KeepAspectRatio));
+        Ffigure->FirstMoveDone = true;
+      
+
+    }
+
+    else if (Ffigure==nullptr) {
+
+
+
+       Ffigure = dndata->Ffigure;
+       ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::KeepAspectRatio));
+       Ffigure->FirstMoveDone = true;
+
 
 
     }
     else if (Ffigure->fColor == enemy) {
 
-      event->acceptProposedAction();
-
-      QByteArray data = event->mimeData()->data("application/Figure");
-
-      DnData* dndata = deserialize(data);
       Ffigure = dndata->Ffigure;
-
       ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::KeepAspectRatio));
+      Ffigure->FirstMoveDone = true;
 
     }
 
     if (Ffigure->fakeStatus==false && !Ffigure->availableMoves.contains(QPoint(x, y))) {
       Ffigure->fakeStatus = true;
-      qDebug() << "false";
+      qDebug() << "fake";
     }
     Ffigure->availableMoves.clear();
 }
@@ -206,4 +222,19 @@ void Square::hideSquare() {
 void Square::resizePicture() {
 
   if (Ffigure != nullptr) ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::IgnoreAspectRatio));
+}
+
+
+void Square::deleteFigure() {
+  Ffigure = nullptr;
+  ui.label->setPixmap(QPixmap(""));
+}
+
+
+void Square::placeFigure(Figure* figure) {
+
+  Ffigure = figure;
+  ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::IgnoreAspectRatio));
+
+
 }

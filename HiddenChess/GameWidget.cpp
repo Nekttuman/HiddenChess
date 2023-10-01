@@ -15,6 +15,8 @@ GameWidget::GameWidget(QWidget *parent)
             squares[i][j] = new Square(i, j, this);
             connect(squares[i][j], &Square::showMoves_signal, this, &GameWidget::showMoves_slot);
             connect(squares[i][j], &Square::hideMoves_signal, this, &GameWidget::hideMoves_slot);
+            connect(squares[i][j], &Square::relocateLeftRook_signal, this, &GameWidget::relocateLeftRook_slot);
+            connect(squares[i][j], &Square::relocateRightRook_signal, this, &GameWidget::relocateRightRook_slot);
         }
     }
 
@@ -145,17 +147,32 @@ void GameWidget::pawnAvailableMoves(Figure* figure, int x, int y) {
 void GameWidget::kingAvailableMoves(Figure* figure, int x, int y) {
 
   if (figure->FirstMoveDone == false) {
-    int i = x;
-    while (i < 8) {
-      if (squares[++i][y]->Ffigure != nullptr) {
-        if (squares[i][y]->Ffigure->figureType!= rook && squares[i][y]->Ffigure->fColor!=player) break;
-        if (squares[i][y]->Ffigure->FirstMoveDone == false) {
-          if(i<3)  figure->availableMoves.append({ x +1, y});
-          else  figure->availableMoves.append({ x + 2, y });
+    int i = y;
+    while (i < 7) {
+      if (squares[x][++i]->Ffigure != nullptr) {
+        if (squares[x][i]->Ffigure->figureType != rook && squares[x][i]->Ffigure->fColor != player) break;
+        if (squares[x][i]->Ffigure->FirstMoveDone == false) {
+          qDebug() << "rook";
+          if (i - y < 3)  figure->availableMoves.append({ x, y + 1 });
+          else  figure->availableMoves.append({ x, y + 2 });
 
         }
         else break;
       }
+    }
+
+      i = y;
+      while (i >0) {
+        if (squares[x][--i]->Ffigure != nullptr) {
+          if (squares[x][i]->Ffigure->figureType != rook && squares[x][i]->Ffigure->fColor != player) break;
+          if (squares[x][i]->Ffigure->FirstMoveDone == false) {
+            qDebug() << "rook";
+            if (y-i < 3)  figure->availableMoves.append({ x, y - 1 });
+            else  figure->availableMoves.append({ x, y - 2 });
+
+          }
+          else break;
+        }
 
 
 
@@ -170,6 +187,8 @@ void GameWidget::kingAvailableMoves(Figure* figure, int x, int y) {
         else if (squares[x - i][y - k]->Ffigure->fColor == enemy) figure->availableMoves.append({ x - i, y - k });
     }
   }
+
+
 }
 
 
@@ -284,6 +303,8 @@ void GameWidget::rookAvailableMoves(Figure* figure, int x, int y) {
 
 
 void GameWidget::knightAvailableMoves(Figure* figure, int x, int y) {
+
+
   for (int i = 0; i < 8; ++i) {
     int newX = x + knightMoves[i][0];
     int newY = y + knightMoves[i][1];
@@ -330,22 +351,9 @@ void GameWidget::bishopAvailableMoves(Figure* figure, int x, int y) {
 }
 
 
-//End Figures Moves#########################################################
+//End Figures Moves########################################################################
 
-
-void GameWidget::startGame_slot() {
-
-  setField();
-  setFigures();
-
-}
-
-
-void GameWidget::setOpponentNick_slot(QString nick) {
-  qDebug() << nick;
-  ui.opponentNickLineEdit->setText(nick);
-}
-
+//Slots####################################################################################
 
 void GameWidget::showMoves_slot(Figure* figure, int x, int y) {
 
@@ -370,6 +378,63 @@ void GameWidget::hideMoves_slot(Figure* figure, int x, int y) {
 
 }
 
+
+void GameWidget::relocateLeftRook_slot(int x, int y) {
+
+  int i = y;
+  while (true) {
+    --i;
+    if (squares[x][i]->Ffigure != nullptr && squares[x][i]->Ffigure->figureType == rook) break;
+  }
+
+  Figure* buffer = squares[x][i]->Ffigure;
+  squares[x][i]->deleteFigure();
+
+  if (y - i < 3) {
+    squares[x][y]->placeFigure(buffer);
+  }
+  else
+    squares[x][y-1]->placeFigure(buffer);
+}
+
+
+
+void GameWidget::relocateRightRook_slot(int x, int y) {
+
+  int i = y;
+  while (true) {
+    ++i;
+    if (squares[x][i]->Ffigure != nullptr && squares[x][i]->Ffigure->figureType == rook) break;
+
+
+  }
+  Figure* buffer = squares[x][i]->Ffigure;
+  squares[x][i]->deleteFigure();
+
+  if (i - y < 3) {
+    squares[x][y]->placeFigure(buffer);
+  }
+  else
+    squares[x][y+1]->placeFigure(buffer);
+
+}
+
+
+void GameWidget::startGame_slot() {
+
+  setField();
+  setFigures();
+
+}
+
+
+void GameWidget::setOpponentNick_slot(QString nick) {
+  qDebug() << nick;
+  ui.opponentNickLineEdit->setText(nick);
+}
+
+
+//End Slots################################################################################
 
 
 void GameWidget::resizeEvent(QResizeEvent* event) {

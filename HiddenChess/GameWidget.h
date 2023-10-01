@@ -48,6 +48,9 @@ public slots:
     void showMoves_slot(Figure *figure, int x, int y);
     void hideMoves_slot(Figure* figure, int x, int y);
 
+    void relocateLeftRook_slot(int x, int y);
+    void relocateRightRook_slot(int x, int y);
+
     void startGame_slot();
 
     void setOpponentNick_slot(QString);

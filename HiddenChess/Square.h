@@ -20,6 +20,8 @@ public:
     void lightSquare();
     void hideSquare();
     void resizePicture();
+    void deleteFigure();
+    void placeFigure(Figure* figure);
 
 public:
 
@@ -31,6 +33,9 @@ signals:
 
     void showMoves_signal(Figure *figure, int x, int y);
     void hideMoves_signal(Figure* figure, int x, int y);
+    void relocateLeftRook_signal(int x, int y);
+    void relocateRightRook_signal(int x, int y);
+
 
 private:
     Ui::SquareClass ui;
