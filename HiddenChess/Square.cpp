@@ -51,6 +51,7 @@ void Square::setFigureType(Ft figure_, Fc color_) {
 void Square::mousePressEvent(QMouseEvent *event) {
     
     if ((Ffigure != nullptr) && Ffigure->fColor==player) {
+      auto prevFigure = Ffigure;
 
         emit showMoves_signal(Ffigure, x, y);
 
@@ -72,15 +73,16 @@ void Square::mousePressEvent(QMouseEvent *event) {
         QPoint hotSpot = QPoint(image.size().width() / 2, image.size().height() / 2);
         drag->setHotSpot(hotSpot);
 
+        Ffigure = nullptr;
+
         Qt::DropAction dropAction = drag->exec();
 
         if (dropAction == Qt::IgnoreAction) {
-
+          Ffigure = prevFigure;
           ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::KeepAspectRatio));
         }
-        else Ffigure = nullptr;
 
-        emit hideMoves_signal(Ffigure, x, y);
+        emit hideMoves_signal();
         
     }
 
@@ -90,13 +92,7 @@ void Square::mousePressEvent(QMouseEvent *event) {
 void Square::dragEnterEvent(QDragEnterEvent* event) {
   const QMimeData* mimeData = event->mimeData();
 
-  if (Ffigure == nullptr) event->acceptProposedAction();
-  else if (Ffigure->fColor == enemy)event->acceptProposedAction();
-  else if (Ffigure->fColor == player) {
-    event->setDropAction(Qt::IgnoreAction); 
-    event->accept();
-  }
-  
+  event->acceptProposedAction();
 }
 
 
@@ -107,21 +103,18 @@ void Square::dropEvent(QDropEvent *event) {
     QByteArray data = event->mimeData()->data("application/Figure");
     DnData* dndata = deserialize(data);
 
-    if (dndata->Ffigure->figureType == king && dndata->Ffigure->FirstMoveDone == false 
-          && abs(dndata->prevPos.y() - y) == 2) {
-
-        if (dndata->prevPos.y() - y == 2) {
-          qDebug() << "rakirovka";
-          emit relocateLeftRook_signal(dndata->prevPos.x(), dndata->prevPos.y());
-        }
-        else {
-          qDebug() << "rakirovka";
-          emit relocateRightRook_signal(dndata->prevPos.x(), dndata->prevPos.y());
-        }
-        Ffigure = dndata->Ffigure;
-        ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::KeepAspectRatio));
-        Ffigure->FirstMoveDone = true;
-      
+    if (dndata->Ffigure->figureType == king && dndata->Ffigure->FirstMoveDone == false){
+        
+      emit relocateRook_signal(
+        dndata->prevPos.x(),
+        dndata->prevPos.y(), 
+        y > dndata->prevPos.y() ? 1 : -1,
+        event
+      );
+        
+      Ffigure = dndata->Ffigure;
+      ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::KeepAspectRatio));
+      Ffigure->FirstMoveDone = true;
 
     }
 
@@ -138,6 +131,12 @@ void Square::dropEvent(QDropEvent *event) {
       ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::KeepAspectRatio));
       Ffigure->FirstMoveDone = true;
 
+    }
+    else if (Ffigure != nullptr) {
+
+      event->setDropAction(Qt::IgnoreAction);
+      Ffigure->availableMoves.clear();
+      return;
     }
   
 

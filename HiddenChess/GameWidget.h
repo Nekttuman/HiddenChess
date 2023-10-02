@@ -46,10 +46,9 @@ private slots:
 public slots:
 
     void showMoves_slot(Figure *figure, int x, int y);
-    void hideMoves_slot(Figure* figure, int x, int y);
+    void hideMoves_slot();
 
-    void relocateLeftRook_slot(int x, int y);
-    void relocateRightRook_slot(int x, int y);
+    void relocateRook_slot(int x, int y, int direction, QDropEvent* event);
 
     void startGame_slot();
 

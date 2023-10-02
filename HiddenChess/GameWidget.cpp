@@ -15,8 +15,7 @@ GameWidget::GameWidget(QWidget *parent)
             squares[i][j] = new Square(i, j, this);
             connect(squares[i][j], &Square::showMoves_signal, this, &GameWidget::showMoves_slot);
             connect(squares[i][j], &Square::hideMoves_signal, this, &GameWidget::hideMoves_slot);
-            connect(squares[i][j], &Square::relocateLeftRook_signal, this, &GameWidget::relocateLeftRook_slot);
-            connect(squares[i][j], &Square::relocateRightRook_signal, this, &GameWidget::relocateRightRook_slot);
+            connect(squares[i][j], &Square::relocateRook_signal, this, &GameWidget::relocateRook_slot);
         }
     }
 
@@ -52,10 +51,10 @@ void GameWidget::setFigures() {
     squares[7][7]->setFigureType(rook, player);
     squares[7][1]->setFigureType(knight, player);
     squares[7][6]->setFigureType(knight, player);
-    squares[7][2]->setFigureType(bishop, player);
+    squares[7][4]->setFigureType(bishop, player);
     squares[7][5]->setFigureType(bishop, player);
     squares[7][3]->setFigureType(queen, player);
-    squares[7][4]->setFigureType(king, player);
+    squares[7][2]->setFigureType(king, player);
 
 
     for (int i = 0; i < 8; i++) {
@@ -366,7 +365,7 @@ void GameWidget::showMoves_slot(Figure* figure, int x, int y) {
 }
 
 
-void GameWidget::hideMoves_slot(Figure* figure, int x, int y) {
+void GameWidget::hideMoves_slot() {
 
   for (int i = 0; i < 8; ++i) {
     for (int j = 0; j < 8; ++j) {
@@ -379,44 +378,26 @@ void GameWidget::hideMoves_slot(Figure* figure, int x, int y) {
 }
 
 
-void GameWidget::relocateLeftRook_slot(int x, int y) {
+void GameWidget::relocateRook_slot(int x, int y, int direction, QDropEvent* event) {
 
   int i = y;
-  while (true) {
-    --i;
-    if (squares[x][i]->Ffigure != nullptr && squares[x][i]->Ffigure->figureType == rook) break;
-  }
+  while (i >= 0 && i < 8 && squares[x][i += direction]->Ffigure == nullptr) {}
 
   Figure* buffer = squares[x][i]->Ffigure;
-  squares[x][i]->deleteFigure();
+  
+  if (buffer->figureType == rook) {
+    squares[x][i]->deleteFigure();
 
-  if (y - i < 3) {
-    squares[x][y]->placeFigure(buffer);
+    if (abs(y - i) < 3) {
+      squares[x][y]->placeFigure(buffer);
+    }
+    else
+      squares[x][y + direction]->placeFigure(buffer);
+
+    return;
   }
-  else
-    squares[x][y-1]->placeFigure(buffer);
-}
 
-
-
-void GameWidget::relocateRightRook_slot(int x, int y) {
-
-  int i = y;
-  while (true) {
-    ++i;
-    if (squares[x][i]->Ffigure != nullptr && squares[x][i]->Ffigure->figureType == rook) break;
-
-
-  }
-  Figure* buffer = squares[x][i]->Ffigure;
-  squares[x][i]->deleteFigure();
-
-  if (i - y < 3) {
-    squares[x][y]->placeFigure(buffer);
-  }
-  else
-    squares[x][y+1]->placeFigure(buffer);
-
+  event->setDropAction(Qt::IgnoreAction);
 }
 
 

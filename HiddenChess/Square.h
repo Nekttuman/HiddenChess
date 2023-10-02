@@ -32,9 +32,8 @@ public:
 signals:
 
     void showMoves_signal(Figure *figure, int x, int y);
-    void hideMoves_signal(Figure* figure, int x, int y);
-    void relocateLeftRook_signal(int x, int y);
-    void relocateRightRook_signal(int x, int y);
+    void hideMoves_signal();
+    void relocateRook_signal(int x, int y, int direction, QDropEvent* event);
 
 
 private:
