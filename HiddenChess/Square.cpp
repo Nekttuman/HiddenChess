@@ -90,20 +90,17 @@ void Square::mousePressEvent(QMouseEvent *event) {
 void Square::dragEnterEvent(QDragEnterEvent* event) {
   const QMimeData* mimeData = event->mimeData();
 
-
   if (Ffigure == nullptr) event->acceptProposedAction();
   else if (Ffigure->fColor == enemy)event->acceptProposedAction();
   else if (Ffigure->fColor == player) {
-   
     event->setDropAction(Qt::IgnoreAction); 
     event->accept();
   }
+  
 }
 
 
 void Square::dropEvent(QDropEvent *event) {
-
-    const QMimeData *mimeData = event->mimeData();
 
     event->acceptProposedAction();
 
@@ -130,13 +127,9 @@ void Square::dropEvent(QDropEvent *event) {
 
     else if (Ffigure==nullptr) {
 
-
-
        Ffigure = dndata->Ffigure;
        ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::KeepAspectRatio));
        Ffigure->FirstMoveDone = true;
-
-
 
     }
     else if (Ffigure->fColor == enemy) {
@@ -146,6 +139,7 @@ void Square::dropEvent(QDropEvent *event) {
       Ffigure->FirstMoveDone = true;
 
     }
+  
 
     if (Ffigure->fakeStatus==false && !Ffigure->availableMoves.contains(QPoint(x, y))) {
       Ffigure->fakeStatus = true;
