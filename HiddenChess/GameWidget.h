@@ -48,7 +48,7 @@ public slots:
     void showMoves_slot(Figure *figure, int x, int y);
     void hideMoves_slot();
 
-    void relocateRook_slot(int x, int y, int direction, QDropEvent* event);
+    void relocateKingWRook_slot(int x, int y, int direction,Figure* king, QDropEvent* event);
 
     void startGame_slot();
 

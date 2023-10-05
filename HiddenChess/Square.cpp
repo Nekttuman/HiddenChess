@@ -103,18 +103,17 @@ void Square::dropEvent(QDropEvent *event) {
     QByteArray data = event->mimeData()->data("application/Figure");
     DnData* dndata = deserialize(data);
 
-    if (dndata->Ffigure->figureType == king && dndata->Ffigure->FirstMoveDone == false){
+    if (dndata->Ffigure->figureType == king && dndata->Ffigure->FirstMoveDone == false &&
+        (abs(y-dndata->prevPos.y()==2 )||(Ffigure!=nullptr && Ffigure->figureType==rook))){
         
-      emit relocateRook_signal(
+      emit relocateKingWRook_signal(
         dndata->prevPos.x(),
         dndata->prevPos.y(), 
         y > dndata->prevPos.y() ? 1 : -1,
+        dndata->Ffigure,
         event
       );
-        
-      Ffigure = dndata->Ffigure;
-      ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::KeepAspectRatio));
-      Ffigure->FirstMoveDone = true;
+      return;
 
     }
 
@@ -227,6 +226,7 @@ void Square::deleteFigure() {
 void Square::placeFigure(Figure* figure) {
 
   Ffigure = figure;
+  qDebug() << Ffigure->figureType;
   ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::IgnoreAspectRatio));
 
 

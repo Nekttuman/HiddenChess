@@ -15,7 +15,7 @@ GameWidget::GameWidget(QWidget *parent)
             squares[i][j] = new Square(i, j, this);
             connect(squares[i][j], &Square::showMoves_signal, this, &GameWidget::showMoves_slot);
             connect(squares[i][j], &Square::hideMoves_signal, this, &GameWidget::hideMoves_slot);
-            connect(squares[i][j], &Square::relocateRook_signal, this, &GameWidget::relocateRook_slot);
+            connect(squares[i][j], &Square::relocateKingWRook_signal, this, &GameWidget::relocateKingWRook_slot);
         }
     }
 
@@ -138,7 +138,7 @@ void GameWidget::pawnAvailableMoves(Figure* figure, int x, int y) {
     }
     else return;
 
-  if (x == 6 && squares[x - 2][y]->Ffigure == nullptr) figure->availableMoves.append({ x - 2, y }); //два шага (первый ход)
+  if (x > 5 && squares[x - 2][y]->Ffigure == nullptr) figure->availableMoves.append({ x - 2, y }); //два шага (первый ход)
 
 }
 
@@ -378,7 +378,7 @@ void GameWidget::hideMoves_slot() {
 }
 
 
-void GameWidget::relocateRook_slot(int x, int y, int direction, QDropEvent* event) {
+void GameWidget::relocateKingWRook_slot(int x, int y, int direction,Figure* king, QDropEvent* event) {
 
   int i = y;
   while (i >= 0 && i < 8 && squares[x][i += direction]->Ffigure == nullptr) {}
@@ -390,9 +390,14 @@ void GameWidget::relocateRook_slot(int x, int y, int direction, QDropEvent* even
 
     if (abs(y - i) < 3) {
       squares[x][y]->placeFigure(buffer);
+      squares[x][y + direction]->placeFigure(king);
     }
-    else
+    else {
       squares[x][y + direction]->placeFigure(buffer);
+      squares[x][y + direction * 2]->placeFigure(king);
+    }
+    buffer->FirstMoveDone = true;
+    king->FirstMoveDone = true;
 
     return;
   }

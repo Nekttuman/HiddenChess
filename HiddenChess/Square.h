@@ -33,7 +33,7 @@ signals:
 
     void showMoves_signal(Figure *figure, int x, int y);
     void hideMoves_signal();
-    void relocateRook_signal(int x, int y, int direction, QDropEvent* event);
+    void relocateKingWRook_signal(int x, int y, int direction,Figure* king, QDropEvent* event);
 
 
 private:
