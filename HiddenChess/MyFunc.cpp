@@ -20,6 +20,9 @@ Figure::Figure(Ft figure_, Fc fcolor_) {
     fakeStatus = false;
     figureImage = FigureImages[{figure_, fcolor_}];
 
+    if (figureType != king && figureType != rook) FirstMoveDone = true;
+    else FirstMoveDone = false;
+
 };
 
 

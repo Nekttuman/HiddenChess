@@ -6,15 +6,9 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>974</width>
-    <height>591</height>
+    <width>966</width>
+    <height>630</height>
    </rect>
-  </property>
-  <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-    <horstretch>0</horstretch>
-    <verstretch>0</verstretch>
-   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>GameWidget</string>
@@ -22,94 +16,77 @@
   <property name="styleSheet">
    <string notr="true">background-color: white;</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
-   <item row="0" column="0" rowspan="2">
-    <widget class="QPushButton" name="surrenderButton_2">
+  <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0,0" columnstretch="3,0,0,0,0,0,0,0">
+   <item row="0" column="7">
+    <layout class="QGridLayout" name="gridLayout_3">
+     <item row="0" column="1">
+      <widget class="QLabel" name="hostNickLineEdit">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLabel" name="opponentNickLineEdit">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Opponent:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Your nickname:</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="1" column="7" rowspan="4">
+    <widget class="ChatWidget" name="widget" native="true">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="text">
-      <string>Ready</string>
+     <property name="minimumSize">
+      <size>
+       <width>300</width>
+       <height>0</height>
+      </size>
      </property>
     </widget>
    </item>
-   <item row="0" column="1" rowspan="2">
-    <widget class="QPushButton" name="startButton">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string>start</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="2" rowspan="2">
+   <item row="0" column="2">
     <widget class="QPushButton" name="surrenderButton">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
      <property name="text">
       <string>Surrender</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="4">
-    <widget class="QLabel" name="label">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
+   <item row="0" column="1">
+    <widget class="QPushButton" name="startButton">
      <property name="text">
-      <string>Your nickname:</string>
+      <string>start</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="5">
-    <widget class="QLabel" name="hostNickLineEdit">
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="4">
-    <widget class="QLabel" name="label_2">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string>Opponent:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="5">
-    <widget class="QLabel" name="opponentNickLineEdit">
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0" colspan="3">
+   <item row="1" column="0" rowspan="4" colspan="5">
     <layout class="QGridLayout" name="gridLayout">
      <property name="sizeConstraint">
       <enum>QLayout::SetDefaultConstraint</enum>
      </property>
     </layout>
    </item>
-   <item row="2" column="3">
+   <item row="0" column="6" rowspan="5">
     <layout class="QVBoxLayout" name="spacinglayout">
      <item>
       <widget class="QLabel" name="label_3">
@@ -126,19 +103,10 @@
      </item>
     </layout>
    </item>
-   <item row="2" column="4" colspan="2">
-    <widget class="ChatWidget" name="widget" native="true">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>300</width>
-       <height>0</height>
-      </size>
+   <item row="0" column="0">
+    <widget class="QPushButton" name="surrenderButton_2">
+     <property name="text">
+      <string>Ready</string>
      </property>
     </widget>
    </item>
