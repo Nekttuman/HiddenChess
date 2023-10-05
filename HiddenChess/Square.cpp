@@ -3,7 +3,6 @@
 #include <qdebug.h>
 #include "MyFunc.h"
 #include "DnData.h";
-#include "qmath.h"
 
 
 Square::~Square() {}
@@ -51,7 +50,6 @@ void Square::setFigureType(Ft figure_, Fc color_) {
 void Square::mousePressEvent(QMouseEvent *event) {
     
     if ((Ffigure != nullptr) && Ffigure->fColor==player) {
-      auto prevFigure = Ffigure;
 
         emit showMoves_signal(Ffigure, x, y);
 
@@ -73,16 +71,15 @@ void Square::mousePressEvent(QMouseEvent *event) {
         QPoint hotSpot = QPoint(image.size().width() / 2, image.size().height() / 2);
         drag->setHotSpot(hotSpot);
 
-        Ffigure = nullptr;
-
         Qt::DropAction dropAction = drag->exec();
 
         if (dropAction == Qt::IgnoreAction) {
-          Ffigure = prevFigure;
+
           ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::KeepAspectRatio));
         }
+        else Ffigure = nullptr;
 
-        emit hideMoves_signal();
+        emit hideMoves_signal(Ffigure, x, y);
         
     }
 
@@ -92,56 +89,51 @@ void Square::mousePressEvent(QMouseEvent *event) {
 void Square::dragEnterEvent(QDragEnterEvent* event) {
   const QMimeData* mimeData = event->mimeData();
 
-  event->acceptProposedAction();
+
+  if (Ffigure == nullptr) event->acceptProposedAction();
+  else if (Ffigure->fColor == enemy)event->acceptProposedAction();
+  else if (Ffigure->fColor == player) {
+    // Если фигура на клетке белая, игнорируем операцию drop и фигура остается на месте
+    event->setDropAction(Qt::IgnoreAction); // Установим флаг Qt::IgnoreAction
+    event->accept();
+  }
 }
 
 
 void Square::dropEvent(QDropEvent *event) {
 
-    event->acceptProposedAction();
+    const QMimeData *mimeData = event->mimeData();
 
-    QByteArray data = event->mimeData()->data("application/Figure");
-    DnData* dndata = deserialize(data);
+    //mimeData->hasFormat("application/Figure")
+    if (Ffigure==nullptr) {
 
-    if (dndata->Ffigure->figureType == king && dndata->Ffigure->FirstMoveDone == false &&
-        (abs(y-dndata->prevPos.y()==2 )||(Ffigure!=nullptr && Ffigure->figureType==rook))){
-        
-      emit relocateKingWRook_signal(
-        dndata->prevPos.x(),
-        dndata->prevPos.y(), 
-        y > dndata->prevPos.y() ? 1 : -1,
-        dndata->Ffigure,
-        event
-      );
-      return;
+        event->acceptProposedAction();
+      
+        QByteArray data = event->mimeData()->data("application/Figure");
 
-    }
+        DnData* dndata = deserialize(data);
+        Ffigure = dndata->Ffigure;
 
-    else if (Ffigure==nullptr) {
+        ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::KeepAspectRatio));
 
-       Ffigure = dndata->Ffigure;
-       ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::KeepAspectRatio));
-       Ffigure->FirstMoveDone = true;
 
     }
     else if (Ffigure->fColor == enemy) {
 
+      event->acceptProposedAction();
+
+      QByteArray data = event->mimeData()->data("application/Figure");
+
+      DnData* dndata = deserialize(data);
       Ffigure = dndata->Ffigure;
+
       ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::KeepAspectRatio));
-      Ffigure->FirstMoveDone = true;
 
     }
-    else if (Ffigure != nullptr) {
-
-      event->setDropAction(Qt::IgnoreAction);
-      Ffigure->availableMoves.clear();
-      return;
-    }
-  
 
     if (Ffigure->fakeStatus==false && !Ffigure->availableMoves.contains(QPoint(x, y))) {
       Ffigure->fakeStatus = true;
-      qDebug() << "fake";
+      qDebug() << "false";
     }
     Ffigure->availableMoves.clear();
 }
@@ -214,20 +206,4 @@ void Square::hideSquare() {
 void Square::resizePicture() {
 
   if (Ffigure != nullptr) ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::IgnoreAspectRatio));
-}
-
-
-void Square::deleteFigure() {
-  Ffigure = nullptr;
-  ui.label->setPixmap(QPixmap(""));
-}
-
-
-void Square::placeFigure(Figure* figure) {
-
-  Ffigure = figure;
-  qDebug() << Ffigure->figureType;
-  ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::IgnoreAspectRatio));
-
-
 }
