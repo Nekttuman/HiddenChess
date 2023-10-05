@@ -5,7 +5,8 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 
-#include "Room.h"
+#include "RoomsManager.h"
+
 
 enum clientRequestType {
     createRoom,
@@ -13,33 +14,13 @@ enum clientRequestType {
     move,
     surrenderCommand,
     checkRoomNameUniq,
-    tryJoiningToRoom,
-    getOpponentNick
+    tryJoiningToRoom
 };
 
-enum serverResponseType {
-    roomNameCheckFailed,
-    roomNameCheckPassed,
-    roomCreated,
-    roomCreationErr,
 
-    JoiningErrNoRoom,
-    JoiningErrWrongPswd,
-    JoiningErrRoomFull,
-    JoinedToRoom,
-    OpponentNick,
-
-};
 class Server : public QTcpServer {
 Q_OBJECT
-// TODO: create roomManager, in server create func
-//  sendResponce(serverResponseType rt, QList<QString> responseParams)
-//  and send everything throw it
-//  getRequest(clientRequestType rt, QList<QString> requestParams) analogically
-//  and have one instance of roomManager in server
 
-
-    int prevId = 0;
 public:
     Server();
 
@@ -47,29 +28,25 @@ public:
 
     QTcpSocket *socket;
 
+
+    using RoomId = int;
+
 private:
-    QVector<QTcpSocket *> m_sockets;
+    QMap<qintptr, QTcpSocket *> m_sockets;
     quint16 m_nextBlockSize = 0;
     QByteArray m_data;
 
+    RoomsManager *roomsManager;
 
-    using roomId = int;
-
-    QMap<roomId, Room*> M_rooms;
-
-    void createRoom(QString roomName, QString pswd, QString hostNick, QTcpSocket *sender);
-    void sendNick(const QString& nick, QTcpSocket * receiver);
-
-    void checkRoomNameUniq(QString name, QTcpSocket *sender);
-    bool isUniq(const QString& roomName) ;
-    void tryJoinToRoom(const QString &roomName, QString roomPasswd, QString nick, QTcpSocket *receiver);
-    roomId getRoomId(const QString& roomName);
 
 public slots:
 
     void incomingConnection(qintptr socketDescriptor) override;
 
     void slotReadyRead();
+
+    void sendResponse_slot(qintptr socketDescriptor, serverResponseType rt, const QList<QString> &responseParams);
+
 
 private slots:
 
