@@ -46,13 +46,11 @@ private slots:
 public slots:
 
     void showMoves_slot(Figure *figure, int x, int y);
-    void hideMoves_slot();
-
-    void relocateKingWRook_slot(int x, int y, int direction,Figure* king, QDropEvent* event);
+    void hideMoves_slot(Figure* figure, int x, int y);
 
     void startGame_slot();
 
-    void setOpponentNick_slot(QString);
+    void setOpponentNick_slot(const QString&);
     void setHostNick_slot(QString nick){
         ui.hostNickLineEdit->setText(nick);
     }

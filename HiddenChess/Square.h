@@ -20,8 +20,6 @@ public:
     void lightSquare();
     void hideSquare();
     void resizePicture();
-    void deleteFigure();
-    void placeFigure(Figure* figure);
 
 public:
 
@@ -32,9 +30,7 @@ public:
 signals:
 
     void showMoves_signal(Figure *figure, int x, int y);
-    void hideMoves_signal();
-    void relocateKingWRook_signal(int x, int y, int direction,Figure* king, QDropEvent* event);
-
+    void hideMoves_signal(Figure* figure, int x, int y);
 
 private:
     Ui::SquareClass ui;
