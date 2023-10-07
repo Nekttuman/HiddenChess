@@ -63,6 +63,11 @@ public:
 
     bool FirstMoveDone;
 
+    ~Figure(){
+
+      qDebug() << "ia umer";
+    }
+
 private:
 
 

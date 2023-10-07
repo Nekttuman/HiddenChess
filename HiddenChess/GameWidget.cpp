@@ -15,7 +15,7 @@ GameWidget::GameWidget(QWidget *parent)
             squares[i][j] = new Square(i, j, this);
             connect(squares[i][j], &Square::showMoves_signal, this, &GameWidget::showMoves_slot);
             connect(squares[i][j], &Square::hideMoves_signal, this, &GameWidget::hideMoves_slot);
-            connect(squares[i][j], &Square::relocateKingWRook_signal, this, &GameWidget::relocateKingWRook_slot);
+            connect(squares[i][j], &Square::moveRequest_signal, this, &GameWidget::moveRequest_slot);
         }
     }
 
@@ -151,7 +151,6 @@ void GameWidget::kingAvailableMoves(Figure* figure, int x, int y) {
       if (squares[x][++i]->Ffigure != nullptr) {
         if (squares[x][i]->Ffigure->figureType != rook && squares[x][i]->Ffigure->fColor != player) break;
         if (squares[x][i]->Ffigure->FirstMoveDone == false) {
-          qDebug() << "rook";
           if (i - y < 3)  figure->availableMoves.append({ x, y + 1 });
           else  figure->availableMoves.append({ x, y + 2 });
 
@@ -165,7 +164,6 @@ void GameWidget::kingAvailableMoves(Figure* figure, int x, int y) {
         if (squares[x][--i]->Ffigure != nullptr) {
           if (squares[x][i]->Ffigure->figureType != rook && squares[x][i]->Ffigure->fColor != player) break;
           if (squares[x][i]->Ffigure->FirstMoveDone == false) {
-            qDebug() << "rook";
             if (y-i < 3)  figure->availableMoves.append({ x, y - 1 });
             else  figure->availableMoves.append({ x, y - 2 });
 
@@ -366,35 +364,32 @@ void GameWidget::showMoves_slot(Figure* figure, int x, int y) {
 
 
 void GameWidget::hideMoves_slot() {
-
   for (int i = 0; i < 8; ++i) {
     for (int j = 0; j < 8; ++j) {
-
       squares[i][j]->hideSquare();
-
     }
   }
-
 }
 
 
-void GameWidget::relocateKingWRook_slot(int x, int y, int direction,Figure* king, QDropEvent* event) {
+void GameWidget::relocateKingWRook(int prevX, int prevY, int direction,Figure* king, QDropEvent* event) {
 
-  int i = y;
-  while (i >= 0 && i < 8 && squares[x][i += direction]->Ffigure == nullptr) {}
+  int i = prevY;
+  while (i >= 0 && i < 8 && squares[prevX][i += direction]->Ffigure == nullptr) {}
 
-  Figure* buffer = squares[x][i]->Ffigure;
+  Figure* buffer = squares[prevX][i]->Ffigure;
   
   if (buffer->figureType == rook) {
-    squares[x][i]->deleteFigure();
+    squares[prevX][i]->removeFigure();
 
-    if (abs(y - i) < 3) {
-      squares[x][y]->placeFigure(buffer);
-      squares[x][y + direction]->placeFigure(king);
+    if (abs(prevY - i) < 3) {
+      squares[prevX][prevY]->placeFigure(buffer);
+      squares[prevX][prevY + direction]->placeFigure(king);
     }
     else {
-      squares[x][y + direction]->placeFigure(buffer);
-      squares[x][y + direction * 2]->placeFigure(king);
+      squares[prevX][prevY + direction]->placeFigure(buffer);
+      squares[prevX][prevY + direction * 2]->placeFigure(king);
+      squares[prevX][prevY]->removeFigure();
     }
     buffer->FirstMoveDone = true;
     king->FirstMoveDone = true;
@@ -429,13 +424,8 @@ void GameWidget::resizeEvent(QResizeEvent* event) {
   int width = widgetSize.width();
   int height = widgetSize.height();
   int minSize = (width < height) ? width : height;
-  //int buttonsHeight = ui.surrenderButton->size().height();
   
   ui.gridLayout->setGeometry(QRect(widgetSize.topLeft(), QSize(minSize,minSize)));
-  
-  //ui.surrenderButton->setMaximumSize(minSize,buttonsHeight);
-  //ui.surrenderButton_2->setMaximumSize(minSize, buttonsHeight);
-  //ui.startButton->setMaximumSize(minSize, buttonsHeight);
   
   QWidget::resizeEvent(event);
 
@@ -446,3 +436,45 @@ void GameWidget::resizeEvent(QResizeEvent* event) {
   }
 }
 
+void GameWidget::moveRequest_slot(int prevX, int prevY, int x, int y, QDropEvent* event) {
+
+  Figure* prevFigure = squares[prevX][prevY]->Ffigure;
+
+  if (prevFigure->figureType == king && prevFigure->FirstMoveDone == false &&
+      (abs(y-prevY==2 )||(squares[x][y]->Ffigure!=nullptr &&
+        squares[x][y]->Ffigure->figureType==rook))){
+            
+    relocateKingWRook(prevX, prevY, y > prevY ? 1 : -1, prevFigure, event);
+    
+  }
+    
+
+  else if ((x!=prevX || y!=prevY) && squares[x][y]->Ffigure == nullptr) {
+    
+    squares[x][y]->placeFigure(prevFigure);
+    squares[prevX][prevY]->removeFigure();
+  
+  }
+  else if (squares[x][y]->Ffigure->fColor == enemy) {
+
+    squares[x][y]->placeFigure(prevFigure);
+    squares[prevX][prevY]->removeFigure();
+
+  }
+  else  {
+    
+    event->setDropAction(Qt::IgnoreAction);
+    return;
+  }
+
+
+
+
+  if (prevFigure->fakeStatus == false && !prevFigure->availableMoves.contains(QPoint(x, y))) {
+    prevFigure->fakeStatus = true;
+    qDebug() << "fake";
+  }
+
+
+
+}

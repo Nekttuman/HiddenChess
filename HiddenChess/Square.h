@@ -5,7 +5,7 @@
 #include <qlabel.h>
 #include "ui_Square.h"
 #include "MyFunc.h"
-#include "DnData.h"
+
 
 
 class Square : public QWidget {
@@ -22,6 +22,8 @@ public:
     void resizePicture();
     void deleteFigure();
     void placeFigure(Figure* figure);
+    void removeFigure();
+
 
 public:
 
@@ -33,20 +35,16 @@ signals:
 
     void showMoves_signal(Figure *figure, int x, int y);
     void hideMoves_signal();
-    void relocateKingWRook_signal(int x, int y, int direction,Figure* king, QDropEvent* event);
-
+    void moveRequest_signal(int prevX, int prevY, int x, int y, QDropEvent* event);
 
 private:
     Ui::SquareClass ui;
-
-    QByteArray serialize(DnData* dndata);
-    DnData *deserialize(QByteArray data);
 
 
 protected:
 
     void paintEvent(QPaintEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
+    void dragEnterEvent(QDragEnterEvent *event) override; 
     void dropEvent(QDropEvent *event) override;
-    void dragEnterEvent(QDragEnterEvent *event) override;
 };

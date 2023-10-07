@@ -2,7 +2,6 @@
 #include <qpainter.h>
 #include <qdebug.h>
 #include "MyFunc.h"
-#include "DnData.h";
 #include "qmath.h"
 
 
@@ -45,132 +44,6 @@ void Square::setFigureType(Ft figure_, Fc color_) {
     
 
     ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::IgnoreAspectRatio));
-}
-
-
-void Square::mousePressEvent(QMouseEvent *event) {
-    
-    if ((Ffigure != nullptr) && Ffigure->fColor==player) {
-      auto prevFigure = Ffigure;
-
-        emit showMoves_signal(Ffigure, x, y);
-
-        ui.label->setPixmap(QPixmap());
-
-        DnData dndata = DnData(Ffigure, x, y);
-
-        QDrag *drag = new QDrag(this);
-        QMimeData *mimeData = new QMimeData;
-        QByteArray data = serialize(&dndata);
-
-
-        mimeData->setData("application/Figure", data);
-        drag->setMimeData(mimeData);
-
-        auto image = QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::KeepAspectRatio);
-        drag->setPixmap(image);
-
-        QPoint hotSpot = QPoint(image.size().width() / 2, image.size().height() / 2);
-        drag->setHotSpot(hotSpot);
-
-        Ffigure = nullptr;
-
-        Qt::DropAction dropAction = drag->exec();
-
-        if (dropAction == Qt::IgnoreAction) {
-          Ffigure = prevFigure;
-          ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::KeepAspectRatio));
-        }
-
-        emit hideMoves_signal();
-        
-    }
-
-}
-
-
-void Square::dragEnterEvent(QDragEnterEvent* event) {
-  const QMimeData* mimeData = event->mimeData();
-
-  event->acceptProposedAction();
-}
-
-
-void Square::dropEvent(QDropEvent *event) {
-
-    event->acceptProposedAction();
-
-    QByteArray data = event->mimeData()->data("application/Figure");
-    DnData* dndata = deserialize(data);
-
-    if (dndata->Ffigure->figureType == king && dndata->Ffigure->FirstMoveDone == false &&
-        (abs(y-dndata->prevPos.y()==2 )||(Ffigure!=nullptr && Ffigure->figureType==rook))){
-        
-      emit relocateKingWRook_signal(
-        dndata->prevPos.x(),
-        dndata->prevPos.y(), 
-        y > dndata->prevPos.y() ? 1 : -1,
-        dndata->Ffigure,
-        event
-      );
-      return;
-
-    }
-
-    else if (Ffigure==nullptr) {
-
-       Ffigure = dndata->Ffigure;
-       ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::KeepAspectRatio));
-       Ffigure->FirstMoveDone = true;
-
-    }
-    else if (Ffigure->fColor == enemy) {
-
-      Ffigure = dndata->Ffigure;
-      ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::KeepAspectRatio));
-      Ffigure->FirstMoveDone = true;
-
-    }
-    else if (Ffigure != nullptr) {
-
-      event->setDropAction(Qt::IgnoreAction);
-      Ffigure->availableMoves.clear();
-      return;
-    }
-  
-
-    if (Ffigure->fakeStatus==false && !Ffigure->availableMoves.contains(QPoint(x, y))) {
-      Ffigure->fakeStatus = true;
-      qDebug() << "fake";
-    }
-    Ffigure->availableMoves.clear();
-}
-
-
-QByteArray Square::serialize(DnData* dndata) {
-
-    QByteArray data;
-    QDataStream stream(&data, QIODevice::WriteOnly);
-    qintptr objAddress = reinterpret_cast<qintptr>(dndata);
-
-    stream << objAddress;
-
-    return data;
-}
-
-
-DnData *Square::deserialize(QByteArray data) {
-
-    QDataStream stream(data);
-    qintptr objAdress;
-
-    stream >> objAdress;
-
-
-    DnData* obj = reinterpret_cast<DnData*>(objAdress);
-
-    return obj;
-
 }
 
 
@@ -218,6 +91,15 @@ void Square::resizePicture() {
 
 
 void Square::deleteFigure() {
+  if (Ffigure != nullptr) {
+    delete Ffigure;
+    Ffigure = nullptr;
+  }
+  ui.label->setPixmap(QPixmap(""));
+}
+
+
+void Square::removeFigure() {
   Ffigure = nullptr;
   ui.label->setPixmap(QPixmap(""));
 }
@@ -226,8 +108,77 @@ void Square::deleteFigure() {
 void Square::placeFigure(Figure* figure) {
 
   Ffigure = figure;
-  qDebug() << Ffigure->figureType;
+  Ffigure->FirstMoveDone = true;
   ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::IgnoreAspectRatio));
+  
+
+}
+
+
+void Square::mousePressEvent(QMouseEvent* event) {
+
+  if ((Ffigure != nullptr) && Ffigure->fColor == player) {
+
+    emit showMoves_signal(Ffigure, x, y);
+
+    ui.label->setPixmap(QPixmap());
+
+
+    QDrag* drag = new QDrag(this);
+
+    QMimeData* mimeData = new QMimeData;
+
+    QByteArray data;
+    QDataStream dataStream(&data, QIODevice::WriteOnly);
+    dataStream << x << y;
+
+    mimeData->setData("application/Move", data);
+
+    drag->setMimeData(mimeData);
+
+
+
+    auto image = QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::KeepAspectRatio);
+    drag->setPixmap(image);
+
+    QPoint hotSpot = QPoint(image.size().width() / 2, image.size().height() / 2);
+    drag->setHotSpot(hotSpot);
+
+    Qt::DropAction dropAction = drag->exec();
+
+
+    if (dropAction == Qt::IgnoreAction) {
+      qDebug() << "ignoreAction";
+      ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::KeepAspectRatio));
+    }
+      
+     emit hideMoves_signal();
+
+  }
+
+}
+
+
+void Square::dragEnterEvent(QDragEnterEvent* event) {
+  const QMimeData* mimeData = event->mimeData();
+
+  event->acceptProposedAction();
+}
+
+
+void Square::dropEvent(QDropEvent* event) {
+
+  int prevX, prevY;
+  event->acceptProposedAction();
+  QByteArray data = event->mimeData()->data("application/Move");
+
+  QDataStream dataStream(&data, QIODevice::ReadOnly);
+  dataStream >> prevX >> prevY;
+
+  qDebug() <<"from"<<QString::number(prevX)<<QString::number(prevY)<<"to"
+    <<QString::number(x)<<QString::number(y);
+
+  emit moveRequest_signal(prevX, prevY, x, y, event);
 
 
 }
