@@ -13,15 +13,15 @@ void showCursorMe() {
 }
 
 
-Figure::Figure(Ft figure_, Fc fcolor_) {
+Figure::Figure(Ft figure_, PlayerType type, Fc color) {
 
     figureType = figure_;
-    fColor = fcolor_;
+    playerType = type;
     fakeStatus = false;
-    figureImage = FigureImages[{figure_, fcolor_}];
+    figureImage = FigureImages[{figure_, color}];
 
-    if (figureType != king && figureType != rook) FirstMoveDone = true;
-    else FirstMoveDone = false;
+    if (figureType == king || figureType == rook) FirstMoveDone = false;
+    else FirstMoveDone = true;
 
 };
 

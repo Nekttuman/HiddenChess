@@ -38,9 +38,9 @@ void Square::paintEvent(QPaintEvent *event) {
 };
 
 
-void Square::setFigureType(Ft figure_, Fc color_) {
+void Square::setFigureType(Ft figure_, PlayerType type, Fc color) {
 
-    Ffigure = new Figure(figure_, color_);
+    Ffigure = new Figure(figure_, type, color );
     
 
     ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::IgnoreAspectRatio));
@@ -117,7 +117,7 @@ void Square::placeFigure(Figure* figure) {
 
 void Square::mousePressEvent(QMouseEvent* event) {
 
-  if ((Ffigure != nullptr) && Ffigure->fColor == player) {
+  if ((Ffigure != nullptr) && Ffigure->playerType == player) {
 
     emit showMoves_signal(Ffigure, x, y);
 

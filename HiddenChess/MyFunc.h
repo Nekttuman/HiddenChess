@@ -26,26 +26,30 @@ enum Ft {
     knight,
     bishop
 };
-enum Fc {
+enum PlayerType {
     player, enemy
+};
+
+enum Fc {
+  white, black
 };
 
 typedef std::tuple<Ft, Fc> TwoKey;
 typedef QList<QList<int>> TwoDimIntArray;
 
 const QMap<TwoKey, QString> FigureImages = 
-{{{pawn,   player}, (":/HiddenChess/Figures/Wp.png")},
-{{pawn,   enemy}, (":/HiddenChess/Figures/Bp.png")},
-{{king,   player}, (":/HiddenChess/Figures/Wk.png")},
-{{king,   enemy}, (":/HiddenChess/Figures/Bk.png")},
-{{queen,  player}, (":/HiddenChess/Figures/Wq.png")},
-{{queen,  enemy}, (":/HiddenChess/Figures/Bq.png")},
-{{rook,   player}, (":/HiddenChess/Figures/Wr.png")},
-{{rook,   enemy}, (":/HiddenChess/Figures/Br.png")},
-{{knight, player}, (":/HiddenChess/Figures/Wn.png")},
-{{knight, enemy}, (":/HiddenChess/Figures/Bn.png")},
-{{bishop, player}, (":/HiddenChess/Figures/Wb.png")},
-{{bishop, enemy}, (":/HiddenChess/Figures/Bb.png")}
+{{{pawn,   white}, (":/HiddenChess/Figures/Wp.png")},
+{{pawn,   black}, (":/HiddenChess/Figures/Bp.png")},
+{{king,   white}, (":/HiddenChess/Figures/Wk.png")},
+{{king,   black}, (":/HiddenChess/Figures/Bk.png")},
+{{queen,  white}, (":/HiddenChess/Figures/Wq.png")},
+{{queen,  black}, (":/HiddenChess/Figures/Bq.png")},
+{{rook,   white}, (":/HiddenChess/Figures/Wr.png")},
+{{rook,   black}, (":/HiddenChess/Figures/Br.png")},
+{{knight, white}, (":/HiddenChess/Figures/Wn.png")},
+{{knight, black}, (":/HiddenChess/Figures/Bn.png")},
+{{bishop, white}, (":/HiddenChess/Figures/Wb.png")},
+{{bishop, black}, (":/HiddenChess/Figures/Bb.png")}
 };
 
 
@@ -54,12 +58,12 @@ class Figure {
 public:
 
     Ft figureType;
-    Fc fColor;
+    PlayerType playerType;
     QString figureImage = "";
     bool fakeStatus;
     QList<QPoint> availableMoves;
 
-    Figure(Ft figure_, Fc fcolor_);
+    Figure(Ft figure_, PlayerType fcolor_, Fc color_);
 
     bool FirstMoveDone;
 

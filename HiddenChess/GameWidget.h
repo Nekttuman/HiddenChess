@@ -22,7 +22,7 @@ private:
 
     void setField();
 
-    void setFigures();
+    void setFigures(Fc playerColor, Fc enemyColor);
 
     void setEnabledMoves(Figure* figure, int x, int y);
 

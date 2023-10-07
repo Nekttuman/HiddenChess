@@ -41,34 +41,34 @@ void GameWidget::setField() {
 
 }
 
-void GameWidget::setFigures() {
+void GameWidget::setFigures(Fc playerColor, Fc enemyColor) {
 
     for (int i = 0; i < 8; i++) {
 
-        squares[6][i]->setFigureType(pawn, player);
+        squares[6][i]->setFigureType(pawn, player, playerColor);
     }
-    squares[7][0]->setFigureType(rook, player);
-    squares[7][7]->setFigureType(rook, player);
-    squares[7][1]->setFigureType(knight, player);
-    squares[7][6]->setFigureType(knight, player);
-    squares[7][4]->setFigureType(bishop, player);
-    squares[7][5]->setFigureType(bishop, player);
-    squares[7][3]->setFigureType(queen, player);
-    squares[7][2]->setFigureType(king, player);
+    squares[7][0]->setFigureType(rook, player, playerColor);
+    squares[7][7]->setFigureType(rook, player, playerColor);
+    squares[7][1]->setFigureType(knight, player, playerColor);
+    squares[7][6]->setFigureType(knight, player, playerColor);
+    squares[7][4]->setFigureType(bishop, player, playerColor);
+    squares[7][5]->setFigureType(bishop, player, playerColor);
+    squares[7][3]->setFigureType(queen, player, playerColor);
+    squares[7][2]->setFigureType(king, player, playerColor);
 
 
     for (int i = 0; i < 8; i++) {
 
-      squares[1][i]->setFigureType(pawn, enemy);
+      squares[1][i]->setFigureType(pawn, enemy, enemyColor);
     }
-    squares[0][0]->setFigureType(rook, enemy);
-    squares[0][7]->setFigureType(rook, enemy);
-    squares[0][1]->setFigureType(knight, enemy);
-    squares[0][6]->setFigureType(knight, enemy);
-    squares[0][2]->setFigureType(bishop, enemy);
-    squares[0][5]->setFigureType(bishop, enemy);
-    squares[0][3]->setFigureType(queen, enemy);
-    squares[0][4]->setFigureType(king, enemy);
+    squares[0][0]->setFigureType(rook, enemy, enemyColor);
+    squares[0][7]->setFigureType(rook, enemy, enemyColor);
+    squares[0][1]->setFigureType(knight, enemy, enemyColor);
+    squares[0][6]->setFigureType(knight, enemy, enemyColor);
+    squares[0][2]->setFigureType(bishop, enemy, enemyColor);
+    squares[0][5]->setFigureType(bishop, enemy, enemyColor);
+    squares[0][3]->setFigureType(queen, enemy, enemyColor);
+    squares[0][4]->setFigureType(king, enemy, enemyColor);
 }
 
 
@@ -118,13 +118,13 @@ void GameWidget::pawnAvailableMoves(Figure* figure, int x, int y) {
   if (x > 0) {
     try {
       if (squares[x - 1][y - 1]->Ffigure != nullptr) {
-        if (squares[x - 1][y - 1]->Ffigure->fColor == enemy) figure->availableMoves.append({ x - 1, y - 1 });
+        if (squares[x - 1][y - 1]->Ffigure->playerType == enemy) figure->availableMoves.append({ x - 1, y - 1 });
       }
     }
     catch (...) {}
     try {
       if (squares[x - 1][y + 1]->Ffigure != nullptr) {
-        if (squares[x - 1][y + 1]->Ffigure->fColor == enemy) figure->availableMoves.append({ x - 1, y + 1 });
+        if (squares[x - 1][y + 1]->Ffigure->playerType == enemy) figure->availableMoves.append({ x - 1, y + 1 });
       }
     }
     catch (...) {}
@@ -149,7 +149,7 @@ void GameWidget::kingAvailableMoves(Figure* figure, int x, int y) {
     int i = y;
     while (i < 7) {
       if (squares[x][++i]->Ffigure != nullptr) {
-        if (squares[x][i]->Ffigure->figureType != rook && squares[x][i]->Ffigure->fColor != player) break;
+        if (squares[x][i]->Ffigure->figureType != rook && squares[x][i]->Ffigure->playerType != player) break;
         if (squares[x][i]->Ffigure->FirstMoveDone == false) {
           if (i - y < 3)  figure->availableMoves.append({ x, y + 1 });
           else  figure->availableMoves.append({ x, y + 2 });
@@ -162,7 +162,7 @@ void GameWidget::kingAvailableMoves(Figure* figure, int x, int y) {
       i = y;
       while (i >0) {
         if (squares[x][--i]->Ffigure != nullptr) {
-          if (squares[x][i]->Ffigure->figureType != rook && squares[x][i]->Ffigure->fColor != player) break;
+          if (squares[x][i]->Ffigure->figureType != rook && squares[x][i]->Ffigure->playerType != player) break;
           if (squares[x][i]->Ffigure->FirstMoveDone == false) {
             if (y-i < 3)  figure->availableMoves.append({ x, y - 1 });
             else  figure->availableMoves.append({ x, y - 2 });
@@ -181,7 +181,7 @@ void GameWidget::kingAvailableMoves(Figure* figure, int x, int y) {
     for (int k = -1; k < 2; ++k) {
       if (!((x - i < 0 || x - i>7) || (y - k < 0 || y - k>7) || (i == 0 && k == 0)))
         if (squares[x - i][y - k]->Ffigure == nullptr) figure->availableMoves.append({ x - i, y - k });
-        else if (squares[x - i][y - k]->Ffigure->fColor == enemy) figure->availableMoves.append({ x - i, y - k });
+        else if (squares[x - i][y - k]->Ffigure->playerType == enemy) figure->availableMoves.append({ x - i, y - k });
     }
   }
 
@@ -201,7 +201,7 @@ void GameWidget::queenAvailableMoves(Figure* figure, int x, int y) {
 
         // Проверяем, есть ли фигура на пути, и если есть, прерываем цикл
         if (squares[newX][y]->Ffigure != nullptr) {
-          if (squares[newX][y]->Ffigure->fColor == enemy) {
+          if (squares[newX][y]->Ffigure->playerType == enemy) {
             figure->availableMoves.append({ newX, y });
             break;
           }
@@ -217,7 +217,7 @@ void GameWidget::queenAvailableMoves(Figure* figure, int x, int y) {
 
         // Проверяем, есть ли фигура на пути, и если есть, прерываем цикл
         if (squares[x][newY]->Ffigure != nullptr) {
-          if (squares[x][newY]->Ffigure->fColor == enemy) {
+          if (squares[x][newY]->Ffigure->playerType == enemy) {
             figure->availableMoves.append({ x, newY });
             break;
           }
@@ -240,7 +240,7 @@ void GameWidget::queenAvailableMoves(Figure* figure, int x, int y) {
             figure->availableMoves.append({ newX, newY });
           }
           else {
-            if (squares[newX][newY]->Ffigure->fColor == enemy) {
+            if (squares[newX][newY]->Ffigure->playerType == enemy) {
               figure->availableMoves.append({ newX, newY });
               break;
             }
@@ -269,7 +269,7 @@ void GameWidget::rookAvailableMoves(Figure* figure, int x, int y) {
         {
           if (squares[newX][y]->Ffigure == nullptr) figure->availableMoves.append({ newX, y });
           else {
-            if (squares[newX][y]->Ffigure->fColor == enemy) {
+            if (squares[newX][y]->Ffigure->playerType == enemy) {
               figure->availableMoves.append({ newX, y });
               break;
             }
@@ -285,7 +285,7 @@ void GameWidget::rookAvailableMoves(Figure* figure, int x, int y) {
         {
           if (squares[x][newY]->Ffigure == nullptr) figure->availableMoves.append({ x, newY });
           else {
-            if (squares[x][newY]->Ffigure->fColor == enemy) {
+            if (squares[x][newY]->Ffigure->playerType == enemy) {
               figure->availableMoves.append({ x, newY });
               break;
             }
@@ -311,7 +311,7 @@ void GameWidget::knightAvailableMoves(Figure* figure, int x, int y) {
       if (squares[newX][newY]->Ffigure == nullptr) {
         figure->availableMoves.append({ newX, newY });
       }
-      else if (squares[newX][newY]->Ffigure->fColor == enemy) {
+      else if (squares[newX][newY]->Ffigure->playerType == enemy) {
         figure->availableMoves.append({ newX, newY });
       }
     }
@@ -331,7 +331,7 @@ void GameWidget::bishopAvailableMoves(Figure* figure, int x, int y) {
             figure->availableMoves.append({ newX, newY });
           }
           else {
-            if (squares[newX][newY]->Ffigure->fColor == enemy) {
+            if (squares[newX][newY]->Ffigure->playerType == enemy) {
               figure->availableMoves.append({ newX, newY });
               break;
             }
@@ -404,7 +404,7 @@ void GameWidget::relocateKingWRook(int prevX, int prevY, int direction,Figure* k
 void GameWidget::startGame_slot() {
 
   setField();
-  setFigures();
+  setFigures(black, white);
 
 }
 
@@ -455,7 +455,7 @@ void GameWidget::moveRequest_slot(int prevX, int prevY, int x, int y, QDropEvent
     squares[prevX][prevY]->removeFigure();
   
   }
-  else if (squares[x][y]->Ffigure->fColor == enemy) {
+  else if (squares[x][y]->Ffigure->playerType == enemy) {
 
     squares[x][y]->placeFigure(prevFigure);
     squares[prevX][prevY]->removeFigure();
@@ -467,14 +467,9 @@ void GameWidget::moveRequest_slot(int prevX, int prevY, int x, int y, QDropEvent
     return;
   }
 
-
-
-
   if (prevFigure->fakeStatus == false && !prevFigure->availableMoves.contains(QPoint(x, y))) {
     prevFigure->fakeStatus = true;
     qDebug() << "fake";
   }
-
-
 
 }
