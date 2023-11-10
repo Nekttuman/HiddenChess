@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>397</width>
-    <height>508</height>
+    <width>527</width>
+    <height>564</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -38,24 +38,7 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
- <connections>
-  <connection>
-   <sender>sendButton</sender>
-   <signal>released()</signal>
-   <receiver>ChatWidgetClass</receiver>
-   <slot>on_sendButton_clicked()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>287</x>
-     <y>367</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>300</x>
-     <y>378</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
  <slots>
   <slot>on_connectButton_clicked()</slot>
   <slot>on_sendButton_clicked()</slot>

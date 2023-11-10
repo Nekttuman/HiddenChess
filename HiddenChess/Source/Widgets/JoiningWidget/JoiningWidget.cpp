@@ -12,7 +12,7 @@ JoiningWidget::~JoiningWidget() {}
 
 void JoiningWidget::tryJoining_slot() {
     qDebug() << "JoiningWidget tryJoining slot called";
-    emit tryJoining_signal(m_currentRoomId, m_currentRoomName);
+    emit tryJoining_signal(m_currentRoomId, ui.pswdLineEdit->text());
 }
 
 void JoiningWidget::clearFields() {

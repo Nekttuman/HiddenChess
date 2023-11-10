@@ -14,6 +14,7 @@ RoomsListWidget::RoomsListWidget(QWidget *parent) :
 
     connect(ui.refreshButton, &QPushButton::released, this, [&]() { emit refresh_signal(); });
     connect(ui.listWidget, &QListWidget::itemClicked, this, &RoomsListWidget::emitItemSelectedSignal_slot);
+    connect(ui.backToMenuButton, &QPushButton::released, this, [&]() { emit backToMenu_signal(); });
 }
 
 RoomsListWidget::~RoomsListWidget() {

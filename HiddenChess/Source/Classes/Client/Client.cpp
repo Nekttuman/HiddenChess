@@ -6,6 +6,8 @@ Client::Client(QObject *parent)
         : QObject(parent) {
     manager = new QNetworkAccessManager();
 
+    timer = new QTimer(this);
+
     QObject::connect(manager, &QNetworkAccessManager::finished, this, &Client::responseHandler);
 }
 
@@ -37,14 +39,28 @@ void Client::responseHandler(QNetworkReply *reply) {
         emit loginSuccess_signal();
         // todo: save login and passwd to settings or session token
     } else if (jsonObject["message"] == "Room created") {
+        m_roomId = jsonObject["room-id"].toString();
+        qDebug()<< m_roomId<<jsonObject["room-id"];
         emit roomCreated_signal(jsonObject["room-id"].toString());
+        isRoomOwner = true;
     } else if (jsonObject["message"] == "Rooms list") {
         qDebug() << jsonObject["rooms"].toString();
         emit roomsList_signal(jsonObject["rooms"].toObject());
     } else if (jsonObject["message"] == "Connection available") {
         emit connected_signal();
     } else if (jsonObject["message"] == "Successfully joined") {
+        m_roomId = jsonObject["room-id"].toString();
+        qDebug()<< m_roomId<<jsonObject["room-id"];
         emit joinedToRoom_signal();
+        isRoomOwner = false;
+    } else if (jsonObject["message"] == "new move") {
+        QPoint from = QPoint{jsonObject["prev-pos-x"].toString().toInt(), jsonObject["prev-pos-y"].toString().toInt()};
+        QPoint two = QPoint{jsonObject["next-pos-x"].toString().toInt(), jsonObject["next-pos-y"].toString().toInt()};
+
+        qDebug()<<"yeeeee"<<from<<two;
+        emit opponentMadeMove_signal(from,two);
+        timer->stop();
+//        m_roomId = jsonObject["room-id"].toString();
     }
 
     qDebug() << QJsonDocument::fromJson(responseData);
@@ -82,7 +98,7 @@ void Client::checkRoomNameUniq_slot(QString roomName) {
 }
 
 void Client::sendJoiningRequest_slot(QString roomId, QString roomPasswd) {
-    qDebug() << "Client::sendJoiningRequest_slot(QString roomId, QString roomPasswd)slot called";
+    qDebug() << "Client::sendJoiningRequest_slot(QString roomId, QString roomPasswd)slot called"<<roomPasswd;
 
     QNetworkRequest request(roomJoinUrl);
 
@@ -148,5 +164,41 @@ void Client::getRoomsList_slot() {
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
 
     manager->post(request, "");
+}
+
+void Client::sendMove_slot(QPoint prevPoint, QPoint nextPoint) {
+    qDebug() << "Client::sendMove_slot(QPoint prevPoint, QPoint nextPoint) slot called" << prevPoint << nextPoint << m_roomId;
+
+    QNetworkRequest request(moveUrl);
+
+    request.setRawHeader("X-CSRFToken", csrfToken.toUtf8());
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+
+    QUrlQuery postData;
+    postData.addQueryItem("room-id", m_roomId);
+    postData.addQueryItem("prev-pos-x", QString::number(prevPoint.x()));
+    postData.addQueryItem("prev-pos-y", QString::number(prevPoint.y()));
+    postData.addQueryItem("next-pos-x", QString::number(nextPoint.x()));
+    postData.addQueryItem("next-pos-y", QString::number(nextPoint.y()));
+    manager->post(request, postData.toString(QUrl::FullyEncoded).toUtf8());
+
+
+    connect(timer, &QTimer::timeout, this, &Client::checkOpponentMove_slot);
+    timer->start(3000); // Start the timer with a 1-second interval (1000 ms)
+
+}
+
+void Client::checkOpponentMove_slot() {
+    qDebug() << "checkOpponentMove_slot() slot called" << m_roomId;
+
+    QNetworkRequest request(checkMoveUrl);
+
+    request.setRawHeader("X-CSRFToken", csrfToken.toUtf8());
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+
+    QUrlQuery postData;
+    postData.addQueryItem("room-id", m_roomId);
+    manager->post(request, postData.toString(QUrl::FullyEncoded).toUtf8());
+
 }
 

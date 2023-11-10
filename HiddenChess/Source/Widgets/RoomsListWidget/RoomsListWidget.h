@@ -40,6 +40,8 @@ signals:
 
     void roomListItemSelected_signal(QString roomName, QString roomId);
 
+    void backToMenu_signal();
+
 public slots:
 
     void parseJson_slot(QJsonObject json);

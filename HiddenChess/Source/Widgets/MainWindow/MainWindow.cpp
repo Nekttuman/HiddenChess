@@ -20,8 +20,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(client, &Client::loginSuccess_signal, ui.mainMenuWidget, &MainMenu::show);
     connect(ui.loginWidget, &LoginWidget::tryLoggin_signal, this->client, &Client::tryLoggin_slot);
 
-
-
     // ------------------------------ Main Menu Navigation by Btn
     connect(ui.mainMenuWidget, &MainMenu::createRoomBtn_signal, ui.roomCreationWidget, &RoomCreationWidget::show);
     connect(ui.mainMenuWidget, &MainMenu::joinRoomBtn_signal, ui.roomsListWidget, &RoomsListWidget::show);
@@ -61,6 +59,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui.roomsListWidget, &RoomsListWidget::roomListItemSelected_signal,
             ui.joiningWidget, &JoiningWidget::showSelf_slot);
 
+    connect(ui.roomsListWidget, &RoomsListWidget::backToMenu_signal, ui.mainMenuWidget, &MainMenu::show);
+
 
 
 
@@ -70,10 +70,16 @@ MainWindow::MainWindow(QWidget *parent)
             this, &MainWindow::showMainMenu_slot);
     connect(ui.joiningWidget, &JoiningWidget::tryJoining_signal,
             client, &Client::sendJoiningRequest_slot);
-    connect(client, &Client::joinedToRoom_signal, ui.gameWidget, &GameWidget::show);
+//    connect(client, &Client::joinedToRoom_signal, ui.gameWidget, &GameWidget::show);
     connect(client, &Client::joinedToRoom_signal, ui.joiningWidget, &JoiningWidget::hide);
 //
-//    connect(client, &Client::joinedToRoom_signal, ui.gameWidget, &GameWidget::startGame_slot);
+
+
+
+    connect(client, &Client::joinedToRoom_signal, ui.gameConfirmationWidget, &GameConfirmationWidget::show);
+//    connect(ui.gameConfirmationWidget, &GameConfirmationWidget::roomSettingsChanged_signal, client, &Client::);
+//    connect(ui.gameConfirmationWidget, &GameConfirmationWidget::userReady_signal, client, &Client::);
+    connect(client, &Client::roomCreated_signal, ui.gameConfirmationWidget, &GameConfirmationWidget::userIsRoomOwner_slot);
 //
 //    connect(client, &Client::opponentNickReceived_signal, ui.gameWidget, &GameWidget::setOpponentNick_slot);
 //    connect(client, &Client::joinedToRoom_signal, ui.gameWidget,
@@ -81,7 +87,16 @@ MainWindow::MainWindow(QWidget *parent)
 //    connect(client, &Client::joinedToRoom_signal, this, [&]() { ui.joiningWidget->clearFields(); });
 //    connect(client, &Client::joinedToRoom_signal, this, [&]() { ui.errTextBrowser->clear(); });
 
-    //---------------------------------
+
+    //--------------------------------- Game Widget connects
+//    connect(ui.game, &GameWidget::move_signal, client, &Client::sendMove_slot);
+
+
+
+    //--------------------------------- Game Widget connects
+    connect(ui.gameWidget, &GameWidget::move_signal, client, &Client::sendMove_slot);
+
+
 //    connect(client, &Client::clientErr_signal, this, &MainWindow::disableGame_slot);
 //    connect(client, &Client::clientErr_signal, this, [&]() { has_connection = false; });
 
@@ -89,10 +104,10 @@ MainWindow::MainWindow(QWidget *parent)
 //    connect(client, &Client::connected_signal, this, [&]() { has_connection = true; });
 //    connect(client, &Client::connected_signal, this, &MainWindow::showConnectedMessage_slot);
 
-
-
     connect(ui.gameWidget, &GameWidget::backToMenu_signal,
             this, &MainWindow::showMainMenu_slot);
+
+
 
 }
 
@@ -114,19 +129,27 @@ void MainWindow::setGUI() {
 
     ui.gameWidget->hide();
     ui.gameWidget->move(0, 0);
-    ui.gameWidget->setFixedSize(this->size());
+    ui.gameWidget->setFixedSize(this->size() - QSize(0, 30));
 
     ui.roomsListWidget->hide();
     ui.roomsListWidget->move(0, 0);
     ui.roomsListWidget->setFixedSize(this->size());
 
-    ui.loginWidget->move((this->size() / 4).width(), (this->size() / 4).height());
-    ui.loginWidget->setFixedSize(this->size() / 2);
+    ui.loginWidget->move(0, 0);
+    ui.loginWidget->setFixedSize(this->size());
     ui.loginWidget->hide();
 
+    ui.roomsListWidget->move(0, 0);
+    ui.roomsListWidget->setFixedSize(this->size());
+    ui.roomsListWidget->hide();
+
     ui.splashScreenWidget->move(0, 0);
-    ui.splashScreenWidget->setFixedSize(this->size() - QSize(0, 100));
+    ui.splashScreenWidget->setFixedSize(this->size());
     ui.splashScreenWidget->show();
+
+    ui.gameConfirmationWidget->move(0, 0);
+    ui.gameConfirmationWidget->setFixedSize(this->size());
+    ui.gameConfirmationWidget->hide();
 
 }
 
@@ -141,16 +164,17 @@ MainWindow::~MainWindow() {}
 
 void MainWindow::showConnectedMessage_slot() {
     qDebug() << "MainWindow::showConnectedMessage_slot() slot called";
-    ui.errTextBrowser->setText("Connected");
-    ui.errTextBrowser->setStyleSheet(ui.errTextBrowser->styleSheet() + "color:green;");
+//    ui.errTextBrowser->setText("Connected");
+//    ui.errTextBrowser->setStyleSheet(ui.errTextBrowser->styleSheet() + "color:green;");
 }
 
-void MainWindow::paintEvent(QPaintEvent) {
+void MainWindow::paintEvent(QPaintEvent *) {
 
     ui.mainMenuWidget->setFixedSize(this->size());
     ui.joiningWidget->setFixedSize(this->size());
     ui.roomCreationWidget->setFixedSize(this->size());
-    ui.gameWidget->setFixedSize(this->size());
+    ui.gameWidget->setFixedSize(this->size() - QSize(0, 30));
     ui.loginWidget->setFixedSize(this->size());
     ui.splashScreenWidget->setFixedSize(this->size());
+    ui.roomsListWidget->setFixedSize(this->size());
 }

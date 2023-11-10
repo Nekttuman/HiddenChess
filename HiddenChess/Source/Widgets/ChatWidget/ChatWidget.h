@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QtWidgets>
-#include <QTcpSocket>
+#include <QtWebSockets/QtWebSockets>
 #include "ui_ChatWidget.h"
 
 class ChatWidget : public QWidget {
@@ -11,22 +11,27 @@ public:
     ChatWidget(QWidget *parent = nullptr);
 
     ~ChatWidget();
-
-private slots:
-
-    void on_connectButton_clicked();
-
-    void on_sendButton_clicked();
-
 public slots:
+    void onConnected() {
+        qDebug() << "Connected to the server";
+    }
 
-    void slotReadyRead();
+    void onDisconnected() {
+        qDebug() << "Disconnected from the server";
+    }
+
+    void onTextMessageReceived(QString message) {
+        qDebug() << "Received message: " << message;
+        // Handle the received message (e.g., display it in your UI)
+    }
+
+    void sendMessage(QString message) {
+        websocket->sendTextMessage(message);
+    }
+
 
 private:
-    Ui::ChatWidgetClass ui;
-    QTcpSocket *socket;
-    QByteArray Data;
-    quint16 nextBlockSize = 0;
+    QWebSocket *websocket;
 
-    void SendToServer(QString str);
+    Ui::ChatWidgetClass ui;
 };

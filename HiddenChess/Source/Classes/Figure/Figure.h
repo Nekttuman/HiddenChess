@@ -8,10 +8,10 @@
 
 
 const int knightMoves[8][2] = {
-        {1, 2},
-        {2, 1},
-        {2, -1},
-        {1, -2},
+        {1,  2},
+        {2,  1},
+        {2,  -1},
+        {1,  -2},
         {-1, -2},
         {-2, -1},
         {-2, 1},
@@ -31,26 +31,26 @@ enum PlayerType {
 };
 
 enum Fc {
-  white, black
+    white, black
 };
 
 typedef std::tuple<Ft, Fc> TwoKey;
 typedef QList<QList<int>> TwoDimIntArray;
 
-const QMap<TwoKey, QString> FigureImages = 
-{{{pawn,   white}, (":/MainWindow/Figures/Wp.png")},
-{{pawn,   black}, (":/MainWindow/Figures/Bp.png")},
-{{king,   white}, (":/MainWindow/Figures/Wk.png")},
-{{king,   black}, (":/MainWindow/Figures/Bk.png")},
-{{queen,  white}, (":/MainWindow/Figures/Wq.png")},
-{{queen,  black}, (":/MainWindow/Figures/Bq.png")},
-{{rook,   white}, (":/MainWindow/Figures/Wr.png")},
-{{rook,   black}, (":/MainWindow/Figures/Br.png")},
-{{knight, white}, (":/MainWindow/Figures/Wn.png")},
-{{knight, black}, (":/MainWindow/Figures/Bn.png")},
-{{bishop, white}, (":/MainWindow/Figures/Wb.png")},
-{{bishop, black}, (":/MainWindow/Figures/Bb.png")}
-};
+const QMap<TwoKey, QString> FigureImages =
+        {{{pawn,   white}, (":/MainWindow/Figures/Wp.png")},
+         {{pawn,   black}, (":/MainWindow/Figures/Bp.png")},
+         {{king,   white}, (":/MainWindow/Figures/Wk.png")},
+         {{king,   black}, (":/MainWindow/Figures/Bk.png")},
+         {{queen,  white}, (":/MainWindow/Figures/Wq.png")},
+         {{queen,  black}, (":/MainWindow/Figures/Bq.png")},
+         {{rook,   white}, (":/MainWindow/Figures/Wr.png")},
+         {{rook,   black}, (":/MainWindow/Figures/Br.png")},
+         {{knight, white}, (":/MainWindow/Figures/Wn.png")},
+         {{knight, black}, (":/MainWindow/Figures/Bn.png")},
+         {{bishop, white}, (":/MainWindow/Figures/Wb.png")},
+         {{bishop, black}, (":/MainWindow/Figures/Bb.png")}
+        };
 
 
 class Figure {
@@ -67,9 +67,9 @@ public:
 
     bool FirstMoveDone;
 
-    ~Figure(){
+    ~Figure() {
 
-      qDebug() << "ia umer";
+        qDebug() << "ia umer";
     }
 
 private:

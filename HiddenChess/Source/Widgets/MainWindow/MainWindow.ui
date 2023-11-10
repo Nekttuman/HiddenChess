@@ -97,6 +97,16 @@
      </rect>
     </property>
    </widget>
+   <widget class="GameConfirmationWidget" name="gameConfirmationWidget" native="true">
+    <property name="geometry">
+     <rect>
+      <x>1160</x>
+      <y>440</y>
+      <width>120</width>
+      <height>80</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -160,6 +170,12 @@
    <class>RoomsListWidget</class>
    <extends>QWidget</extends>
    <header>RoomsListWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GameConfirmationWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">GameConfirmationWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

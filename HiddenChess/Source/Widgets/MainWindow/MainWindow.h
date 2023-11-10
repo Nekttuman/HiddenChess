@@ -20,7 +20,8 @@ private:
 
     bool has_connection = false;
 
-    void paintEvent(QPaintEvent);
+    void paintEvent(QPaintEvent*) override;
+//    void resizeEvent(QResizeEvent*) override;
 
     void setGUI();
 
