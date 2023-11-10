@@ -3,116 +3,20 @@
 MainWindow::MainWindow(QWidget *parent)
         : QMainWindow(parent) {
     setGUI();
-
     client = new Client(this);
 
-    // ------------------------------- SplashScreen
-    connect(ui.splashScreenWidget, &SplashScreenWidget::exit_signal, this, &MainWindow::exit_slot);
-    connect(ui.splashScreenWidget, &SplashScreenWidget::tryConnect_signal, client, &Client::connectToHost_slot);
-    connect(client, &Client::clientErr_signal, ui.splashScreenWidget, &SplashScreenWidget::showErr_slot);
-    connect(client, &Client::clientErr_signal, ui.splashScreenWidget, &SplashScreenWidget::showErr_slot);
-    connect(client, &Client::connected_signal, ui.splashScreenWidget, &SplashScreenWidget::hide);
-    connect(client, &Client::connected_signal, ui.loginWidget, &LoginWidget::show);
-
-    //------------------------------- loggining
-    connect(ui.loginWidget, &LoginWidget::tryLoggin_signal, this->client, &Client::tryLoggin_slot);
-    connect(client, &Client::loginSuccess_signal, ui.loginWidget, &LoginWidget::hide);
-    connect(client, &Client::loginSuccess_signal, ui.mainMenuWidget, &MainMenu::show);
-    connect(ui.loginWidget, &LoginWidget::tryLoggin_signal, this->client, &Client::tryLoggin_slot);
-
-    // ------------------------------ Main Menu Navigation by Btn
-    connect(ui.mainMenuWidget, &MainMenu::createRoomBtn_signal, ui.roomCreationWidget, &RoomCreationWidget::show);
-    connect(ui.mainMenuWidget, &MainMenu::joinRoomBtn_signal, ui.roomsListWidget, &RoomsListWidget::show);
-    connect(ui.mainMenuWidget, &MainMenu::exitBtn_signal, this, &MainWindow::exit_slot);
-    connect(ui.roomCreationWidget, &RoomCreationWidget::backToMenu_signal,
-            this, &MainWindow::showMainMenu_slot);
-
-    //------------------------------- Room creation client-server connects
-    connect(ui.roomCreationWidget, &RoomCreationWidget::createRoom_signal,
-            client, [&]() {
-                client->tryCreateRoom_slot(
-                        ui.roomCreationWidget->getRoomName(),
-                        ui.roomCreationWidget->getPswd());
-            });
-    connect(client, &Client::roomCreated_signal, ui.gameWidget, &GameWidget::show);
-
-    connect(client, &Client::roomCreated_signal, ui.gameWidget, &GameWidget::startGame_slot);
-    connect(client, &Client::roomCreated_signal, ui.roomCreationWidget, &RoomCreationWidget::hide);
-    connect(client, &Client::roomCreated_signal, ui.roomCreationWidget, &RoomCreationWidget::clearFields);
-    connect(client, &Client::roomCreated_signal, ui.loginWidget, &LoginWidget::hide);
-
-
-//    connect(ui.roomCreationWidget, &RoomCreationWidget::checkRoomNameUniq_signal,
-//            client, &Client::checkRoomNameUniq_slot);
-//    connect(client, &Client::roomNameUniqConfirmed_signal, ui.roomCreationWidget,
-//            &RoomCreationWidget::roomNameUniqConfirmed_slot);
-//    connect(client, &Client::roomNameUniqNotConfirmed_signal, ui.roomCreationWidget,
-//            &RoomCreationWidget::roomNameUniqNotConfirmed_slot);
-
-
-
-    //------------------------------- Rooms list client-server connects
-    connect(ui.roomsListWidget, &RoomsListWidget::refresh_signal, client, &Client::getRoomsList_slot);
-
-    connect(client, &Client::roomsList_signal,
-            ui.roomsListWidget, &RoomsListWidget::parseJson_slot);
-    connect(ui.roomsListWidget, &RoomsListWidget::roomListItemSelected_signal,
-            ui.joiningWidget, &JoiningWidget::showSelf_slot);
-
-    connect(ui.roomsListWidget, &RoomsListWidget::backToMenu_signal, ui.mainMenuWidget, &MainMenu::show);
-
-
-
-
-
-    //--------------------------------- Room Joining client-server connects
-    connect(ui.joiningWidget, &JoiningWidget::backToMenu_signal,
-            this, &MainWindow::showMainMenu_slot);
-    connect(ui.joiningWidget, &JoiningWidget::tryJoining_signal,
-            client, &Client::sendJoiningRequest_slot);
-//    connect(client, &Client::joinedToRoom_signal, ui.gameWidget, &GameWidget::show);
-    connect(client, &Client::joinedToRoom_signal, ui.joiningWidget, &JoiningWidget::hide);
-//
-
-
-
-    connect(client, &Client::joinedToRoom_signal, ui.gameConfirmationWidget, &GameConfirmationWidget::show);
-//    connect(ui.gameConfirmationWidget, &GameConfirmationWidget::roomSettingsChanged_signal, client, &Client::);
-//    connect(ui.gameConfirmationWidget, &GameConfirmationWidget::userReady_signal, client, &Client::);
-    connect(client, &Client::roomCreated_signal, ui.gameConfirmationWidget, &GameConfirmationWidget::userIsRoomOwner_slot);
-//
-//    connect(client, &Client::opponentNickReceived_signal, ui.gameWidget, &GameWidget::setOpponentNick_slot);
-//    connect(client, &Client::joinedToRoom_signal, ui.gameWidget,
-//            [&]() { ui.gameWidget->setHostNick_slot(ui.joiningWidget->getNick()); });
-//    connect(client, &Client::joinedToRoom_signal, this, [&]() { ui.joiningWidget->clearFields(); });
-//    connect(client, &Client::joinedToRoom_signal, this, [&]() { ui.errTextBrowser->clear(); });
-
-
-    //--------------------------------- Game Widget connects
-//    connect(ui.game, &GameWidget::move_signal, client, &Client::sendMove_slot);
-
-
-
-    //--------------------------------- Game Widget connects
-    connect(ui.gameWidget, &GameWidget::move_signal, client, &Client::sendMove_slot);
-
-
-//    connect(client, &Client::clientErr_signal, this, &MainWindow::disableGame_slot);
-//    connect(client, &Client::clientErr_signal, this, [&]() { has_connection = false; });
-
-
-//    connect(client, &Client::connected_signal, this, [&]() { has_connection = true; });
-//    connect(client, &Client::connected_signal, this, &MainWindow::showConnectedMessage_slot);
-
-    connect(ui.gameWidget, &GameWidget::backToMenu_signal,
-            this, &MainWindow::showMainMenu_slot);
-
-
-
+// set global signal-slot connections
+    splashScreen_connections();
+    logging_connections();
+    mainMenu_connections();
+    roomCreation_connections();
+    roomsList_connections();
+    roomJoining_connections();
+    gameConfirmation_connections();
+    gameWidget_connections();
 }
 
 void MainWindow::setGUI() {
-
     ui.setupUi(this);
 
     ui.mainMenuWidget->move(0, 0);
@@ -150,7 +54,6 @@ void MainWindow::setGUI() {
     ui.gameConfirmationWidget->move(0, 0);
     ui.gameConfirmationWidget->setFixedSize(this->size());
     ui.gameConfirmationWidget->hide();
-
 }
 
 MainWindow::~MainWindow() {}
@@ -177,4 +80,96 @@ void MainWindow::paintEvent(QPaintEvent *) {
     ui.loginWidget->setFixedSize(this->size());
     ui.splashScreenWidget->setFixedSize(this->size());
     ui.roomsListWidget->setFixedSize(this->size());
+}
+
+void MainWindow::splashScreen_connections() {
+    connect(ui.splashScreenWidget, &SplashScreenWidget::exit_signal, this, &MainWindow::exit_slot);
+    connect(ui.splashScreenWidget, &SplashScreenWidget::tryConnect_signal, client, &Client::connectToHost_slot);
+    connect(client, &Client::clientErr_signal, ui.splashScreenWidget, &SplashScreenWidget::showErr_slot);
+    connect(client, &Client::clientErr_signal, ui.splashScreenWidget, &SplashScreenWidget::showErr_slot);
+    connect(client, &Client::connected_signal, ui.splashScreenWidget, &SplashScreenWidget::hide);
+    connect(client, &Client::connected_signal, ui.loginWidget, &LoginWidget::show);
+}
+
+void MainWindow::logging_connections() {
+    connect(ui.loginWidget, &LoginWidget::tryLoggin_signal, this->client, &Client::tryLoggin_slot);
+    connect(client, &Client::loginSuccess_signal, ui.loginWidget, &LoginWidget::hide);
+    connect(client, &Client::loginSuccess_signal, ui.mainMenuWidget, &MainMenu::show);
+    connect(ui.loginWidget, &LoginWidget::tryLoggin_signal, this->client, &Client::tryLoggin_slot);
+
+}
+
+void MainWindow::mainMenu_connections() {
+    connect(ui.mainMenuWidget, &MainMenu::createRoomBtn_signal, ui.roomCreationWidget, &RoomCreationWidget::show);
+    connect(ui.mainMenuWidget, &MainMenu::joinRoomBtn_signal, ui.roomsListWidget, &RoomsListWidget::show);
+    connect(ui.mainMenuWidget, &MainMenu::exitBtn_signal, this, &MainWindow::exit_slot);
+    connect(ui.roomCreationWidget, &RoomCreationWidget::backToMenu_signal,
+            this, &MainWindow::showMainMenu_slot);
+
+}
+
+void MainWindow::roomCreation_connections() {
+    connect(ui.roomCreationWidget, &RoomCreationWidget::createRoom_signal,
+            client, [&]() {
+                client->tryCreateRoom_slot(
+                        ui.roomCreationWidget->getRoomName(),
+                        ui.roomCreationWidget->getPswd());
+            });
+    connect(client, &Client::roomCreated_signal, ui.gameWidget, &GameWidget::show);
+
+    connect(client, &Client::roomCreated_signal, ui.gameWidget, &GameWidget::startGame_slot);
+    connect(client, &Client::roomCreated_signal, ui.roomCreationWidget, &RoomCreationWidget::hide);
+    connect(client, &Client::roomCreated_signal, ui.roomCreationWidget, &RoomCreationWidget::clearFields);
+    connect(client, &Client::roomCreated_signal, ui.loginWidget, &LoginWidget::hide);
+}
+
+void MainWindow::roomsList_connections() {
+    connect(ui.roomsListWidget, &RoomsListWidget::refresh_signal, client, &Client::getRoomsList_slot);
+
+    connect(client, &Client::roomsList_signal,
+            ui.roomsListWidget, &RoomsListWidget::parseJson_slot);
+    connect(ui.roomsListWidget, &RoomsListWidget::roomListItemSelected_signal,
+            ui.joiningWidget, &JoiningWidget::showSelf_slot);
+
+    connect(ui.roomsListWidget, &RoomsListWidget::backToMenu_signal, ui.mainMenuWidget, &MainMenu::show);
+
+}
+
+void MainWindow::gameConfirmation_connections() {
+
+
+    connect(client, &Client::joinedToRoom_signal, ui.gameConfirmationWidget, &GameConfirmationWidget::show);
+//    connect(ui.gameConfirmationWidget, &GameConfirmationWidget::roomSettingsChanged_signal, client, &Client::);
+//    connect(ui.gameConfirmationWidget, &GameConfirmationWidget::userReady_signal, client, &Client::);
+    connect(client, &Client::roomCreated_signal, ui.gameConfirmationWidget,
+            &GameConfirmationWidget::userIsRoomOwner_slot);
+//
+}
+
+void MainWindow::roomJoining_connections() {
+    connect(ui.joiningWidget, &JoiningWidget::backToMenu_signal,
+            this, &MainWindow::showMainMenu_slot);
+    connect(ui.joiningWidget, &JoiningWidget::tryJoining_signal,
+            client, &Client::sendJoiningRequest_slot);
+//    connect(client, &Client::joinedToRoom_signal, ui.gameWidget, &GameWidget::show);
+    connect(client, &Client::joinedToRoom_signal, ui.joiningWidget, &JoiningWidget::hide);
+//
+
+}
+
+void MainWindow::gameWidget_connections() {
+    connect(ui.gameWidget, &GameWidget::move_signal, client, &Client::sendMove_slot);
+
+
+//    connect(client, &Client::clientErr_signal, this, &MainWindow::disableGame_slot);
+//    connect(client, &Client::clientErr_signal, this, [&]() { has_connection = false; });
+
+
+//    connect(client, &Client::connected_signal, this, [&]() { has_connection = true; });
+//    connect(client, &Client::connected_signal, this, &MainWindow::showConnectedMessage_slot);
+
+    connect(ui.gameWidget, &GameWidget::backToMenu_signal,
+            this, &MainWindow::showMainMenu_slot);
+
+
 }

@@ -9,7 +9,7 @@ class MainWindow : public QMainWindow {
 Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
+    explicit MainWindow(QWidget *parent = nullptr);
 
     ~MainWindow();
 
@@ -20,10 +20,21 @@ private:
 
     bool has_connection = false;
 
-    void paintEvent(QPaintEvent*) override;
+    void paintEvent(QPaintEvent *) override;
 //    void resizeEvent(QResizeEvent*) override;
 
     void setGUI();
+
+
+// set global signal-slot connections
+    inline void splashScreen_connections();
+    inline void logging_connections();
+    inline void mainMenu_connections();
+    inline void roomCreation_connections();
+    inline void roomsList_connections();
+    inline void roomJoining_connections();
+    inline void gameConfirmation_connections();
+    inline void gameWidget_connections();
 
 public slots:
 
