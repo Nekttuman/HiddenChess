@@ -17,6 +17,7 @@
     <file>Figures/Wr.png</file>
     <file>AnotherPics/green.png</file>
     <file>AnotherPics/red.png</file>
+    <file>style.qss</file>
   </qresource>
   <qresource prefix="newPrefix"/>
 </RCC>
