@@ -17,10 +17,11 @@ private:
     qint32 allowedFakesCount;
 
     bool isRoomOwner = false;
+    bool isOpponentReady = false;
 
-    void disableSettings();
+    void disableRoomSettings();
 
-    void enableSettings();
+    void enableRoomSettings();
 
 private slots:
 
@@ -28,10 +29,15 @@ private slots:
 
 public slots:
     void userIsRoomOwner_slot();
+    void opponentReady_slot();
+    void opponentNotReady_slot();
 
 signals:
 
+    void enableStartGame_signal();
+
     void userReady_signal();
+    void userNotReady_signal();
     void backToMenu_signal();
 
     void roomSettingsChanged_signal(QString color, qint32 allowedFakesCount);

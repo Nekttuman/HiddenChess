@@ -141,7 +141,17 @@ void MainWindow::gameConfirmation_connections() {
     connect(client, &Client::roomCreated_signal, ui.gameConfirmationWidget,
             &GameConfirmationWidget::userIsRoomOwner_slot);
     connect(ui.gameConfirmationWidget, &GameConfirmationWidget::backToMenu_signal, ui.mainMenuWidget, &MainMenu::show);
-//
+
+    connect(ui.gameConfirmationWidget, &GameConfirmationWidget::userReady_signal, client, &Client::sendUserReady_slot);
+    connect(ui.gameConfirmationWidget, &GameConfirmationWidget::userNotReady_signal, client,
+            &Client::sendUserNotReady_slot);
+
+
+    connect(client, &Client::opponentReady_signal, ui.gameConfirmationWidget,
+            &GameConfirmationWidget::opponentReady_slot);
+    connect(client, &Client::opponentReady_signal, ui.gameConfirmationWidget,
+            &GameConfirmationWidget::opponentNotReady_slot);
+
 }
 
 void MainWindow::roomJoining_connections() {
@@ -159,7 +169,10 @@ void MainWindow::roomJoining_connections() {
 void MainWindow::gameWidget_connections() {
     connect(ui.gameWidget, &GameWidget::move_signal, client, &Client::sendMove_slot);
 
-
+    connect(ui.gameConfirmationWidget, &GameConfirmationWidget::enableStartGame_signal, ui.gameWidget,
+            &GameWidget::show);
+    connect(ui.gameConfirmationWidget, &GameConfirmationWidget::enableStartGame_signal, ui.gameWidget,
+            &GameWidget::startGame_slot);
 //    connect(client, &Client::clientErr_signal, this, &MainWindow::disableGame_slot);
 //    connect(client, &Client::clientErr_signal, this, [&]() { has_connection = false; });
 

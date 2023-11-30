@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QPoint>
 #include <QObject>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkReply>
@@ -44,6 +45,9 @@ signals:
 
     void loginSuccess_signal();
 
+    void opponentReady_signal();
+    void opponentNotReady_signal();
+
     void opponentMadeMove_signal(QPoint prevPoint, QPoint point);
 
     void opponentNickReceived_signal(QString opponentNick);
@@ -61,6 +65,10 @@ public slots:
     void sendMove_slot(QPoint prevPoint, QPoint nextPoint);
 
     void checkOpponentMove_slot();
+    void checkOpponentReady_slot();
+
+    void sendUserReady_slot();
+    void sendUserNotReady_slot();
 
     void checkRoomNameUniq_slot(QString roomName); //for creating
     void sendJoiningRequest_slot(QString roomId, QString roomPasswd); // for Joining
@@ -71,12 +79,15 @@ private:
 
     QByteArray m_data;
 
+    // TODO: create url manager class
     const QUrl loginUrl = QUrl(DOMEN_API_URL + "login/");
     const QUrl roomJoinUrl = QUrl(DOMEN_API_URL + "gameroom/join/");
     const QUrl roomCreationUrl = QUrl(DOMEN_API_URL + "gameroom/create/");
     const QUrl roomsListUrl = QUrl(DOMEN_API_URL + "gameroom/list/");
     const QUrl moveUrl = QUrl(DOMEN_API_URL + "gameroom/move/");
     const QUrl checkMoveUrl = QUrl(DOMEN_API_URL + "gameroom/check-move/");
+    const QUrl userReadyUrl = QUrl(DOMEN_API_URL + "gameroom/user-ready-info/");
+    const QUrl checkReadyUrl = QUrl(DOMEN_API_URL + "gameroom/opponent-ready-check/");
     bool connectionAvailable = false;
 
     QString sessionId; // Cookie
@@ -93,5 +104,6 @@ private:
     bool m_waitMove = true;
 
 
-    QTimer* timer;
+    QTimer* moveTimer;
+    QTimer* readyTimer;
 };

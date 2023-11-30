@@ -110,8 +110,6 @@ void GameWidget::setEnabledMoves(Figure *figure, int x, int y) {
         default:
             break;
     }
-
-
 }
 
 
@@ -282,8 +280,6 @@ void GameWidget::rookAvailableMoves(Figure *figure, int x, int y) {
 
 
 void GameWidget::knightAvailableMoves(Figure *figure, int x, int y) {
-
-
     for (int i = 0; i < 8; ++i) {
         int newX = x + knightMoves[i][0];
         int newY = y + knightMoves[i][1];

@@ -44,6 +44,7 @@ private:
 signals:
 
     void backToMenu_signal();
+
     void move_signal(QPoint prevPoint, QPoint point);
 
 private slots:

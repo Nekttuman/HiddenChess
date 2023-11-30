@@ -5,13 +5,19 @@ GameConfirmationWidget::GameConfirmationWidget(QWidget *parent) : QWidget(parent
     ui.setupUi(this);
     connect(ui.saveButton, &QPushButton::released, this, &GameConfirmationWidget::saveSettings_slot);
     connect(ui.readyRadioButton, &QRadioButton::clicked, this, [&]() {
+        disableRoomSettings();
+        if (isOpponentReady) {
+            this->setDisabled(true);
+            this->hide();
+            emit enableStartGame_signal();
+
+        }
         emit userReady_signal();
-        disableSettings();
     });
     connect(ui.notReadyRadioButton, &QRadioButton::clicked, this, [&]() {
-        emit userReady_signal();
+        emit userNotReady_signal();
         if (isRoomOwner)
-            enableSettings();
+            enableRoomSettings();
     });
     connect(ui.backToMenuBtn, &QPushButton::released, this, [&]() { emit backToMenu_signal(); });
     connect(ui.backToMenuBtn, &QPushButton::released, this, &GameConfirmationWidget::hide);
@@ -31,11 +37,12 @@ void GameConfirmationWidget::saveSettings_slot() {
 
 void GameConfirmationWidget::userIsRoomOwner_slot() {
     isRoomOwner = true;
+    ui.colorComboBox->setCurrentText("white");
     if (ui.notReadyRadioButton->isChecked())
-        enableSettings();
+        enableRoomSettings();
 }
 
-void GameConfirmationWidget::disableSettings() {
+void GameConfirmationWidget::disableRoomSettings() {
 
     ui.colorComboBox->setEnabled(false);
     ui.fakesCountSpinBox->setEnabled(false);
@@ -44,9 +51,28 @@ void GameConfirmationWidget::disableSettings() {
 
 }
 
-void GameConfirmationWidget::enableSettings() {
+void GameConfirmationWidget::enableRoomSettings() {
     ui.colorComboBox->setEnabled(true);
     ui.fakesCountSpinBox->setEnabled(true);
     ui.infRadioButton->setEnabled(true);
     ui.saveButton->setEnabled(true);
+}
+
+void GameConfirmationWidget::opponentReady_slot() {
+    ui.opponentStatusLabel->setText("Opponent Ready");
+
+    if (ui.readyRadioButton->isChecked()) {
+        this->setDisabled(true);
+        this->hide();
+        emit enableStartGame_signal();
+    }
+    isOpponentReady = true;
+}
+
+void GameConfirmationWidget::opponentNotReady_slot() {
+    ui.opponentStatusLabel->setText("Waiting opponent");
+
+    this->setDisabled(false);
+
+    isOpponentReady = false;
 }
