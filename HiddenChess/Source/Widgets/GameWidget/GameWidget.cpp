@@ -421,6 +421,15 @@ void GameWidget::moveRequest_slot(int prevX, int prevY, int x, int y, QDropEvent
 
 }
 
+void GameWidget::allowOrForbidMoves_slot(bool allowed) {
+
+    m_movesAllowed=allowed;
+
+
+}
+
+
+
 
 //End Slots################################################################################
 
