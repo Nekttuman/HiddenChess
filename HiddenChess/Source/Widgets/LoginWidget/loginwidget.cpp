@@ -11,6 +11,7 @@
 LoginWidget::LoginWidget(QWidget *parent) :
         QWidget(parent) {
     ui.setupUi(this);
+    ui.pswdLineEdit->setEchoMode(QLineEdit::Password);
 
     connect(ui.loginBtn, &QPushButton::clicked, this, &LoginWidget::emitTryLogin_slot);
 }
