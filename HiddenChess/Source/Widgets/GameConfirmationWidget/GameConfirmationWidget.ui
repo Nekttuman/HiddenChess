@@ -176,7 +176,7 @@
         <bool>false</bool>
        </property>
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -215,6 +215,19 @@
       </widget>
      </item>
     </layout>
+   </item>
+   <item row="14" column="1">
+    <widget class="QPushButton" name="backToMenuBtn">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Back to menu</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

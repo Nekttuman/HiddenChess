@@ -143,6 +143,7 @@ void MainWindow::gameConfirmation_connections() {
 //    connect(ui.gameConfirmationWidget, &GameConfirmationWidget::userReady_signal, client, &Client::);
     connect(client, &Client::roomCreated_signal, ui.gameConfirmationWidget,
             &GameConfirmationWidget::userIsRoomOwner_slot);
+    connect(ui.gameConfirmationWidget, &GameConfirmationWidget::backToMenu_signal, ui.mainMenuWidget, &MainMenu::show);
 //
 }
 

@@ -13,6 +13,8 @@ GameConfirmationWidget::GameConfirmationWidget(QWidget *parent) : QWidget(parent
         if (isRoomOwner)
             enableSettings();
     });
+    connect(ui.backToMenuBtn, &QPushButton::released, this, [&]() { emit backToMenu_signal(); });
+    connect(ui.backToMenuBtn, &QPushButton::released, this, &GameConfirmationWidget::hide);
 }
 
 GameConfirmationWidget::~GameConfirmationWidget() {

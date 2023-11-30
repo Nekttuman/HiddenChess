@@ -32,6 +32,7 @@ public slots:
 signals:
 
     void userReady_signal();
+    void backToMenu_signal();
 
     void roomSettingsChanged_signal(QString color, qint32 allowedFakesCount);
 };
