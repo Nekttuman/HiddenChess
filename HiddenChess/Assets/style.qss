@@ -1,0 +1,129 @@
+/*-----QWidget-----*/
+QWidget {
+	background-color: rgba(48, 48, 48, 1);
+	color: #ffffff;
+	font-size: 14px;
+	font:  "Arial";
+}
+
+
+/*-----QLabel-----*/
+QLabel {
+	background-color: transparent;
+	color: #ffffff;
+}
+
+.title {
+	font-size: 14px;
+}
+
+/*-----QPushButton-----*/
+QPushButton {
+	background-color: rgba(86, 143, 219, 1);
+	color: #ffffff;
+	border-style: solid;
+	border-width: 0px;
+	border-radius: 3px;
+	border-color: #051a39;
+	padding: 5px;
+
+}
+
+QPushButton:focus{
+background-color: rgba(242, 73, 107, 1);
+}
+
+
+QPushButton:hover {
+	background-color: rgba(242, 112, 138, 1);
+	border-style: solid;
+	border-width: 0px;
+	border-radius: 3px;
+	border-color: #051a39;
+	padding: 5px;
+
+}
+
+
+QPushButton:pressed {
+	background-color: rgba(255, 25, 71, 1);
+	color: #ffffff;
+	border-style: solid;
+	border-width: 1px;
+	border-radius: 3px;
+	border-color: #051a39;
+	padding: 5px;
+
+}
+
+.searchBtn {
+	background-color: #121212;
+	font-size: 24px;
+	border: none;
+}
+
+.navBtn {
+	max-height: 35;
+	max-width: 35;
+}
+
+
+/*-----QLineEdit-----*/
+QLineEdit {
+	background-color: #525251;
+	color: #ffffff;
+	border-width: 1px;
+	border-radius: 3px;
+	border-color: #051a39;
+	padding: 2px;
+
+}
+
+
+/*-----QScrollBar-----*/
+QScrollBar:vertical {
+	background-color: #3d3d3d;
+	width: 13px;
+	margin: 16px 0 16px 0;
+	border: 1px solid #222222;
+
+}
+
+
+QScrollBar::handle:vertical {
+	background-color: rgba(255, 25, 71, 1);
+	min-height: 20px;
+
+}
+
+
+QScrollBar::add-line:vertical {
+	border: 1px solid #1b1b19;
+	background-color: rgba(255, 98, 129, 1);
+	height: 14px;
+
+}
+
+
+QScrollBar::sub-line:vertical {
+	border: 1px solid #1b1b19;
+	background-color: rgba(255, 98, 129, 1);
+	height: 14px;
+
+}
+
+
+QScrollBar::add-page:vertical,
+QScrollBar::sub-page:vertical {
+	background: none;
+}
+
+
+/*-----------------------------------------------*/
+/*--------------- SPLASH SCREEN STYLES ----------*/
+QWidget#SplashScreenWidget{
+	background-color: rgba(0, 0, 0, 1);
+}
+QWidget#SplashScreenWidget QLabel{
+font-size:24px;
+}
