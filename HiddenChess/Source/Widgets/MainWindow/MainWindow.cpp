@@ -115,9 +115,9 @@ void MainWindow::roomCreation_connections() {
                         ui.roomCreationWidget->getRoomName(),
                         ui.roomCreationWidget->getPswd());
             });
-    connect(client, &Client::roomCreated_signal, ui.gameWidget, &GameWidget::show);
+//    connect(client, &Client::roomCreated_signal, ui.gameWidget, &GameWidget::show);
 
-    connect(client, &Client::roomCreated_signal, ui.gameWidget, &GameWidget::startGame_slot);
+    connect(client, &Client::roomCreated_signal, ui.gameConfirmationWidget, &GameConfirmationWidget::show);
     connect(client, &Client::roomCreated_signal, ui.roomCreationWidget, &RoomCreationWidget::hide);
     connect(client, &Client::roomCreated_signal, ui.roomCreationWidget, &RoomCreationWidget::clearFields);
     connect(client, &Client::roomCreated_signal, ui.loginWidget, &LoginWidget::hide);
@@ -138,9 +138,6 @@ void MainWindow::roomsList_connections() {
 void MainWindow::gameConfirmation_connections() {
 
 
-    connect(client, &Client::joinedToRoom_signal, ui.gameConfirmationWidget, &GameConfirmationWidget::show);
-//    connect(ui.gameConfirmationWidget, &GameConfirmationWidget::roomSettingsChanged_signal, client, &Client::);
-//    connect(ui.gameConfirmationWidget, &GameConfirmationWidget::userReady_signal, client, &Client::);
     connect(client, &Client::roomCreated_signal, ui.gameConfirmationWidget,
             &GameConfirmationWidget::userIsRoomOwner_slot);
     connect(ui.gameConfirmationWidget, &GameConfirmationWidget::backToMenu_signal, ui.mainMenuWidget, &MainMenu::show);
@@ -154,7 +151,8 @@ void MainWindow::roomJoining_connections() {
             client, &Client::sendJoiningRequest_slot);
 //    connect(client, &Client::joinedToRoom_signal, ui.gameWidget, &GameWidget::show);
     connect(client, &Client::joinedToRoom_signal, ui.joiningWidget, &JoiningWidget::hide);
-//
+
+    connect(client, &Client::joinedToRoom_signal, ui.gameConfirmationWidget, &GameConfirmationWidget::show);
 
 }
 

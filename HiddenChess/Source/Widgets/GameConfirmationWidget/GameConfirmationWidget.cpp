@@ -31,7 +31,8 @@ void GameConfirmationWidget::saveSettings_slot() {
 
 void GameConfirmationWidget::userIsRoomOwner_slot() {
     isRoomOwner = true;
-    enableSettings();
+    if (ui.notReadyRadioButton->isChecked())
+        enableSettings();
 }
 
 void GameConfirmationWidget::disableSettings() {
