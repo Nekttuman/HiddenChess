@@ -173,15 +173,12 @@ void MainWindow::gameWidget_connections() {
             &GameWidget::show);
     connect(ui.gameConfirmationWidget, &GameConfirmationWidget::enableStartGame_signal, ui.gameWidget,
             &GameWidget::startGame_slot);
-//    connect(client, &Client::clientErr_signal, this, &MainWindow::disableGame_slot);
-//    connect(client, &Client::clientErr_signal, this, [&]() { has_connection = false; });
-
-
-//    connect(client, &Client::connected_signal, this, [&]() { has_connection = true; });
-//    connect(client, &Client::connected_signal, this, &MainWindow::showConnectedMessage_slot);
 
     connect(ui.gameWidget, &GameWidget::backToMenu_signal,
             this, &MainWindow::showMainMenu_slot);
+
+    connect(ui.gameConfirmationWidget, &GameConfirmationWidget::roomSettingsChanged_signal, ui.gameWidget,
+            &GameWidget::setSettings_slot);
 
 
 }

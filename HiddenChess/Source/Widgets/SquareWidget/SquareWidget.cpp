@@ -38,7 +38,7 @@ void SquareWidget::paintEvent(QPaintEvent *event) {
 };
 
 
-void SquareWidget::setFigureType(Ft figure_, PlayerType type, Fc color) {
+void SquareWidget::setFigureType(Ft figure_, PlayerType type, FigureColor color) {
 
     Ffigure = new Figure(figure_, type, color);
 

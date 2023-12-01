@@ -30,11 +30,11 @@ enum PlayerType {
     player, enemy
 };
 
-enum Fc {
+enum FigureColor {
     white, black
 };
 
-typedef std::tuple<Ft, Fc> TwoKey;
+typedef std::tuple<Ft, FigureColor> TwoKey;
 typedef QList<QList<int>> TwoDimIntArray;
 
 const QMap<TwoKey, QString> FigureImages =
@@ -63,7 +63,7 @@ public:
     bool fakeStatus;
     QList<QPoint> availableMoves;
 
-    Figure(Ft figure_, PlayerType fcolor_, Fc color_);
+    Figure(Ft figure_, PlayerType fcolor_, FigureColor color_);
 
     bool FirstMoveDone;
 

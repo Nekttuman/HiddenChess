@@ -4,10 +4,11 @@
 #include "ui_GameWidget.h"
 #include "SquareWidget.h"
 #include "Figure.h"
+#include "RoomSettings.h"
+
 
 class GameWidget : public QWidget {
 Q_OBJECT
-
 
 public:
     SquareWidget *squares[8][8];
@@ -20,10 +21,11 @@ public:
 private:
     Ui::GameWidgetClass ui;
     bool m_movesAllowed = false;
+    RoomSettings m_rs;
 
     void setField();
 
-    void setFigures(Fc playerColor, Fc enemyColor);
+    void setFigures(FigureColor playerColor, FigureColor enemyColor);
 
     void setEnabledMoves(Figure *figure, int x, int y);
 
@@ -59,9 +61,11 @@ public slots:
 
     void startGame_slot();
 
+    void setSettings_slot(RoomSettings rs);
+
     void moveRequest_slot(int prevX, int prevY, int x, int y, QDropEvent *event);
 
-    void allowOrForbidMoves_slot(bool allowed);
+    void allowMoves_slot();
 
 protected:
     void paintEvent(QPaintEvent *event) override;

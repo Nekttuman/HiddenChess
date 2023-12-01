@@ -6,7 +6,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-set(CMAKE_PREFIX_PATH "D:/Zona_Downloads/Qt-1/5.15.2/vs_/msvc2019_64")
+#set(CMAKE_PREFIX_PATH "D:/Zona_Downloads/Qt-1/5.15.2/vs_/msvc2019_64")
 
 find_package(Qt5 COMPONENTS
         Core
@@ -32,6 +32,7 @@ include_directories(${CMAKE_SOURCE_DIR}/Source/Widgets/GameConfirmationWidget)
 
 include_directories(${CMAKE_SOURCE_DIR}/Source/Classes/Client)
 include_directories(${CMAKE_SOURCE_DIR}/Source/Classes/Figure)
+include_directories(${CMAKE_SOURCE_DIR}/Source/Classes/RoomSettings)
 
 set(UI_FILES
         Source/Widgets/SquareWidget/SquareWidget.ui
@@ -52,12 +53,13 @@ qt5_wrap_ui(UI_HEADERS ${UI_FILES})
 
 add_executable(HiddenChess
         Source/main.cpp
+        Source/Classes/Figure/Figure.cpp
+        Source/Classes/RoomSettings/RoomSettings.cpp
         Source/Widgets/MainWindow/MainWindow.cpp
         Source/Widgets/ChatWidget/ChatWidget.cpp
         Source/Widgets/MainMenuWidget/MainMenu.cpp
         Source/Widgets/GameWidget/GameWidget.cpp
         Source/Widgets/JoiningWidget/JoiningWidget.cpp
-        Source/Classes/Figure/Figure.cpp
         Source/Widgets/RoomCreationWidget/RoomCreationWidget.cpp
         Source/Widgets/SquareWidget/SquareWidget.cpp
         Source/Classes/Client/Client.cpp

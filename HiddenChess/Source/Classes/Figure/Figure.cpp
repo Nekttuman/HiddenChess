@@ -13,7 +13,7 @@ void showCursorMe() {
 }
 
 
-Figure::Figure(Ft figure_, PlayerType type, Fc color) {
+Figure::Figure(Ft figure_, PlayerType type, FigureColor color) {
 
     figureType = figure_;
     playerType = type;

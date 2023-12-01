@@ -5,10 +5,14 @@ GameConfirmationWidget::GameConfirmationWidget(QWidget *parent) : QWidget(parent
     ui.setupUi(this);
     connect(ui.saveButton, &QPushButton::released, this, &GameConfirmationWidget::saveSettings_slot);
     connect(ui.readyRadioButton, &QRadioButton::clicked, this, [&]() {
-        disableRoomSettings();
+        disableRoomSettings();  // TODO: create slot from this lambda
         if (isOpponentReady) {
             this->setDisabled(true);
             this->hide();
+            if (isRoomOwner)
+                    emit roomSettingsChanged_signal(
+                        {(ui.colorComboBox->currentText() == "black") ? FigureColor::black : FigureColor::white, 0});
+
             emit enableStartGame_signal();
 
         }
@@ -27,12 +31,12 @@ GameConfirmationWidget::~GameConfirmationWidget() {
 }
 
 void GameConfirmationWidget::saveSettings_slot() {
-    color = ui.colorComboBox->currentText();
+    color = (ui.colorComboBox->currentText() == "black") ? FigureColor::black : FigureColor::white;
     if (ui.infRadioButton->isChecked())
         allowedFakesCount = -1; // inf
     else
         allowedFakesCount = ui.fakesCountSpinBox->value();
-    emit roomSettingsChanged_signal(color, allowedFakesCount);
+    emit roomSettingsChanged_signal({color, allowedFakesCount});
 }
 
 void GameConfirmationWidget::userIsRoomOwner_slot() {
@@ -63,6 +67,10 @@ void GameConfirmationWidget::opponentReady_slot() {
 
     if (ui.readyRadioButton->isChecked()) {
         this->setDisabled(true);
+        if (isRoomOwner)
+                emit roomSettingsChanged_signal(
+                    {(ui.colorComboBox->currentText() == "black") ? FigureColor::black : FigureColor::white, 0});
+
         this->hide();
         emit enableStartGame_signal();
     }

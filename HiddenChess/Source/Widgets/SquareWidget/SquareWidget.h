@@ -15,7 +15,7 @@ public:
 
     SquareWidget(int x, int y, QWidget *parent = nullptr);
 
-    void setFigureType(Ft figure_, PlayerType type, Fc color);
+    void setFigureType(Ft figure_, PlayerType type, FigureColor color);
 
     void lightSquare();
 

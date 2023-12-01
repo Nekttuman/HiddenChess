@@ -6,7 +6,7 @@ GameWidget::GameWidget(QWidget *parent)
         : QWidget(parent) {
     ui.setupUi(this);
 
-
+    m_rs = {FigureColor::black, 0};
     ui.gridLayout->setSpacing(0);
     ui.label_3->setText("ti dolbaaaeeeb");
 
@@ -42,7 +42,7 @@ void GameWidget::setField() {
 
 }
 
-void GameWidget::setFigures(Fc playerColor, Fc enemyColor) {
+void GameWidget::setFigures(FigureColor playerColor, FigureColor enemyColor) {
 
     for (int i = 0; i < 8; i++) {
 
@@ -374,11 +374,10 @@ void GameWidget::relocateKingWRook(int prevX, int prevY, int direction, Figure *
 
 
 void GameWidget::startGame_slot() {
-
     setField();
-    setFigures(black, white);
-    m_movesAllowed = true;
-
+    setFigures(m_rs.color, m_rs.color == FigureColor::white ? FigureColor::black : FigureColor::white);
+    if (m_rs.color == white)
+        m_movesAllowed = true;
 }
 
 
@@ -412,8 +411,8 @@ void GameWidget::moveRequest_slot(int prevX, int prevY, int x, int y, QDropEvent
         return;
     }
 
-    emit move_signal(QPoint(prevX, prevY), QPoint(x,y));
-
+    emit move_signal(QPoint(prevX, prevY), QPoint(x, y));
+    m_movesAllowed = false;
     if (prevFigure->fakeStatus == false && !prevFigure->availableMoves.contains(QPoint(x, y))) {
         prevFigure->fakeStatus = true;
         qDebug() << "fake";
@@ -421,14 +420,9 @@ void GameWidget::moveRequest_slot(int prevX, int prevY, int x, int y, QDropEvent
 
 }
 
-void GameWidget::allowOrForbidMoves_slot(bool allowed) {
-
-    m_movesAllowed=allowed;
-
-
+void GameWidget::allowMoves_slot() {
+    m_movesAllowed = true;
 }
-
-
 
 
 //End Slots################################################################################
@@ -449,5 +443,10 @@ void GameWidget::paintEvent(QPaintEvent *event) {
             squares[i][j]->resizePicture();
         }
     }
+}
+
+void GameWidget::setSettings_slot(RoomSettings rs) {
+    m_rs = rs;
+    qDebug() << "color" << m_rs.color;
 }
 
