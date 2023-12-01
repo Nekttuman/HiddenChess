@@ -180,5 +180,8 @@ void MainWindow::gameWidget_connections() {
     connect(ui.gameConfirmationWidget, &GameConfirmationWidget::roomSettingsChanged_signal, ui.gameWidget,
             &GameWidget::setSettings_slot);
 
+    connect(client, &Client::opponentMadeMove_signal, ui.gameWidget, &GameWidget::opponetMadeMove_slot);
+    connect(client, &Client::opponentMadeMove_signal, ui.gameWidget, &GameWidget::allowMoves_slot);
 
+    connect (ui.gameWidget, &GameWidget::startAskingForMove_signal, client, &Client::startAskingForMove_slot);
 }

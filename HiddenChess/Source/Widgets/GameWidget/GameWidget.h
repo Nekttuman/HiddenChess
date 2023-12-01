@@ -49,6 +49,8 @@ signals:
 
     void move_signal(QPoint prevPoint, QPoint point);
 
+    void startAskingForMove_signal();
+
 private slots:
 
     void emitBackToMenu_slot() { emit backToMenu_signal(); }
@@ -56,6 +58,8 @@ private slots:
 public slots:
 
     void showMoves_slot(Figure *figure, int x, int y);
+
+    void opponetMadeMove_slot(QPoint prevPoint, QPoint point);
 
     void hideMoves_slot();
 

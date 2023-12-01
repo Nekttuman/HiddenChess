@@ -378,6 +378,8 @@ void GameWidget::startGame_slot() {
     setFigures(m_rs.color, m_rs.color == FigureColor::white ? FigureColor::black : FigureColor::white);
     if (m_rs.color == white)
         m_movesAllowed = true;
+    else
+        emit startAskingForMove_signal();
 }
 
 
@@ -448,5 +450,9 @@ void GameWidget::paintEvent(QPaintEvent *event) {
 void GameWidget::setSettings_slot(RoomSettings rs) {
     m_rs = rs;
     qDebug() << "color" << m_rs.color;
+}
+
+void GameWidget::opponetMadeMove_slot(QPoint prevPoint, QPoint point) {
+
 }
 

@@ -254,3 +254,8 @@ void Client::checkOpponentReady_slot() {
     manager->post(request, postData.toString(QUrl::FullyEncoded).toUtf8());
 }
 
+void Client::startAskingForMove_slot() {
+    moveTimer->start(3000); // Start the moveTimer with a 3-second interval (3000 ms)
+
+}
+

@@ -69,6 +69,7 @@ public slots:
 
     void sendUserReady_slot();
     void sendUserNotReady_slot();
+    void startAskingForMove_slot();
 
     void checkRoomNameUniq_slot(QString roomName); //for creating
     void sendJoiningRequest_slot(QString roomId, QString roomPasswd); // for Joining
