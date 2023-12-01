@@ -69,7 +69,7 @@ public:
 
     ~Figure() {
 
-        qDebug() << "ia umer";
+
     }
 
 private:

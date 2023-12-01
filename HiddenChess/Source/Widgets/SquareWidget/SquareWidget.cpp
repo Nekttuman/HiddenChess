@@ -105,6 +105,8 @@ void SquareWidget::removeFigure() {
 
 
 void SquareWidget::placeFigure(Figure *figure) {
+    if (Ffigure!=nullptr)delete Ffgiure;
+
     Ffigure = figure;
     Ffigure->FirstMoveDone = true;
     ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::IgnoreAspectRatio));
