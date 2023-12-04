@@ -8,5 +8,5 @@
 
 struct RoomSettings {
     FigureColor color;
-    qint32 allowedFakewCount;
+    qint32 allowedFakesCount;
 };
