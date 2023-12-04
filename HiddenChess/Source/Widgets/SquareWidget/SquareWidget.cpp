@@ -105,7 +105,8 @@ void SquareWidget::removeFigure() {
 
 
 void SquareWidget::placeFigure(Figure *figure) {
-    if (Ffigure!=nullptr)delete Ffgiure;
+    if (Ffigure!=nullptr)
+        delete Ffigure;
 
     Ffigure = figure;
     Ffigure->FirstMoveDone = true;
