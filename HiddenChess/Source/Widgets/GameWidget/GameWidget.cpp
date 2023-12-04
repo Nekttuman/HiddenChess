@@ -8,7 +8,6 @@ GameWidget::GameWidget(QWidget *parent)
 
     m_rs = {FigureColor::black, 0};
     ui.gridLayout->setSpacing(0);
-    ui.label_3->setText("ti dolbaaaeeeb");
 
     connect(ui.startButton, &QPushButton::clicked, this, &GameWidget::startGame_slot);
     for (int i = 0; i < 8; ++i) {
@@ -26,8 +25,6 @@ GameWidget::~GameWidget() {}
 
 
 void GameWidget::setField() {
-
-    qDebug() << "start";
 
 
     for (int i = 0; i < 8; i++) {
@@ -392,7 +389,6 @@ void GameWidget::moveRequest_slot(int prevX, int prevY, int x, int y, QDropEvent
 
     Figure *prevFigure = squares[prevX][prevY]->Ffigure;
     if (!m_movesAllowed) {
-        qDebug() << "Moves not allowed";
         return;
     }
 
@@ -422,7 +418,6 @@ void GameWidget::moveRequest_slot(int prevX, int prevY, int x, int y, QDropEvent
     m_movesAllowed = false;
     if (prevFigure->fakeStatus == false && !prevFigure->availableMoves.contains(QPoint(x, y))) {
         prevFigure->fakeStatus = true;
-        qDebug() << "fake";
     }
 
 }
@@ -445,7 +440,6 @@ void GameWidget::opponentMadeMove_slot(QPoint prevPoint, QPoint point){
         (abs(prevPoint.y() - point.y()) == 2 ||
          (squares[point.x()][point.y()]->Ffigure != nullptr &&
           squares[point.x()][point.y()]->Ffigure->figureType == rook))){
-        qDebug()<<"rekirovka";
 
         relocateKingWRook(prevPoint.x(), prevPoint.y(),point.y() > prevPoint.y() ? 1 : -1,
                           squares[prevPoint.x()][prevPoint.y()]->Ffigure);
@@ -484,7 +478,6 @@ void GameWidget::resizeEvent(QResizeEvent *event){
 
 void GameWidget::setSettings_slot(RoomSettings rs) {
     m_rs = rs;
-    qDebug() << "color" << m_rs.color;
 }
 
 

@@ -144,7 +144,6 @@ void SquareWidget::mousePressEvent(QMouseEvent *event) {
         Qt::DropAction dropAction = drag->exec();
 
         if (dropAction == Qt::IgnoreAction) {
-            qDebug() << "ignoreAction";
             ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::IgnoreAspectRatio));
         }
 
@@ -171,8 +170,6 @@ void SquareWidget::dropEvent(QDropEvent *event) {
     QDataStream dataStream(&data, QIODevice::ReadOnly);
     dataStream >> prevX >> prevY;
 
-    qDebug() << "from" << QString::number(prevX) << QString::number(prevY) << "to"
-             << QString::number(x) << QString::number(y);
 
     emit moveRequest_signal(prevX, prevY, x, y, event);
 
