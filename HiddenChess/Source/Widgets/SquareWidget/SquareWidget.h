@@ -46,7 +46,7 @@ signals:
 
 private:
     Ui::SquareClass ui;
-
+    void YaDolbaebVcelenskogoMashtaba();
 
 protected:
 

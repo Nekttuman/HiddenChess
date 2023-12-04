@@ -72,7 +72,8 @@ public slots:
     void allowMoves_slot();
 
 protected:
-    void paintEvent(QPaintEvent *event) override;
+
+    void resizeEvent(QResizeEvent *event) override;
 
 };
 
