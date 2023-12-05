@@ -35,6 +35,7 @@ private:
     inline void roomJoining_connections();
     inline void gameConfirmation_connections();
     inline void gameWidget_connections();
+    inline void registerWidget_connections();
 
 public slots:
 

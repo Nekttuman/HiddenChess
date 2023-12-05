@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
     roomJoining_connections();
     gameConfirmation_connections();
     gameWidget_connections();
+    registerWidget_connections();
 }
 
 void MainWindow::setGUI() {
@@ -54,6 +55,7 @@ void MainWindow::setGUI() {
     ui.gameConfirmationWidget->move(0, 0);
     ui.gameConfirmationWidget->setFixedSize(this->size());
     ui.gameConfirmationWidget->hide();
+
 }
 
 MainWindow::~MainWindow() {}
@@ -183,5 +185,9 @@ void MainWindow::gameWidget_connections() {
     connect(client, &Client::opponentMadeMove_signal, ui.gameWidget, &GameWidget::opponentMadeMove_slot);
     connect(client, &Client::opponentMadeMove_signal, ui.gameWidget, &GameWidget::allowMoves_slot);
 
-    connect (ui.gameWidget, &GameWidget::startAskingForMove_signal, client, &Client::startAskingForMove_slot);
+    connect(ui.gameWidget, &GameWidget::startAskingForMove_signal, client, &Client::startAskingForMove_slot);
+}
+
+void MainWindow::registerWidget_connections() {
+//connect(ui.registerWidget, RegisterWidget::)
 }

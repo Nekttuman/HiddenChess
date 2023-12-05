@@ -30,6 +30,7 @@ include_directories(${CMAKE_SOURCE_DIR}/Source/Widgets/SplashScreenWidget)
 include_directories(${CMAKE_SOURCE_DIR}/Source/Widgets/SquareWidget)
 include_directories(${CMAKE_SOURCE_DIR}/Source/Widgets/GameConfirmationWidget)
 include_directories(${CMAKE_SOURCE_DIR}/Source/Widgets/FiguresDeckWidget)
+include_directories(${CMAKE_SOURCE_DIR}/Source/Widgets/RegistrationWidget)
 
 include_directories(${CMAKE_SOURCE_DIR}/Source/Classes/Client)
 include_directories(${CMAKE_SOURCE_DIR}/Source/Classes/Figure)
@@ -48,6 +49,7 @@ set(UI_FILES
         Source/Widgets/RoomsListWidget/RoomsListWidget.ui
         Source/Widgets/GameConfirmationWidget/GameConfirmationWidget.ui
         Source/Widgets/FiguresDeckWidget/FiguresDeckWidget.ui
+        Source/Widgets/RegistrationWidget/RegistrationWidget.ui
 )
 
 qt5_add_resources(RESOURCES Assets/HiddenChess.qrc)
@@ -70,6 +72,7 @@ add_executable(HiddenChess
         Source/Widgets/RoomsListWidget/RoomsListWidget.cpp
         Source/Widgets/GameConfirmationWidget/GameConfirmationWidget.cpp
         Source/Widgets/FiguresDeckWidget/FiguresDeckWidget.cpp
+        Source/Widgets/RegistrationWidget/RegistrationWidget.cpp
         ${RESOURCES}
         ${UI_FILES} ${UI_HEADERS}
 )
