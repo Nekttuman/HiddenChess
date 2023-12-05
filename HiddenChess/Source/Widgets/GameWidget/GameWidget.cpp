@@ -8,7 +8,6 @@ GameWidget::GameWidget(QWidget *parent)
 
     m_rs = {FigureColor::black, 0};
     ui.gridLayout->setSpacing(0);
-
     connect(ui.startButton, &QPushButton::clicked, this, &GameWidget::startGame_slot);
     for (int i = 0; i < 8; ++i) {
         for (int j = 0; j < 8; ++j) {
@@ -397,6 +396,7 @@ void GameWidget::moveRequest_slot(int prevX, int prevY, int x, int y, QDropEvent
                                  squares[x][y]->Ffigure->figureType == rook))) {
 
         relocateKingWRook(prevX, prevY, y > prevY ? 1 : -1, prevFigure, event);
+        if (event->dropAction()==Qt::IgnoreAction) return;
 
     } else if ((x != prevX || y != prevY) && squares[x][y]->Ffigure == nullptr) {
 
@@ -406,7 +406,7 @@ void GameWidget::moveRequest_slot(int prevX, int prevY, int x, int y, QDropEvent
     } else if (squares[x][y]->Ffigure->playerType == enemy) {
 
         squares[x][y]->placeFigure(prevFigure);
-        squares[prevX][prevY]->removeFigure();
+        squares[prevX][prevY]->deleteFigure();
 
     } else {
 

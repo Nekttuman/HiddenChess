@@ -144,6 +144,7 @@ void SquareWidget::mousePressEvent(QMouseEvent *event) {
         Qt::DropAction dropAction = drag->exec();
 
         if (dropAction == Qt::IgnoreAction) {
+            qDebug()<<"moves not allowed";
             ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::IgnoreAspectRatio));
         }
 
