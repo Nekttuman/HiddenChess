@@ -13,7 +13,6 @@ SquareWidget::SquareWidget(int x_, int y_, QWidget *parent) {
     ui.setupUi(this);
     ui.label->acceptDrops();
     this->setAcceptDrops(true);
-    ui.label->setAcceptDrops(false);
 
     x = x_;
     y = y_;
@@ -116,12 +115,12 @@ void SquareWidget::placeFigure(Figure *figure) {
 
 void SquareWidget::mousePressEvent(QMouseEvent *event) {
 
+
     if ((Ffigure != nullptr) && Ffigure->playerType == player) {
 
         emit showMoves_signal(Ffigure, x, y);
 
-        ui.label->setPixmap(QPixmap());
-
+        ui.label->setPixmap(QPixmap(""));
 
         QDrag *drag = new QDrag(this);
 
@@ -144,9 +143,7 @@ void SquareWidget::mousePressEvent(QMouseEvent *event) {
 
         Qt::DropAction dropAction = drag->exec();
 
-
         if (dropAction == Qt::IgnoreAction) {
-            qDebug() << "ignoreAction";
             ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::IgnoreAspectRatio));
         }
 
@@ -173,10 +170,14 @@ void SquareWidget::dropEvent(QDropEvent *event) {
     QDataStream dataStream(&data, QIODevice::ReadOnly);
     dataStream >> prevX >> prevY;
 
-    qDebug() << "from" << QString::number(prevX) << QString::number(prevY) << "to"
-             << QString::number(x) << QString::number(y);
 
     emit moveRequest_signal(prevX, prevY, x, y, event);
 
+
+}
+
+void SquareWidget::YaDolbaebVcelenskogoMashtaba() {
+    Ffigure = nullptr;
+    ui.label->setPixmap(QPixmap(""));
 
 }
