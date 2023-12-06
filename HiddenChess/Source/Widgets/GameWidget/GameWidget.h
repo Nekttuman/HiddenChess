@@ -22,10 +22,11 @@ private:
     Ui::GameWidgetClass ui;
     bool m_movesAllowed = false;
     RoomSettings m_rs;
+    bool gameMode = false; //false -swapTime; true - playTime
 
     void setField();
 
-    void setFigures(FigureColor playerColor, FigureColor enemyColor);
+    void setFigures(FigureColor playerColor);
 
     void setEnabledMoves(Figure *figure, int x, int y);
 
@@ -43,6 +44,10 @@ private:
 
     void relocateKingWRook(int prevX, int prevY, int direction, Figure *king, QDropEvent *event);
 
+    void playTimeMoves(int prevX, int prevY, int x, int y, QDropEvent *event);
+
+    void swapTimeMoves(int prevX, int prevY, int x, int y, QDropEvent *event);
+
 signals:
 
     void backToMenu_signal();
@@ -54,6 +59,8 @@ signals:
 private slots:
 
     void emitBackToMenu_slot() { emit backToMenu_signal(); }
+
+    void clearField();
 
 public slots:
 
@@ -70,6 +77,8 @@ public slots:
     void moveRequest_slot(int prevX, int prevY, int x, int y, QDropEvent *event);
 
     void allowMoves_slot();
+
+    void setField_slot();
 
 protected:
 

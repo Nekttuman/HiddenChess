@@ -103,7 +103,7 @@ void SquareWidget::removeFigure() {
 }
 
 
-void SquareWidget::placeFigure(Figure *figure) {
+void SquareWidget::placeFigureWithHack(Figure *figure) {
     if (Ffigure!=nullptr)
         delete Ffigure;
 
@@ -111,6 +111,15 @@ void SquareWidget::placeFigure(Figure *figure) {
     Ffigure->FirstMoveDone = true;
     ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::IgnoreAspectRatio));
 }
+
+
+void SquareWidget::placeFigureWithoutHack(Figure *figure) {
+
+    Ffigure = figure;
+    Ffigure->FirstMoveDone = true;
+    ui.label->setPixmap(QPixmap(Ffigure->figureImage).scaled(this->size(), Qt::IgnoreAspectRatio));
+}
+
 
 
 void SquareWidget::mousePressEvent(QMouseEvent *event) {

@@ -38,7 +38,7 @@ void GameWidget::setField() {
 
 }
 
-void GameWidget::setFigures(FigureColor playerColor, FigureColor enemyColor) {
+void GameWidget::setFigures(FigureColor playerColor) {
 
     for (int i = 0; i < 8; i++) {
 
@@ -53,20 +53,75 @@ void GameWidget::setFigures(FigureColor playerColor, FigureColor enemyColor) {
     squares[7][3]->setFigureType(queen, player, playerColor);
     squares[7][4]->setFigureType(king, player, playerColor);
 
-
-    for (int i = 0; i < 8; i++) {
-
-        squares[1][i]->setFigureType(pawn, enemy, enemyColor);
-    }
-    squares[0][0]->setFigureType(rook, enemy, enemyColor);
-    squares[0][7]->setFigureType(rook, enemy, enemyColor);
-    squares[0][1]->setFigureType(knight, enemy, enemyColor);
-    squares[0][6]->setFigureType(knight, enemy, enemyColor);
-    squares[0][2]->setFigureType(bishop, enemy, enemyColor);
-    squares[0][5]->setFigureType(bishop, enemy, enemyColor);
-    squares[0][3]->setFigureType(queen, enemy, enemyColor);
-    squares[0][4]->setFigureType(king, enemy, enemyColor);
 }
+
+
+void GameWidget::playTimeMoves(int prevX, int prevY, int x, int y, QDropEvent *event){
+
+    Figure *prevFigure = squares[prevX][prevY]->Ffigure;
+    if (!m_movesAllowed) {
+        return;
+    }
+
+    if (prevFigure->figureType == king && prevFigure->FirstMoveDone == false &&
+        (abs(y - prevY == 2) || (squares[x][y]->Ffigure != nullptr &&
+                                 squares[x][y]->Ffigure->figureType == rook))) {
+
+        relocateKingWRook(prevX, prevY, y > prevY ? 1 : -1, prevFigure, event);
+        if (event->dropAction()==Qt::IgnoreAction) return;
+
+    } else if ((x != prevX || y != prevY) && squares[x][y]->Ffigure == nullptr) {
+
+        squares[x][y]->placeFigureWithHack(prevFigure);
+        squares[prevX][prevY]->removeFigure();
+
+    } else if (squares[x][y]->Ffigure->playerType == enemy) {
+
+        squares[x][y]->placeFigureWithHack(prevFigure);
+        squares[prevX][prevY]->deleteFigure();
+
+    } else {
+
+        event->setDropAction(Qt::IgnoreAction);
+        return;
+    }
+
+    emit move_signal(QPoint(prevX, prevY), QPoint(x, y));
+    m_movesAllowed = false;
+    if (prevFigure->fakeStatus == false && !prevFigure->availableMoves.contains(QPoint(x, y))) {
+        prevFigure->fakeStatus = true;
+    }
+
+
+}
+
+
+void GameWidget::swapTimeMoves(int prevX, int prevY, int x, int y, QDropEvent *event){
+
+    Figure *prevFigure = squares[prevX][prevY]->Ffigure;
+    Figure *actualFigure = squares[x][y]->Ffigure;
+
+    if (x>5){
+        squares[x][y]->placeFigureWithoutHack(prevFigure);
+        squares[prevX][prevY]->placeFigureWithoutHack(actualFigure);
+    }
+    else {
+        event->setDropAction(Qt::IgnoreAction);
+        return;
+    }
+}
+
+
+void GameWidget::clearField(){
+
+    for (int i = 0; i < 8; ++i) {
+        for (int j = 0; j < 8; ++j) {
+            squares[i][j]->deleteFigure();
+        }
+    }
+}
+
+
 
 
 
@@ -352,11 +407,11 @@ void GameWidget::relocateKingWRook(int prevX, int prevY, int direction, Figure *
         squares[prevX][i]->removeFigure();
 
         if (abs(prevY - i) < 3) {
-            squares[prevX][prevY]->placeFigure(buffer);
-            squares[prevX][prevY + direction]->placeFigure(king);
+            squares[prevX][prevY]->placeFigureWithHack(buffer);
+            squares[prevX][prevY + direction]->placeFigureWithHack(king);
         } else {
-            squares[prevX][prevY + direction]->placeFigure(buffer);
-            squares[prevX][prevY + direction * 2]->placeFigure(king);
+            squares[prevX][prevY + direction]->placeFigureWithHack(buffer);
+            squares[prevX][prevY + direction * 2]->placeFigureWithHack(king);
             squares[prevX][prevY]->removeFigure();
         }
         buffer->FirstMoveDone = true;
@@ -372,9 +427,9 @@ void GameWidget::relocateKingWRook(int prevX, int prevY, int direction, Figure *
 
 
 void GameWidget::startGame_slot() {
-    setField();
+    gameMode=true;
+    /* дописать коннекты между челами о прекращении свапа*/
 
-    setFigures(m_rs.color, m_rs.color == FigureColor::white ? FigureColor::black : FigureColor::white);
     if (m_rs.color == white)
         m_movesAllowed = true;
     else
@@ -386,38 +441,12 @@ void GameWidget::startGame_slot() {
 
 void GameWidget::moveRequest_slot(int prevX, int prevY, int x, int y, QDropEvent *event) {
 
-    Figure *prevFigure = squares[prevX][prevY]->Ffigure;
-    if (!m_movesAllowed) {
-        return;
+
+    if (gameMode){
+        playTimeMoves(prevX, prevY,x,y, event);
     }
-
-    if (prevFigure->figureType == king && prevFigure->FirstMoveDone == false &&
-        (abs(y - prevY == 2) || (squares[x][y]->Ffigure != nullptr &&
-                                 squares[x][y]->Ffigure->figureType == rook))) {
-
-        relocateKingWRook(prevX, prevY, y > prevY ? 1 : -1, prevFigure, event);
-        if (event->dropAction()==Qt::IgnoreAction) return;
-
-    } else if ((x != prevX || y != prevY) && squares[x][y]->Ffigure == nullptr) {
-
-        squares[x][y]->placeFigure(prevFigure);
-        squares[prevX][prevY]->removeFigure();
-
-    } else if (squares[x][y]->Ffigure->playerType == enemy) {
-
-        squares[x][y]->placeFigure(prevFigure);
-        squares[prevX][prevY]->deleteFigure();
-
-    } else {
-
-        event->setDropAction(Qt::IgnoreAction);
-        return;
-    }
-
-    emit move_signal(QPoint(prevX, prevY), QPoint(x, y));
-    m_movesAllowed = false;
-    if (prevFigure->fakeStatus == false && !prevFigure->availableMoves.contains(QPoint(x, y))) {
-        prevFigure->fakeStatus = true;
+    else{
+        swapTimeMoves(prevX, prevY,x,y, event);
     }
 
 }
@@ -447,9 +476,21 @@ void GameWidget::opponentMadeMove_slot(QPoint prevPoint, QPoint point){
     }
 
     squares[prevPoint.x()][prevPoint.y()]->removeFigure();
-    squares[point.x()][point.y()]->placeFigure(figure);
+    squares[point.x()][point.y()]->placeFigureWithHack(figure);
     
 }
+
+
+void GameWidget::setSettings_slot(RoomSettings rs) {
+    m_rs = rs;
+}
+
+
+void GameWidget::setField_slot(){
+    setField();
+    setFigures(m_rs.color);
+}
+
 
 
 
@@ -475,9 +516,5 @@ void GameWidget::resizeEvent(QResizeEvent *event){
 
 }
 
-
-void GameWidget::setSettings_slot(RoomSettings rs) {
-    m_rs = rs;
-}
 
 

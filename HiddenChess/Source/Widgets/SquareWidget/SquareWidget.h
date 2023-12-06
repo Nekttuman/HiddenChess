@@ -25,7 +25,9 @@ public:
 
     void deleteFigure();
 
-    void placeFigure(Figure *figure);
+    void placeFigureWithHack(Figure *figure);
+
+    void placeFigureWithoutHack(Figure *figure);
 
     void removeFigure();
 

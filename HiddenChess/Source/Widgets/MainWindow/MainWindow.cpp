@@ -174,7 +174,7 @@ void MainWindow::gameWidget_connections() {
     connect(ui.gameConfirmationWidget, &GameConfirmationWidget::enableStartGame_signal, ui.gameWidget,
             &GameWidget::show);
     connect(ui.gameConfirmationWidget, &GameConfirmationWidget::enableStartGame_signal, ui.gameWidget,
-            &GameWidget::startGame_slot);
+            &GameWidget::setField_slot);
 
     connect(ui.gameWidget, &GameWidget::backToMenu_signal,
             this, &MainWindow::showMainMenu_slot);
