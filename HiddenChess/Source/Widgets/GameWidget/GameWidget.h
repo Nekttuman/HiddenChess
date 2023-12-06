@@ -48,6 +48,9 @@ private:
 
     void swapTimeMoves(int prevX, int prevY, int x, int y, QDropEvent *event);
 
+    void sendFiguresToOpponent(); //Dasha
+
+
 signals:
 
     void backToMenu_signal();
@@ -79,6 +82,8 @@ public slots:
     void allowMoves_slot();
 
     void setField_slot();
+
+   // void getOpponentFiguresslot(); //Dasha
 
 protected:
 

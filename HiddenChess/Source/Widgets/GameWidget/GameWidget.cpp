@@ -428,7 +428,7 @@ void GameWidget::relocateKingWRook(int prevX, int prevY, int direction, Figure *
 
 void GameWidget::startGame_slot() {
     gameMode=true;
-    /* дописать коннекты между челами о прекращении свапа*/
+    // Dasha
 
     if (m_rs.color == white)
         m_movesAllowed = true;
