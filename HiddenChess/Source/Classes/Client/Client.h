@@ -44,6 +44,10 @@ signals:
     void joinedToRoom_signal();
 
     void loginSuccess_signal();
+    void loginFailed_signal(QString err);
+
+    void registerSuccess_signal();
+    void registerFailed_signal(QString err);
 
     void opponentReady_signal();
     void opponentNotReady_signal();
@@ -57,6 +61,7 @@ public slots:
     void tryCreateRoom_slot(QString roomName, QString pswd);
 
     void tryLoggin_slot(QString login, QString pswd);
+    void tryRegister_slot(QString login, QString pswd);
 
     void connectToHost_slot();
 
@@ -89,6 +94,7 @@ private:
     const QUrl checkMoveUrl = QUrl(DOMEN_API_URL + "gameroom/check-move/");
     const QUrl userReadyUrl = QUrl(DOMEN_API_URL + "gameroom/user-ready-info/");
     const QUrl checkReadyUrl = QUrl(DOMEN_API_URL + "gameroom/opponent-ready-check/");
+    const QUrl registerUrl = QUrl(DOMEN_API_URL + "register/");
     bool connectionAvailable = false;
 
     QString sessionId; // Cookie

@@ -26,11 +26,15 @@ private:
 
 signals:
 
-    void registerSignal(const QString &login, const QString &pswd);
+    void register_signal(const QString &login, const QString &pswd);
+
+    void backToLogin_signal();
 
 private slots:
 
     void validateFields();
+public slots:
+    void showErr_slot(QString err);
 
 };
 
