@@ -107,6 +107,16 @@
      </rect>
     </property>
    </widget>
+   <widget class="RegistrationWidget" name="registrationWidget" native="true">
+    <property name="geometry">
+     <rect>
+      <x>530</x>
+      <y>530</y>
+      <width>120</width>
+      <height>80</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
@@ -158,6 +168,12 @@
    <class>GameConfirmationWidget</class>
    <extends>QWidget</extends>
    <header location="global">GameConfirmationWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>RegistrationWidget</class>
+   <extends>QWidget</extends>
+   <header>RegistrationWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

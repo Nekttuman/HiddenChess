@@ -14,10 +14,13 @@ LoginWidget::LoginWidget(QWidget *parent) :
     ui.pswdLineEdit->setEchoMode(QLineEdit::Password);
 
     connect(ui.loginBtn, &QPushButton::clicked, this, &LoginWidget::emitTryLogin_slot);
+    connect(ui.registerBtn, &QPushButton::clicked, this, [&]() { emit goToRegistration_signal(); });
+    connect(ui.registerBtn, &QPushButton::clicked, this, &LoginWidget::hide);
+    connect(ui.registerBtn, &QPushButton::clicked, ui.errLabel, &QLabel::clear);
 }
 
 void LoginWidget::emitTryLogin_slot() {
-    qDebug()<<"LoginWidget::emitTryLogin_slot slot called";
+    qDebug() << "LoginWidget::emitTryLogin_slot slot called";
     emit tryLoggin_signal(
             ui.loginLineEdit->text(),
             ui.pswdLineEdit->text()

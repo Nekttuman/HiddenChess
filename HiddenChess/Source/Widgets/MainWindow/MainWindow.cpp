@@ -56,6 +56,10 @@ void MainWindow::setGUI() {
     ui.gameConfirmationWidget->setFixedSize(this->size());
     ui.gameConfirmationWidget->hide();
 
+    ui.registrationWidget->move(0, 0);
+    ui.registrationWidget->setFixedSize(this->size());
+    ui.registrationWidget->hide();
+
 }
 
 MainWindow::~MainWindow() {}
@@ -97,8 +101,10 @@ void MainWindow::logging_connections() {
     connect(ui.loginWidget, &LoginWidget::tryLoggin_signal, this->client, &Client::tryLoggin_slot);
     connect(client, &Client::loginSuccess_signal, ui.loginWidget, &LoginWidget::hide);
     connect(client, &Client::loginSuccess_signal, ui.mainMenuWidget, &MainMenu::show);
+    connect(client, &Client::loginFailed_signal, ui.loginWidget, &LoginWidget::showErr_slot);
     connect(ui.loginWidget, &LoginWidget::tryLoggin_signal, this->client, &Client::tryLoggin_slot);
 
+    connect(ui.loginWidget, &LoginWidget::goToRegistration_signal, ui.registrationWidget, &RegistrationWidget::show);
 }
 
 void MainWindow::mainMenu_connections() {
@@ -107,7 +113,7 @@ void MainWindow::mainMenu_connections() {
     connect(ui.mainMenuWidget, &MainMenu::exitBtn_signal, this, &MainWindow::exit_slot);
     connect(ui.roomCreationWidget, &RoomCreationWidget::backToMenu_signal,
             this, &MainWindow::showMainMenu_slot);
-
+    connect(client, &Client::registerSuccess_signal, ui.mainMenuWidget, &MainMenu::show);
 }
 
 void MainWindow::roomCreation_connections() {
@@ -189,5 +195,10 @@ void MainWindow::gameWidget_connections() {
 }
 
 void MainWindow::registerWidget_connections() {
-//connect(ui.registerWidget, RegisterWidget::)
+    connect(ui.registrationWidget, &RegistrationWidget::backToLogin_signal, ui.loginWidget, &LoginWidget::show);
+    connect(ui.registrationWidget, &RegistrationWidget::register_signal, client, &Client::tryRegister_slot);
+
+    connect(client, &Client::registerSuccess_signal, ui.registrationWidget, &RegistrationWidget::hide);
+    connect(client, &Client::registerFailed_signal, ui.registrationWidget, &RegistrationWidget::showErr_slot);
+
 }

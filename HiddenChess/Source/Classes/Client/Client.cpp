@@ -39,39 +39,70 @@ void Client::responseHandler(QNetworkReply *reply) {
     QJsonObject jsonObject = jsonDocument.object();
 
     if (jsonObject["message"] == "Login successful") {
+
         emit loginSuccess_signal();
         // todo: save login and passwd to settings or session token
-    } else if (jsonObject["message"] == "Room created") {
+
+    } else if (jsonObject["message"] == "Login failed") {
+
+        emit loginFailed_signal("Login failed (wrong pswd or login)");
+
+    } else if (jsonObject["message"] == "User created successfully") {
+
+        emit registerSuccess_signal();
+
+    } else if (jsonObject["message"] == "Failed to create user") {
+
+        emit registerFailed_signal("Registration failed");
+
+    } else if (jsonObject["message"] == "Username already exists") {
+
+        emit registerFailed_signal("Username already exists");
+
+    }else if (jsonObject["message"] == "Room created") {
+
         m_roomId = jsonObject["room-id"].toString();
         qDebug() << m_roomId << jsonObject["room-id"];
         emit roomCreated_signal(jsonObject["room-id"].toString());
         isRoomOwner = true;
+
     } else if (jsonObject["message"] == "Rooms list") {
+
         qDebug() << jsonObject["rooms"].toString();
         emit roomsList_signal(jsonObject["rooms"].toObject());
+
     } else if (jsonObject["message"] == "Connection available") {
+
         emit connected_signal();
+
     } else if (jsonObject["message"] == "Successfully joined") {
+
         m_roomId = jsonObject["room-id"].toString();
         qDebug() << m_roomId << jsonObject["room-id"];
         emit joinedToRoom_signal();
         isRoomOwner = false;
+
     } else if (jsonObject["message"] == "new move") {
+
         QPoint from = QPoint{jsonObject["prev-pos-x"].toString().toInt(), jsonObject["prev-pos-y"].toString().toInt()};
         QPoint two = QPoint{jsonObject["next-pos-x"].toString().toInt(), jsonObject["next-pos-y"].toString().toInt()};
 
         qDebug() << "yeeeee" << from << two;
         emit opponentMadeMove_signal(from, two);
         moveTimer->stop();
-    } else if (jsonObject["message"] == "opponent ready"){
-        emit opponentReady_signal();
 
+    } else if (jsonObject["message"] == "opponent ready") {
+
+        emit opponentReady_signal();
         readyTimer->stop();
-    } else if (jsonObject["message"] == "opponent not ready"){
+
+    } else if (jsonObject["message"] == "opponent not ready") {
+
         emit opponentNotReady_signal();
+
     }
 
-        qDebug() << QJsonDocument::fromJson(responseData);
+    qDebug() << QJsonDocument::fromJson(responseData);
 
     reply->deleteLater();
 }
@@ -257,5 +288,19 @@ void Client::checkOpponentReady_slot() {
 void Client::startAskingForMove_slot() {
     moveTimer->start(3000); // Start the moveTimer with a 3-second interval (3000 ms)
 
+}
+
+void Client::tryRegister_slot(QString login, QString pswd) {
+    qDebug() << "checkOpponentMove_slot() slot called" << m_roomId;
+
+    QNetworkRequest request(registerUrl);
+
+    request.setRawHeader("X-CSRFToken", csrfToken.toUtf8());
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+
+    QUrlQuery postData;
+    postData.addQueryItem("username", login);
+    postData.addQueryItem("password", pswd);
+    manager->post(request, postData.toString(QUrl::FullyEncoded).toUtf8());
 }
 

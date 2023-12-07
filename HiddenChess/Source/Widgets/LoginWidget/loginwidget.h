@@ -21,12 +21,20 @@ private:
     Ui::LoginWidget ui;
 
 private slots:
+
     void emitTryLogin_slot();
-void showErr_slot(QString err){
-    ui.errLabel->setText(err);
-}
+
+public slots:
+
+    void showErr_slot(QString err) {
+        ui.errLabel->setText(err);
+    }
+
 signals:
+
     void tryLoggin_signal(QString login, QString pswd);
+
+    void goToRegistration_signal();
 };
 
 
