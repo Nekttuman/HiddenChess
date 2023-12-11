@@ -31,7 +31,6 @@ private:
     void setEnabledMoves(Figure *figure, int x, int y);
 
     void pawnAvailableMoves(Figure *figure, int x, int y);
-
     void kingAvailableMoves(Figure *figure, int x, int y);
 
     void queenAvailableMoves(Figure *figure, int x, int y);
@@ -48,7 +47,9 @@ private:
 
     void swapTimeMoves(int prevX, int prevY, int x, int y, QDropEvent *event);
 
-    void sendFiguresToOpponent(); //Dasha
+    void sendFiguresToOpponent();
+
+
 
 
 signals:
@@ -58,6 +59,8 @@ signals:
     void move_signal(QPoint prevPoint, QPoint point);
 
     void startAskingForMove_signal();
+
+    void sendFiguresToOpponent_signal(QMap<int, std::string> infoToSend); //Dasha
 
 private slots:
 
@@ -83,7 +86,7 @@ public slots:
 
     void setField_slot();
 
-   // void getOpponentFiguresslot(); //Dasha
+    void getOpponentStartFigures_slot(QMap<int, std::string> sentInfo); //Dasha
 
 protected:
 

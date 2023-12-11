@@ -96,6 +96,36 @@ void GameWidget::playTimeMoves(int prevX, int prevY, int x, int y, QDropEvent *e
 }
 
 
+void GameWidget::relocateKingWRook(int prevX, int prevY, int direction, Figure *king, QDropEvent *event= nullptr) {
+
+    int i = prevY;
+    while (i >= 0 && i < 8 && squares[prevX][i += direction]->Ffigure == nullptr) {}
+
+    Figure *buffer = squares[prevX][i]->Ffigure;
+
+    if (buffer->figureType == rook) {
+        squares[prevX][i]->removeFigure();
+
+        if (abs(prevY - i) < 3) {
+            squares[prevX][prevY]->placeFigureWithHack(buffer);
+            squares[prevX][prevY + direction]->placeFigureWithHack(king);
+        } else {
+            squares[prevX][prevY + direction]->placeFigureWithHack(buffer);
+            squares[prevX][prevY + direction * 2]->placeFigureWithHack(king);
+            squares[prevX][prevY]->removeFigure();
+        }
+        buffer->FirstMoveDone = true;
+        king->FirstMoveDone = true;
+
+        return;
+    }
+
+    if (event != nullptr){
+        event->setDropAction(Qt::IgnoreAction);
+    }
+}
+
+
 void GameWidget::swapTimeMoves(int prevX, int prevY, int x, int y, QDropEvent *event){
 
     Figure *prevFigure = squares[prevX][prevY]->Ffigure;
@@ -122,7 +152,24 @@ void GameWidget::clearField(){
 }
 
 
+void GameWidget::sendFiguresToOpponent() {
 
+    QMap<int, std::string> infoToSend;
+    int k = 0;
+    int j = -1;
+    for (int i = 0; i < 64; ++i) {
+        ++j;
+        if (j == 8) {
+            j = 0;
+            ++k;
+        }
+        if (squares[j][k]->Ffigure->playerType == player)
+            infoToSend[i] = FiguresAsLetter[squares[j][k]->Ffigure->figureType];
+
+    }
+    emit sendFiguresToOpponent_signal(infoToSend);
+
+}
 
 
 //FiguresMoves######################################################################
@@ -396,39 +443,13 @@ void GameWidget::hideMoves_slot() {
 }
 
 
-void GameWidget::relocateKingWRook(int prevX, int prevY, int direction, Figure *king, QDropEvent *event= nullptr) {
 
-    int i = prevY;
-    while (i >= 0 && i < 8 && squares[prevX][i += direction]->Ffigure == nullptr) {}
-
-    Figure *buffer = squares[prevX][i]->Ffigure;
-
-    if (buffer->figureType == rook) {
-        squares[prevX][i]->removeFigure();
-
-        if (abs(prevY - i) < 3) {
-            squares[prevX][prevY]->placeFigureWithHack(buffer);
-            squares[prevX][prevY + direction]->placeFigureWithHack(king);
-        } else {
-            squares[prevX][prevY + direction]->placeFigureWithHack(buffer);
-            squares[prevX][prevY + direction * 2]->placeFigureWithHack(king);
-            squares[prevX][prevY]->removeFigure();
-        }
-        buffer->FirstMoveDone = true;
-        king->FirstMoveDone = true;
-
-        return;
-    }
-
-    if (event != nullptr){
-        event->setDropAction(Qt::IgnoreAction);
-    }
-}
 
 
 void GameWidget::startGame_slot() {
+    sendFiguresToOpponent();
     gameMode=true;
-    // Dasha
+    // Dasha ожидание пока противник отправит фигуры
 
     if (m_rs.color == white)
         m_movesAllowed = true;
@@ -489,6 +510,34 @@ void GameWidget::setSettings_slot(RoomSettings rs) {
 void GameWidget::setField_slot(){
     setField();
     setFigures(m_rs.color);
+}
+
+void GameWidget::getOpponentStartFigures_slot(QMap<int, std::string> sentInfo){
+    int j=-1, k=0;
+
+    FigureColor enemyColor= m_rs.color== white ? black :white;
+
+    for (int i=0;i<64;++i){
+        ++j;
+        if (j == 8) {
+            j = 0;
+            ++k;
+        }
+
+        if (sentInfo.find(i) != sentInfo.end()) {
+               squares[7-j][k]->setFigureType(getKeyByValue(FiguresAsLetter, sentInfo[i]), enemy, enemyColor);
+        }
+
+
+
+
+
+
+
+
+
+    }
+
 }
 
 

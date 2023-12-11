@@ -53,6 +53,17 @@ const QMap<TwoKey, QString> FigureImages =
         };
 
 
+const QMap<Ft, std::string> FiguresAsLetter =
+        {{pawn, ("p")},
+         {king, ("k")},
+         {queen, ("q")},
+         {rook, ("r")},
+         {knight, ("n")},
+         {bishop, ("b")}
+        };
+
+
+
 class Figure {
 
 public:
@@ -77,6 +88,14 @@ private:
 
 };
 
+
+Ft getKeyByValue(const QMap<Ft, std::string>& map, std::string& value) {
+    for (auto it = map.begin(); it != map.end(); ++it) {
+        if (it.value() == value) {
+            return it.key();
+        }
+    }
+}
 
 
 
