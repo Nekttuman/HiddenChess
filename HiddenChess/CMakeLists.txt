@@ -6,7 +6,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-#set(CMAKE_PREFIX_PATH "D:/Zona_Downloads/Qt-1/5.15.2/vs_/msvc2019_64")
+#set(CMAKE_PREFIX_PATH "your path") or set it in ide cmake params
 
 find_package(Qt5 COMPONENTS
         Core
@@ -29,7 +29,6 @@ include_directories(${CMAKE_SOURCE_DIR}/Source/Widgets/RoomCreationWidget)
 include_directories(${CMAKE_SOURCE_DIR}/Source/Widgets/SplashScreenWidget)
 include_directories(${CMAKE_SOURCE_DIR}/Source/Widgets/SquareWidget)
 include_directories(${CMAKE_SOURCE_DIR}/Source/Widgets/GameConfirmationWidget)
-include_directories(${CMAKE_SOURCE_DIR}/Source/Widgets/FiguresDeckWidget)
 include_directories(${CMAKE_SOURCE_DIR}/Source/Widgets/RegistrationWidget)
 
 include_directories(${CMAKE_SOURCE_DIR}/Source/Classes/Client)
@@ -48,7 +47,6 @@ set(UI_FILES
         Source/Widgets/ChatWidget/ChatWidget.ui
         Source/Widgets/RoomsListWidget/RoomsListWidget.ui
         Source/Widgets/GameConfirmationWidget/GameConfirmationWidget.ui
-        Source/Widgets/FiguresDeckWidget/FiguresDeckWidget.ui
         Source/Widgets/RegistrationWidget/RegistrationWidget.ui
 )
 
@@ -71,7 +69,6 @@ add_executable(HiddenChess
         Source/Widgets/SplashScreenWidget/SplashScreenWidget.cpp
         Source/Widgets/RoomsListWidget/RoomsListWidget.cpp
         Source/Widgets/GameConfirmationWidget/GameConfirmationWidget.cpp
-        Source/Widgets/FiguresDeckWidget/FiguresDeckWidget.cpp
         Source/Widgets/RegistrationWidget/RegistrationWidget.cpp
         ${RESOURCES}
         ${UI_FILES} ${UI_HEADERS}

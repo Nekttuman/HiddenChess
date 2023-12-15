@@ -25,6 +25,12 @@ Figure::Figure(Ft figure_, PlayerType type, FigureColor color) {
 
 };
 
-
+Ft getKeyByValue(const QMap<Ft, std::string>& map, std::string& value) {
+    for (auto it = map.begin(); it != map.end(); ++it) {
+        if (it.value() == value) {
+            return it.key();
+        }
+    }
+}
 
 

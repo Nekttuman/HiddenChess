@@ -1,8 +1,8 @@
 #pragma once
 
 #include <QtWidgets>
-#include <qmap.h>
-#include<qstring.h>
+#include <QMap>
+#include <QString>
 #include <QList>
 #include <tuple>
 
@@ -53,6 +53,16 @@ const QMap<TwoKey, QString> FigureImages =
         };
 
 
+const QMap<Ft, std::string> FiguresAsLetter =
+        {{pawn,   ("p")},
+         {king,   ("k")},
+         {queen,  ("q")},
+         {rook,   ("r")},
+         {knight, ("n")},
+         {bishop, ("b")}
+        };
+
+
 class Figure {
 
 public:
@@ -68,15 +78,12 @@ public:
     bool FirstMoveDone;
 
     ~Figure() {
-
-
     }
-
-private:
-
 
 };
 
+
+Ft getKeyByValue(const QMap<Ft, std::string> &map, std::string &value);
 
 
 
